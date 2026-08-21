@@ -54,12 +54,23 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
     );
   }
 
-  const currentStageIndex = STAGES.findIndex((s) => s.id === ("IN_PROGRESS"));
-  const progressPercent = currentStageIndex === -1 ? 100 : Math.round((currentStageIndex / STAGES.length) * 100);
-  const currentStageDetail = STAGES[currentStageIndex];
-
+  
   const isCompleted = run.status === "COMPLETED";
   const isCancelled = run.status === "CANCELLED";
+  const isFailed = run.status === "FAILED";
+
+  // Map backend status to UI stage
+  let activeStageId = run.status;
+  if (run.status === "CREATED") activeStageId = "PLANNING";
+  if (run.status === "PLAN_READY") activeStageId = "DISCOVERING";
+  if (run.status === "CORRELATING") activeStageId = "CONFLICT_ANALYSIS";
+  
+  let currentStageIndex = STAGES.findIndex((s) => s.id === activeStageId);
+  if (isCompleted) currentStageIndex = STAGES.length;
+
+  const progressPercent = isCompleted ? 100 : (currentStageIndex === -1 ? 0 : Math.round((currentStageIndex / STAGES.length) * 100));
+  const currentStageDetail = STAGES[currentStageIndex];
+
 
   const handleCancel = async () => {
     if (cancelling) return;
@@ -88,7 +99,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
         </div>
 
         <div>
-          {!isCompleted && !isCancelled && (
+          {!isCompleted && !isCancelled && !isFailed && (
             <button
               onClick={handleCancel}
               disabled={cancelling}
@@ -157,6 +168,21 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
         </div>
       )}
 
+      
+      {/* Failure Notice Banner */}
+      {isFailed && (
+        <div className="bg-rose-50 border-2 border-rose-200 rounded-[24px] p-6 sm:p-8 flex items-start gap-4 text-rose-900 shadow-sm mb-4">
+          <AlertCircle className="w-8 h-8 text-rose-500 shrink-0 mt-0.5" />
+          <div className="space-y-2">
+            <span className="font-extrabold text-lg block text-rose-900 tracking-tight">Research Run Failed</span>
+            <p className="text-sm text-rose-700 font-medium leading-relaxed max-w-2xl">
+              Execution encountered an error and was halted. <br/>
+              <strong>Reason:</strong> {run.failureReason || "Unknown pipeline error"}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Cancellation Notice Banner */}
       {isCancelled && (
         <div className="bg-rose-50 border-2 border-rose-200 rounded-[24px] p-6 sm:p-8 flex items-start gap-4 text-rose-900 shadow-sm">
@@ -171,7 +197,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
       )}
 
       {/* Active Stage Detail Highlight Card */}
-      {currentStageDetail && !isCompleted && !isCancelled && (
+      {currentStageDetail && !isCompleted && !isCancelled && !isFailed && (
         <div className="bg-indigo-50 rounded-[24px] border-2 border-indigo-200 p-6 sm:p-8 space-y-3 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
             <Loader2 className="w-48 h-48 animate-spin text-indigo-900" />
@@ -221,7 +247,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
         <div className="space-y-3">
           {STAGES.map((stg, idx) => {
             const isDone = currentStageIndex > idx || isCompleted;
-            const isCurrent = currentStageIndex === idx && !isCompleted && !isCancelled;
+            const isCurrent = currentStageIndex === idx && !isCompleted && !isCancelled && !isFailed;
 
             return (
               <div
@@ -237,7 +263,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                   ) : isCurrent ? (
                     <Loader2 className="w-5 h-5 text-indigo-600 animate-spin shrink-0" />
-                  ) : isCancelled && currentStageIndex === idx ? (
+                  ) : (isCancelled || isFailed) && currentStageIndex === idx ? (
                     <XCircle className="w-5 h-5 text-rose-500 shrink-0" />
                   ) : (
                     <div className="w-5 h-5 rounded-full border-2 border-slate-200 shrink-0" />
@@ -246,9 +272,9 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
                 </div>
 
                 <span className={`text-[10px] font-mono font-bold tracking-widest hidden sm:inline-block ${
-                  isDone ? 'text-emerald-600' : isCurrent ? 'text-indigo-600' : isCancelled && currentStageIndex === idx ? 'text-rose-500' : 'text-slate-400'
+                  isDone ? 'text-emerald-600' : isCurrent ? 'text-indigo-600' : (isCancelled || isFailed) && currentStageIndex === idx ? 'text-rose-500' : 'text-slate-400'
                 }`}>
-                  {isDone ? 'COMPLETED' : isCurrent ? 'PROCESSING' : isCancelled && currentStageIndex === idx ? 'ABORTED' : 'QUEUED'}
+                  {isDone ? 'COMPLETED' : isCurrent ? 'PROCESSING' : isCancelled && currentStageIndex === idx ? 'ABORTED' : (isFailed && currentStageIndex === idx ? 'FAILED' : 'QUEUED')}
                 </span>
               </div>
             );
@@ -260,7 +286,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
         <span className="flex items-center gap-2 text-emerald-700 tracking-widest uppercase">
           <ShieldCheck className="w-5 h-5 text-emerald-600" /> Real backend state representation (No fake percentages)
         </span>
-        <span className={`${isCancelled ? "text-rose-600" : "text-indigo-600"} tracking-widest uppercase bg-white px-3 py-1 rounded-md shadow-sm border ${isCancelled ? "border-rose-100" : "border-indigo-100"}`}>
+        <span className={`${(isCancelled || isFailed) ? "text-rose-600" : "text-indigo-600"} tracking-widest uppercase bg-white px-3 py-1 rounded-md shadow-sm border ${(isCancelled || isFailed) ? "border-rose-100" : "border-indigo-100"}`}>
           STATUS: {run.status}
         </span>
       </div>
