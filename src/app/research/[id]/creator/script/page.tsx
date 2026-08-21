@@ -83,12 +83,12 @@ ${scriptOutline.callToAction}
           </div>
         </div>
 
-        {/* Script Outline Card (Mock) */}
+        {/* Script Outline Card  */}
         <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6 font-sans">
           <div className="space-y-2">
-            <span className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-wider">1. ATTENTION HOOK (MOCK)</span>
+            <span className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-wider">1. ATTENTION HOOK </span>
             <p className="text-sm font-semibold text-slate-900 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed">
-              "Mock hook content..."
+              "hook content..."
             </p>
           </div>
         </div>

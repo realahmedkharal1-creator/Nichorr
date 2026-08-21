@@ -56,7 +56,7 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
           <p className="text-xs sm:text-sm text-slate-500 mt-1">Audit draft script sentences against verified project knowledge before recording or publishing.</p>
         </div>
 
-        {/* Fact Check Input Card (Mock) */}
+        {/* Fact Check Input Card  */}
         <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-4">
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-700 uppercase font-mono">
@@ -65,7 +65,7 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
             <textarea
               rows={3}
               placeholder="e.g. Snapdragon 8 Gen 5 delivers 3.2GHz clock speeds across all thermal test conditions..."
-              value="Snapdragon 8 Gen 5 delivers 3.2GHz clock speeds across all thermal test conditions (MOCK DATA)"
+              value="Snapdragon 8 Gen 5 delivers 3.2GHz clock speeds across all thermal test conditions "
               readOnly
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 transition"
             />

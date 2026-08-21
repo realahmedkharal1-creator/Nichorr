@@ -16,76 +16,7 @@ const PIPELINE_COLUMNS: Array<{ stage: ContentStage | string; title: string }> =
   { stage: "PUBLISHED", title: "Published" },
 ];
 
-const MOCK_DATA = [
-  {
-    id: "mock-1",
-    project_id: "default-project",
-    title: "Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max - Ultimate Comparison",
-    stage: "PUBLISHED",
-    content_type: "YOUTUBE_VIDEO",
-    topic: "Smartphone Comparison",
-    priority: "HIGH",
-    fact_check_status: "PASSED",
-    publish_readiness_status: "READY",
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    updated_at: new Date().toISOString(),
-    research_run_id: "res-1",
-    thumbnail: "placeholder",
-    duration: "18:45",
-    views: "1.2M",
-  },
-  {
-    id: "mock-2",
-    project_id: "default-project",
-    title: "RTX 5080 4K Gaming Benchmark Results",
-    stage: "FACT_CHECK",
-    content_type: "YOUTUBE_VIDEO",
-    topic: "GPU Benchmarks",
-    priority: "HIGH",
-    fact_check_status: "PENDING",
-    publish_readiness_status: "NOT_READY",
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-    updated_at: new Date().toISOString(),
-    research_run_id: "res-2",
-    thumbnail: "placeholder",
-    duration: "12:30",
-    views: "N/A",
-  },
-  {
-    id: "mock-3",
-    project_id: "default-project",
-    title: "MacBook Pro M5 Max - Is It Worth $4000?",
-    stage: "IDEA",
-    content_type: "YOUTUBE_VIDEO",
-    topic: "Laptop Review",
-    priority: "MEDIUM",
-    fact_check_status: "PENDING",
-    publish_readiness_status: "NOT_READY",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    research_run_id: "res-3",
-    thumbnail: "placeholder",
-    duration: "TBD",
-    views: "N/A",
-  },
-  {
-    id: "mock-4",
-    project_id: "default-project",
-    title: "Apple Vision Pro 2 Hands-On Experience",
-    stage: "READY_TO_PUBLISH",
-    content_type: "YOUTUBE_VIDEO",
-    topic: "VR/AR Headset",
-    priority: "MEDIUM",
-    fact_check_status: "PASSED",
-    publish_readiness_status: "READY",
-    created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-    updated_at: new Date().toISOString(),
-    research_run_id: "res-4",
-    thumbnail: "placeholder",
-    duration: "22:15",
-    views: "N/A",
-  }
-];
+
 
 export default function ContentPipelinePage() {
   const [contentItems, setContentItems] = useState<any[]>([]);
@@ -102,11 +33,11 @@ export default function ContentPipelinePage() {
       if (data.success && data.contentItems && data.contentItems.length > 0) {
         setContentItems(data.contentItems);
       } else {
-        setContentItems(MOCK_DATA);
+        setContentItems([]);
       }
     } catch (e) {
       console.error(e);
-      setContentItems(MOCK_DATA);
+      setContentItems([]);
     } finally {
       setLoading(false);
     }

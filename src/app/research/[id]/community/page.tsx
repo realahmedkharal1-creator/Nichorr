@@ -47,22 +47,7 @@ export default function CommunityPage({ params }: { params: { id: string } }) {
       </div>
 
       <div className="space-y-4">
-        {((run.communitySignals && run.communitySignals.length > 0) ? run.communitySignals : [
-          {
-            id: 'mock-1',
-            signal_type: "COMPLAINT",
-            frequency_level: "HIGH",
-            firsthand_likelihood: "HIGH",
-            signal: "Numerous Reddit users report coil whine under specific load conditions in the new model."
-          },
-          {
-            id: 'mock-2',
-            signal_type: "WORKAROUND",
-            frequency_level: "MEDIUM",
-            firsthand_likelihood: "MEDIUM",
-            signal: "Users suggest undervolting via software reduces thermal throttling without significant performance loss."
-          }
-        ]).map((sig) => (
+        {(run.communitySignals || []).map((sig) => (
           <div key={sig.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-3.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
               <span className="badge-community px-3 py-1 rounded-full text-xs font-mono font-bold uppercase">

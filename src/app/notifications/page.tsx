@@ -6,63 +6,7 @@ import { Bell, CheckCircle2, AlertTriangle, ShieldCheck, Info, ExternalLink } fr
 import { NotificationEntity } from "@/lib/database/repositories/notifications.repo";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 
-const MOCK_NOTIFICATIONS: NotificationEntity[] = [
-  {
-    id: "mock-1",
-    user_id: "user-1",
-    type: "INFORMATIONAL",
-    project_id: "default-proj",
-    title: "Research run completed",
-    message: "Research run completed for 'Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max'",
-    created_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-    is_read: false,
-    target_url: "/research"
-  },
-  {
-    id: "mock-2",
-    user_id: "user-1",
-    type: "WARNING",
-    project_id: "default-proj",
-    title: "New conflict detected",
-    message: "New conflict detected in brief: The claimed battery life contradicts verified sources.",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    is_read: false,
-    target_url: "/briefs"
-  },
-  {
-    id: "mock-3",
-    user_id: "user-1",
-    type: "INFORMATIONAL",
-    project_id: "default-proj",
-    title: "Source verification completed",
-    message: "Source verification completed for 'Apple 2026 Roadmap'. 12 sources verified.",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    is_read: false,
-    target_url: "/sources"
-  },
-  {
-    id: "mock-4",
-    user_id: "user-1",
-    type: "CRITICAL",
-    project_id: "default-proj",
-    title: "Quality gate passed",
-    message: "Quality gate passed for your recent publish draft. Ready for deployment.",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    is_read: true,
-    target_url: "/publish"
-  },
-  {
-    id: "mock-5",
-    user_id: "user-1",
-    type: "INFORMATIONAL",
-    project_id: "default-proj",
-    title: "Knowledge base updated",
-    message: "Knowledge base updated with new claim regarding Qualcomm Snapdragon 8 Gen 5.",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-    is_read: false,
-    target_url: "/knowledge"
-  }
-];
+
 
 export default function NotificationCenterPage() {
   const [notifications, setNotifications] = useState<NotificationEntity[]>([]);
@@ -79,11 +23,11 @@ export default function NotificationCenterPage() {
       if (data.success && data.notifications && data.notifications.length > 0) {
         setNotifications(data.notifications);
       } else {
-        setNotifications(MOCK_NOTIFICATIONS);
+        setNotifications([]);
       }
     } catch (e) {
       console.error(e);
-      setNotifications(MOCK_NOTIFICATIONS);
+      setNotifications([]);
     } finally {
       setLoading(false);
     }

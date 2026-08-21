@@ -15,18 +15,7 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
     fetchProject();
   }, [params.id]);
 
-  const MOCK_PROJECT: any = {
-    id: params.id,
-    name: 'Samsung Galaxy S27 Ultra Deep Dive',
-    description: 'Comprehensive research workspace for Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max comparison, including benchmark data, camera analysis, and thermal performance testing.',
-    created_at: '2026-08-18T10:00:00Z',
-    research_runs: [
-      { id: '3c7e41fb-f145-41b9-9b1e-a9935a8a5351', topic: 'Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max', status: 'COMPLETED', contentType: 'Comparison', createdAt: '2026-08-20T14:30:00Z', sources: [{id:'1'},{id:'2'},{id:'3'},{id:'4'},{id:'5'},{id:'6'}], claims: [{id:'1'},{id:'2'},{id:'3'},{id:'4'},{id:'5'},{id:'6'}] },
-      { id: 'b2a9c3d4-e5f6-7890-abcd-ef1234567890', topic: 'Galaxy S27 Ultra Camera Deep Dive', status: 'COMPLETED', contentType: 'Deep Dive', createdAt: '2026-08-19T10:00:00Z', sources: [{id:'1'},{id:'2'},{id:'3'}], claims: [{id:'1'},{id:'2'}] },
-      { id: 'd4c5e6f7-a8b9-0123-cdef-012345678902', topic: 'Galaxy S27 Ultra Battery Endurance Testing', status: 'IN_PROGRESS', contentType: 'Benchmark', createdAt: '2026-08-21T07:00:00Z', sources: [{id:'1'}], claims: [] },
-    ],
-  };
-
+  
   const fetchProject = async () => {
     try {
       const res = await fetch(`/api/projects/${params.id}`);
@@ -34,11 +23,11 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
       if (data.success && data.project) {
         setProject(data.project);
       } else {
-        setProject(MOCK_PROJECT);
+        setProject(null);
       }
     } catch (e) {
       console.error(e);
-      setProject(MOCK_PROJECT);
+      setProject(null);
     } finally {
       setLoading(false);
     }

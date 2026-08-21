@@ -6,78 +6,7 @@ import { Video, ShieldCheck, CheckCircle2, FileText, ArrowRight, Lock, AlertCirc
 import { ContentItemEntity, ContentStage } from "@/lib/database/repositories/content.repo";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 
-const MOCK_DATA = [
-  {
-    id: "mock-1",
-    project_id: "default-project",
-    title: "Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max - Ultimate Comparison",
-    stage: "PUBLISHED",
-    content_type: "YOUTUBE_VIDEO",
-    topic: "Smartphone Comparison",
-    priority: "HIGH",
-    fact_check_status: "PASSED",
-    publish_readiness_status: "READY",
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    updated_at: new Date().toISOString(),
-    research_run_id: "res-1",
-    thumbnail: "placeholder",
-    duration: "18:45",
-    views: "1.2M",
-    hook: "The benchmarks are in, and what we found completely flips the script on which flagship phone you should buy this year.",
-    objective: "Compare camera, battery, and gaming performance using empirical data."
-  },
-  {
-    id: "mock-2",
-    project_id: "default-project",
-    title: "RTX 5080 4K Gaming Benchmark Results",
-    stage: "FACT_CHECK",
-    content_type: "YOUTUBE_VIDEO",
-    topic: "GPU Benchmarks",
-    priority: "HIGH",
-    fact_check_status: "PENDING",
-    publish_readiness_status: "NOT_READY",
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-    updated_at: new Date().toISOString(),
-    research_run_id: "res-2",
-    thumbnail: "placeholder",
-    duration: "12:30",
-    views: "N/A",
-  },
-  {
-    id: "mock-3",
-    project_id: "default-project",
-    title: "MacBook Pro M5 Max - Is It Worth $4000?",
-    stage: "IDEA",
-    content_type: "YOUTUBE_VIDEO",
-    topic: "Laptop Review",
-    priority: "MEDIUM",
-    fact_check_status: "PENDING",
-    publish_readiness_status: "NOT_READY",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    research_run_id: "res-3",
-    thumbnail: "placeholder",
-    duration: "TBD",
-    views: "N/A",
-  },
-  {
-    id: "mock-4",
-    project_id: "default-project",
-    title: "Apple Vision Pro 2 Hands-On Experience",
-    stage: "READY_TO_PUBLISH",
-    content_type: "YOUTUBE_VIDEO",
-    topic: "VR/AR Headset",
-    priority: "MEDIUM",
-    fact_check_status: "PASSED",
-    publish_readiness_status: "READY",
-    created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-    updated_at: new Date().toISOString(),
-    research_run_id: "res-4",
-    thumbnail: "placeholder",
-    duration: "22:15",
-    views: "N/A",
-  }
-];
+
 
 export default function ContentWorkspacePage({ params }: { params: { id: string } }) {
   const [item, setItem] = useState<any | null>(null);
@@ -94,14 +23,11 @@ export default function ContentWorkspacePage({ params }: { params: { id: string 
       if (data.success && data.contentItem) {
         setItem(data.contentItem);
       } else {
-        // Fallback
-        const found = MOCK_DATA.find(m => m.id === params.id) || MOCK_DATA[0];
-        setItem(found);
+        setItem(null);
       }
     } catch (e) {
       console.error(e);
-      const found = MOCK_DATA.find(m => m.id === params.id) || MOCK_DATA[0];
-      setItem(found);
+      setItem(null);
     } finally {
       setLoading(false);
     }

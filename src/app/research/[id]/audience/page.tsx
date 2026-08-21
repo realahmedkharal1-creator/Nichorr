@@ -39,20 +39,7 @@ export default function AudiencePage({ params }: { params: { id: string } }) {
       <ResearchTabNav runId={run.id} />
 
       <div className="space-y-4">
-        {((run.audienceQuestions && run.audienceQuestions.length > 0) ? run.audienceQuestions : [
-          {
-            id: 'mock-1',
-            question: "Does the thermals throttle during prolonged 4K video rendering?",
-            importance: "HIGH",
-            coverage_gap: "HIGH"
-          },
-          {
-            id: 'mock-2',
-            question: "How does the fan noise compare to the previous generation under load?",
-            importance: "MEDIUM",
-            coverage_gap: "LOW"
-          }
-        ]).map((q, idx) => (
+        {(run.audienceQuestions || []).map((q, idx) => (
           <div key={q.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-3.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
               <span className="text-xs font-mono text-indigo-600 font-bold">AUDIENCE GAP #{idx + 1}</span>

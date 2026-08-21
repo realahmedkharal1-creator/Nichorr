@@ -39,22 +39,7 @@ export default function OpportunitiesPage({ params }: { params: { id: string } }
       <ResearchTabNav runId={run.id} />
 
       <div className="space-y-4">
-        {((run.opportunities && run.opportunities.length > 0) ? run.opportunities : [
-          {
-            id: 'mock-1',
-            opportunity_type: 'VIDEO ANGLE',
-            score: 9.2,
-            title: 'The Truth About Thermal Throttling on the New Gen',
-            description: 'Focus exclusively on the cooling limitations, contrasting the official claims with independent lab findings and user reports.'
-          },
-          {
-            id: 'mock-2',
-            opportunity_type: 'DEEP DIVE ARTICLE',
-            score: 8.5,
-            title: 'Undervolting Guide for the New Architecture',
-            description: 'Address the high volume of user workarounds by providing a definitive, step-by-step technical guide to undervolting.'
-          }
-        ]).map((opp) => (
+        {(run.opportunities || []).map((opp) => (
           <div key={opp.id} className="bg-white rounded-[24px] shadow-sm border border-pink-200 p-6 space-y-4 hover:border-pink-300 transition-all">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <span className="badge-opportunity px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-pink-100 text-pink-700">
