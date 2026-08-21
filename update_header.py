@@ -1,4 +1,11 @@
+﻿import os
 
+p = r"C:\Users\ahmed\.gemini\antigravity\scratch\tech-research-platform\src\components\layout\Header.tsx"
+with open(p, "r", encoding="utf-8") as f:
+    c = f.read()
+
+# We need to rewrite Header.tsx to include auth state.
+content = """
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -211,3 +218,7 @@ export function Header() {
     </header>
   );
 }
+"""
+
+with open(p, "w", encoding="utf-8") as f:
+    f.write(content)

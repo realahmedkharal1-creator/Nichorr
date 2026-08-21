@@ -1,21 +1,18 @@
+﻿import os
 
+os.makedirs(r"C:\Users\ahmed\.gemini\antigravity\scratch\tech-research-platform\src\app\login", exist_ok=True)
+p = r"C:\Users\ahmed\.gemini\antigravity\scratch\tech-research-platform\src\app\login\page.tsx"
+
+content = """
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldCheck, Mail, Lock, ArrowRight, Github } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={<div className="min-h-[80vh] flex items-center justify-center bg-[#F0F2F6]">Loading...</div>}>
-      <LoginContent />
-    </Suspense>
-  );
-}
-
-function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/dashboard";
@@ -170,3 +167,7 @@ function LoginContent() {
     </div>
   );
 }
+"""
+
+with open(p, "w", encoding="utf-8") as f:
+    f.write(content)

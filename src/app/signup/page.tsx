@@ -3,52 +3,73 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ShieldCheck, Mail, Lock, ArrowRight, Github } from "lucide-react";
+import { ShieldCheck, Mail, Lock, User, ArrowRight, Github } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function SignUpPage() {
   return (
     <Suspense fallback={<div className="min-h-[80vh] flex items-center justify-center bg-[#F0F2F6]">Loading...</div>}>
-      <LoginContent />
+      <SignUpContent />
     </Suspense>
   );
 }
 
-function LoginContent() {
+function SignUpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/dashboard";
 
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: "error" | "success" } | null>(null);
 
   const supabase = createClient();
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!termsAccepted) {
+      setMessage({ text: "You must accept the Terms and Privacy Policy.", type: "error" });
+      return;
+    }
+
     setLoading(true);
     setMessage(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
+        },
       });
 
       if (error) throw error;
-      
-      router.push(redirectTo);
+
+      if (data.session) {
+        router.push(redirectTo);
+      } else {
+        setMessage({ text: "Account created! Please check your email to verify your account.", type: "success" });
+      }
     } catch (err: any) {
-      setMessage({ text: err.message || "Authentication failed.", type: "error" });
+      setMessage({ text: err.message || "Registration failed.", type: "error" });
     } finally {
       setLoading(false);
     }
   };
 
   const handleOAuthLogin = async (provider: 'google' | 'github') => {
+    if (!termsAccepted) {
+      setMessage({ text: "You must accept the Terms and Privacy Policy before continuing.", type: "error" });
+      return;
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -61,6 +82,14 @@ function LoginContent() {
     }
   };
 
+  // Simple password strength
+  const getPasswordStrength = () => {
+    if (password.length === 0) return { width: "0%", color: "bg-slate-200" };
+    if (password.length < 6) return { width: "33%", color: "bg-red-400" };
+    if (password.length < 10) return { width: "66%", color: "bg-amber-400" };
+    return { width: "100%", color: "bg-emerald-400" };
+  };
+
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#F0F2F6]">
       <div className="max-w-md w-full space-y-8">
@@ -69,10 +98,10 @@ function LoginContent() {
             <ShieldCheck className="w-6 h-6" />
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-            Welcome Back
+            Create an Account
           </h1>
           <p className="text-sm text-slate-500 font-medium">
-            Sign in to access your intelligence dashboard.
+            Join VeritasTech to start building your intelligence engine.
           </p>
         </div>
 
@@ -95,14 +124,6 @@ function LoginContent() {
             </svg>
             Continue with Google
           </button>
-          
-          <button
-            onClick={() => handleOAuthLogin('github')}
-            className="w-full flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm"
-          >
-            <Github className="w-5 h-5" />
-            Continue with GitHub
-          </button>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -113,7 +134,22 @@ function LoginContent() {
             </div>
           </div>
 
-          <form onSubmit={handleEmailLogin} className="space-y-4">
+          <form onSubmit={handleEmailSignUp} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Full Name</label>
+              <div className="relative">
+                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  required
+                  placeholder="Jane Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-medium placeholder:text-slate-400"
+                />
+              </div>
+            </div>
+
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Email Address</label>
               <div className="relative">
@@ -130,12 +166,7 @@ function LoginContent() {
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>
-                <Link href="/login" className="text-xs font-bold text-indigo-600 hover:text-indigo-500">
-                  Forgot password?
-                </Link>
-              </div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
@@ -147,23 +178,39 @@ function LoginContent() {
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-medium placeholder:text-slate-400"
                 />
               </div>
+              <div className="h-1.5 w-full bg-slate-100 rounded-full mt-2 overflow-hidden">
+                <div className={`h-full ${getPasswordStrength().color} transition-all duration-300`} style={{ width: getPasswordStrength().width }} />
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="terms"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                className="mt-1 w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+              />
+              <label htmlFor="terms" className="text-xs text-slate-500 font-medium leading-relaxed">
+                I agree to the <Link href="#" className="text-indigo-600 hover:underline">Terms of Service</Link> and <Link href="#" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
+              </label>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-md shadow-indigo-600/20"
+              className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-md shadow-indigo-600/20 mt-2"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Creating account..." : "Sign Up"}
               {!loading && <ArrowRight className="w-4 h-4" />}
             </button>
           </form>
         </div>
 
         <p className="text-center text-sm font-medium text-slate-600">
-          Don't have an account?{" "}
-          <Link href={`/signup?redirectTo=${redirectTo}`} className="font-bold text-indigo-600 hover:text-indigo-500">
-            Sign Up
+          Already have an account?{" "}
+          <Link href={`/login?redirectTo=${redirectTo}`} className="font-bold text-indigo-600 hover:text-indigo-500">
+            Sign In
           </Link>
         </p>
       </div>

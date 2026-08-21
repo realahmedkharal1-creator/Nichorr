@@ -1,4 +1,8 @@
-import { createServerClient } from "@supabase/ssr";
+﻿import os
+
+p = r"C:\Users\ahmed\.gemini\antigravity\scratch\tech-research-platform\src\lib\supabase\middleware.ts"
+
+content = """import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
@@ -67,3 +71,7 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse;
 }
+"""
+
+with open(p, "w", encoding="utf-8") as f:
+    f.write(content)
