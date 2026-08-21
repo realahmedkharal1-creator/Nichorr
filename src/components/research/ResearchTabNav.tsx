@@ -112,7 +112,7 @@ export function ResearchTabNav({ runId }: { runId: string }) {
         onMouseLeave={handleMouseLeave}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-        className="flex overflow-x-auto gap-2 pb-3 px-6 w-full cursor-grab active:cursor-grabbing" 
+        className="flex overflow-x-auto gap-2 pb-3 pl-6 pr-0 w-full cursor-grab active:cursor-grabbing" 
         style={{ 
           scrollbarWidth: "none", 
           msOverflowStyle: "none",
@@ -146,6 +146,8 @@ export function ResearchTabNav({ runId }: { runId: string }) {
             </Link>
           );
         })}
+        {/* Spacer to guarantee empty space at the end so the last capsule isn't faded by the mask */}
+        <div className="w-6 shrink-0" />
       </div>
 
       {/* Right scroll button */}
