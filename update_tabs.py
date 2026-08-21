@@ -1,4 +1,7 @@
-"use client";
+﻿import os
+
+file_path = r"src\components\research\ResearchTabNav.tsx"
+content = """"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -128,3 +131,9 @@ export function ResearchTabNav({ runId }: { runId: string }) {
     </div>
   );
 }
+"""
+
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(content)
+
+print("Updated ResearchTabNav.tsx")
