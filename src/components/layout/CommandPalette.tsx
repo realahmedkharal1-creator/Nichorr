@@ -43,19 +43,19 @@ export function CommandPalette() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-start justify-center pt-20 p-4 font-sans">
-      <div className="bg-slate-900 border border-slate-750 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden space-y-2">
-        <div className="p-4 border-b border-slate-800 flex items-center gap-3">
-          <Search className="w-5 h-5 text-indigo-400 shrink-0" />
+    <div className="fixed inset-0 z-50 bg-slate-50 backdrop-blur-sm flex items-start justify-center pt-20 p-4 font-sans">
+      <div className="bg-white border border-slate-200 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden space-y-2">
+        <div className="p-4 border-b border-slate-200 flex items-center gap-3">
+          <Search className="w-5 h-5 text-indigo-600 shrink-0" />
           <input
             type="text"
             placeholder="Search technology topics, commands, or tools... (Esc to exit)"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             autoFocus
-            className="w-full bg-transparent text-sm text-slate-100 placeholder-slate-500 focus:outline-none"
+            className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-500 focus:outline-none"
           />
-          <button onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-slate-300">
+          <button onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-slate-700">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -68,13 +68,13 @@ export function CommandPalette() {
               <button
                 key={idx}
                 onClick={() => handleSelect(action.href)}
-                className="w-full text-left p-3 rounded-xl hover:bg-indigo-950/60 hover:border hover:border-indigo-850 flex items-center justify-between group transition"
+                className="w-full text-left p-3 rounded-xl hover:bg-indigo-50 hover:border hover:border-indigo-850 flex items-center justify-between group transition"
               >
                 <div className="flex items-center gap-3">
-                  <action.icon className="w-4 h-4 text-indigo-400" />
-                  <span className="text-xs font-semibold text-slate-200 group-hover:text-white">{action.label}</span>
+                  <action.icon className="w-4 h-4 text-indigo-600" />
+                  <span className="text-xs font-semibold text-slate-700 group-hover:text-white">{action.label}</span>
                 </div>
-                <span className="text-[10px] font-mono text-slate-500 group-hover:text-indigo-300">Open →</span>
+                <span className="text-[10px] font-mono text-slate-500 group-hover:text-indigo-600">Open →</span>
               </button>
             ))
           )}

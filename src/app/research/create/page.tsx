@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, Sparkles, ArrowRight, ShieldCheck, Zap, Layers, HelpCircle, CheckCircle2 } from "lucide-react";
+import { Search, Sparkles, ArrowRight, ShieldCheck, Zap, Layers } from "lucide-react";
 
 function CreateResearchForm() {
   const router = useRouter();
@@ -59,40 +59,44 @@ function CreateResearchForm() {
 
   const steps = [
     { num: 1, label: "Topic & Goal" },
-    { num: 2, label: "Content Objective" },
-    { num: 3, label: "Depth & Audience" },
-    { num: 4, label: "Review & Plan" },
+    { num: 2, label: "Objective" },
+    { num: 3, label: "Depth" },
+    { num: 4, label: "Plan" },
   ];
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 py-4">
+    <div className="max-w-4xl mx-auto space-y-8 py-4">
       {/* Step Progress Indicator Bar */}
-      <div className="slate-card p-4 bg-slate-900/90 border-slate-800 flex items-center justify-between">
-        {steps.map((s, idx) => (
-          <div key={s.num} className="flex items-center gap-2">
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-mono font-bold ${
-              s.num === 1 ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30" : "bg-slate-800 text-slate-400 border border-slate-700"
-            }`}>
-              {s.num}
+      <div className="flex justify-center mb-10">
+        <div className="flex items-center gap-1 sm:gap-3 bg-white  border border-slate-200  rounded-full px-4 py-2 shadow-sm">
+          {steps.map((s, idx) => (
+            <div key={s.num} className="flex items-center gap-2">
+              <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-mono font-bold transition-all ${
+                s.num === 1 ? "bg-indigo-600 text-white   shadow-md" : "bg-slate-100 text-slate-500  "
+              }`}>
+                {s.num}
+              </div>
+              <span className={`text-[10px] sm:text-xs font-semibold ${s.num === 1 ? "text-slate-900 " : "text-slate-500 "}`}>{s.label}</span>
+              {idx < steps.length - 1 && <span className="text-slate-700  mx-1">/</span>}
             </div>
-            <span className="text-xs font-medium hidden sm:inline text-slate-300">{s.label}</span>
-            {idx < steps.length - 1 && <span className="text-slate-700 text-xs hidden sm:inline">→</span>}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      <div>
-        <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider block mb-1">GUIDED SETUP WIZARD</span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">Create Technology Research Run</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">Define your research topic. Veritas will deconstruct entities, formulate multi-vector search plans, and extract verified evidence.</p>
+      <div className="text-center space-y-2 mb-10">
+        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-50  text-indigo-600  text-[10px] font-mono font-bold border border-indigo-200  uppercase tracking-widest mb-2">
+          <ShieldCheck className="w-3 h-3" /> GUIDED SETUP
+        </span>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 ">Create Research Run</h1>
+        <p className="text-sm text-slate-500 max-w-xl mx-auto">Define your research topic. Veritas will deconstruct entities, formulate multi-vector search plans, and extract verified evidence.</p>
       </div>
 
       {/* Preset Examples */}
-      <div className="space-y-2.5">
-        <label className="text-xs font-mono text-slate-400 flex items-center gap-1.5 font-semibold uppercase tracking-wider">
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400" /> QUICK START BENCHMARK TEMPLATES
+      <div className="mb-8">
+        <label className="text-xs font-mono text-slate-500  flex items-center justify-center gap-1.5 font-semibold uppercase tracking-wider mb-4">
+          <Sparkles className="w-3.5 h-3.5 text-indigo-500" /> QUICK START BENCHMARK TEMPLATES
         </label>
-        <div className="grid sm:grid-cols-2 gap-3">
+        <div className="grid sm:grid-cols-3 gap-4">
           <button
             type="button"
             onClick={() => setExample(
@@ -100,128 +104,142 @@ function CreateResearchForm() {
               "Compare camera dynamic range, sustained thermal throttling under 4K video, battery endurance, and real-world value for a YouTube comparison video.",
               "Comparison"
             )}
-            className="slate-card p-4 text-left hover:border-indigo-500/60 hover:bg-slate-850/80 transition-all text-xs space-y-1.5 group"
+            className="bg-white border border-slate-200/90 shadow-sm shadow-slate-200/70 rounded-2xl p-5 text-left group flex flex-col justify-between space-y-2 hover:border-slate-300 transition-all"
           >
-            <div className="flex items-center justify-between text-indigo-400 font-mono text-[10px]">
+            <span className="font-bold text-sm text-slate-800  group-hover:text-indigo-600 transition line-clamp-2">
+              Galaxy S27 Ultra vs iPhone 18 Pro Max
+            </span>
+            <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 border-t border-slate-100  pt-2">
               <span>FLAGSHIP SHOWDOWN</span>
-              <span className="group-hover:translate-x-0.5 transition transform">Use Template →</span>
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition" />
             </div>
-            <span className="font-bold text-slate-100 block text-sm group-hover:text-indigo-300 transition">Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max</span>
-            <p className="text-slate-400 line-clamp-1 text-[11px]">Compare 4K thermal throttling, camera dynamic range, and battery endurance.</p>
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => setExample(
+              "RTX 5090 vs RX 8900 XTX Power Efficiency & 4K Ray Tracing",
+              "Measure wattage draw, DLSS 4 vs FSR 4 image quality, and 1% low frame time stability.",
+              "Deep Dive"
+            )}
+            className="bg-white border border-slate-200/90 shadow-sm shadow-slate-200/70 rounded-2xl p-5 text-left group flex flex-col justify-between space-y-2 hover:border-slate-300 transition-all"
+          >
+            <span className="font-bold text-sm text-slate-800  group-hover:text-indigo-600 transition line-clamp-2">
+              RTX 5090 vs RX 8900 XTX Power Efficiency
+            </span>
+            <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 border-t border-slate-100  pt-2">
+              <span>GPU EFFICIENCY</span>
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition" />
+            </div>
           </button>
 
           <button
             type="button"
             onClick={() => setExample(
-              "MacBook Pro 16 M5 Max vs Dell XPS 16 Thermal Throttling",
-              "Investigate sustained CPU rendering thermals, fan noise acoustic decibels, and battery drain under multi-core stress workloads.",
-              "Review"
+              "MacBook Pro 16 M5 Max vs Dell XPS 16 Sustained Thermals",
+              "Audit Cinebench R24 multi-core power limits and fan acoustic decibels.",
+              "Comparison"
             )}
-            className="slate-card p-4 text-left hover:border-indigo-500/60 hover:bg-slate-850/80 transition-all text-xs space-y-1.5 group"
+            className="bg-white border border-slate-200/90 shadow-sm shadow-slate-200/70 rounded-2xl p-5 text-left group flex flex-col justify-between space-y-2 hover:border-slate-300 transition-all"
           >
-            <div className="flex items-center justify-between text-indigo-400 font-mono text-[10px]">
+            <span className="font-bold text-sm text-slate-800  group-hover:text-indigo-600 transition line-clamp-2">
+              MacBook Pro M5 Max Sustained Thermals
+            </span>
+            <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 border-t border-slate-100  pt-2">
               <span>LAPTOP THERMALS</span>
-              <span className="group-hover:translate-x-0.5 transition transform">Use Template →</span>
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition" />
             </div>
-            <span className="font-bold text-slate-100 block text-sm group-hover:text-indigo-300 transition">MacBook Pro 16 M5 Max vs Dell XPS 16</span>
-            <p className="text-slate-400 line-clamp-1 text-[11px]">Investigate CPU thermals, acoustic decibels, and battery drain under stress.</p>
           </button>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="slate-card p-6 sm:p-8 space-y-6">
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-slate-200">
-            Research Topic or Primary Question <span className="text-rose-400">*</span>
+      {/* Main Form */}
+      <form onSubmit={handleSubmit} className="bg-white border border-slate-200/90 shadow-sm shadow-slate-200/70 rounded-3xl p-6 sm:p-8 space-y-8">
+        <div className="space-y-2 relative">
+          <label className="block text-xs font-semibold text-slate-600 ">
+            Primary Tech Topic <span className="text-rose-500">*</span>
           </label>
-          <input
-            type="text"
-            required
-            placeholder="e.g. Compare RTX 5080 vs RX 8900 XTX 4K Gaming Performance & Power Consumption"
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-indigo-500 transition shadow-inner"
-          />
-          <p className="text-[11px] text-slate-500 font-mono">Specify exact device models or technologies for automatic SoC entity resolution.</p>
+          <div className="relative">
+            <Search className="w-5 h-5 text-slate-500 absolute left-4 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              required
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="e.g., Apple M4 iPad Pro OLED Display Calibration..."
+              className="w-full bg-white border border-slate-300 focus:ring-2 focus:ring-slate-900  rounded-2xl pl-12 pr-6 py-4 text-sm font-semibold text-slate-900  focus:outline-none focus:ring-2 focus:ring-slate-300 shadow-sm"
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-slate-200">
-            Detailed Research Goal / Specific Questions (Optional)
+          <label className="block text-xs font-semibold text-slate-600 ">
+            Specific Content Objective
           </label>
           <textarea
-            rows={3}
-            placeholder="Describe specific questions, key metrics, user complaints, or benchmark expectations you want verified..."
             value={objective}
             onChange={(e) => setObjective(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-indigo-500 transition shadow-inner"
+            rows={3}
+            placeholder="I want to know if the tandem OLED screen exhibits PWM flickering at low brightness levels and how it compares to..."
+            className="w-full bg-white border border-slate-300 focus:ring-2 focus:ring-slate-900  rounded-2xl px-6 py-4 text-sm text-slate-900  focus:outline-none focus:ring-2 focus:ring-slate-300 shadow-sm"
           />
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-4 pt-2">
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-300 uppercase font-mono">Content Objective</label>
+        <div className="grid sm:grid-cols-3 gap-6 pt-6 border-t border-slate-100 ">
+          <div className="space-y-2">
+            <label className="block text-[10px] font-mono font-semibold uppercase text-slate-500">Content Type</label>
             <select
               value={contentType}
               onChange={(e) => setContentType(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-medium"
+              className="w-full bg-white border border-slate-300 focus:ring-2 focus:ring-slate-900  rounded-xl px-4 py-2.5 text-xs text-slate-800  focus:outline-none"
             >
-              <option value="Comparison">Comparison</option>
-              <option value="Review">Review</option>
-              <option value="Problem investigation">Problem Investigation</option>
-              <option value="Explainer">Explainer</option>
-              <option value="Buying guide">Buying Guide</option>
-              <option value="News">News Analysis</option>
+              <option>Comparison</option>
+              <option>Deep Dive</option>
+              <option>Buying Guide</option>
+              <option>News Analysis</option>
             </select>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-300 uppercase font-mono">Target Audience</label>
+          <div className="space-y-2">
+            <label className="block text-[10px] font-mono font-semibold uppercase text-slate-500">Target Audience</label>
             <select
               value={targetAudience}
               onChange={(e) => setTargetAudience(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-medium"
+              className="w-full bg-white border border-slate-300 focus:ring-2 focus:ring-slate-900  rounded-xl px-4 py-2.5 text-xs text-slate-800  focus:outline-none"
             >
-              <option value="Technology Content Creators">Tech Creators (YouTube/Blog)</option>
-              <option value="PC Hardware Builders">PC Hardware Enthusiasts</option>
-              <option value="Smartphone Buyers">Gadget Buyers</option>
-              <option value="Tech Journalists">Independent Researchers</option>
+              <option>Technology Content Creators</option>
+              <option>Enthusiast / Prosumer</option>
+              <option>General Consumer</option>
             </select>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-300 uppercase font-mono">Research Depth</label>
+          <div className="space-y-2">
+            <label className="block text-[10px] font-mono font-semibold uppercase text-slate-500">Research Depth</label>
             <select
               value={requestedDepth}
               onChange={(e) => setRequestedDepth(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-medium"
+              className="w-full bg-white border border-slate-300 focus:ring-2 focus:ring-slate-900  rounded-xl px-4 py-2.5 text-xs text-slate-800  focus:outline-none"
             >
-              <option value="Quick">Quick (Fast Scan)</option>
-              <option value="Standard">Standard (Balanced)</option>
-              <option value="Deep">Deep (Multi-Vector Audit)</option>
+              <option>Standard</option>
+              <option>Comprehensive (Lab Data)</option>
+              <option>Forensic (Exhaustive)</option>
             </select>
           </div>
         </div>
 
-        <div className="pt-4 border-t border-slate-850 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-mono">
-            <ShieldCheck className="w-4 h-4" /> Traceable evidence extraction enabled
-          </div>
-
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100 ">
+          <p className="text-xs text-slate-500 flex items-center gap-2">
+             <Layers className="w-4 h-4 text-indigo-500" />
+             Research typically takes 30-90 seconds.
+          </p>
           <button
             type="submit"
             disabled={!topic || submitting}
-            className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg shadow-indigo-600/30 transition transform hover:-translate-y-0.5 disabled:opacity-50"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 text-white hover:bg-indigo-700  px-8 py-3 rounded-full text-sm font-semibold transition disabled:opacity-50 shadow-md"
           >
-            {submitting ? (
+            {submitting ? "Initializing Engine..." : (
               <>
-                <Zap className="w-4 h-4 animate-spin text-white" />
-                Deconstructing Plan...
-              </>
-            ) : (
-              <>
-                Proceed to Research Plan
-                <ArrowRight className="w-4 h-4" />
+                Continue to Plan <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
@@ -233,8 +251,10 @@ function CreateResearchForm() {
 
 export default function CreateResearchPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-xs font-mono text-slate-500">Loading Research Wizard...</div>}>
+    <Suspense fallback={<div className="h-96 flex items-center justify-center"><div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div></div>}>
       <CreateResearchForm />
     </Suspense>
   );
 }
+
+

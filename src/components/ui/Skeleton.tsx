@@ -2,7 +2,7 @@ import React from "react";
 
 export function SkeletonCard() {
   return (
-    <div className="slate-card p-6 space-y-4">
+    <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div className="h-4 w-1/3 skeleton" />
         <div className="h-4 w-16 skeleton" />
@@ -18,7 +18,7 @@ export function SkeletonCard() {
 
 export function SkeletonTable() {
   return (
-    <div className="slate-card overflow-hidden border border-slate-800 space-y-3 p-4">
+    <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 overflow-hidden border border-slate-200 space-y-3 p-4">
       <div className="h-8 w-full skeleton" />
       <div className="h-12 w-full skeleton" />
       <div className="h-12 w-full skeleton" />

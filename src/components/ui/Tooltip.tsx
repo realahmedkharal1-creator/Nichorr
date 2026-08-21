@@ -19,21 +19,21 @@ export function TechnicalTooltip({ term, definition, importance, children }: Too
         onMouseEnter={() => setIsVisible(true)}
         onMouseLeave={() => setIsVisible(false)}
         onClick={() => setIsVisible(!isVisible)}
-        className="cursor-help underline decoration-indigo-500/50 underline-offset-4 font-semibold text-slate-200 hover:text-indigo-300 transition"
+        className="cursor-help underline decoration-indigo-500/50 underline-offset-4 font-semibold text-slate-700 hover:text-indigo-600 transition"
       >
         {children || term}
       </span>
-      <HelpCircle className="w-3.5 h-3.5 text-indigo-400/70 ml-1 inline shrink-0" />
+      <HelpCircle className="w-3.5 h-3.5 text-indigo-600/70 ml-1 inline shrink-0" />
 
       {isVisible && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 border border-indigo-900/80 rounded-lg shadow-2xl text-xs z-50 pointer-events-none animate-in fade-in zoom-in-95 duration-150">
-          <div className="font-bold text-indigo-300 border-b border-slate-800 pb-1 mb-1.5 flex items-center justify-between">
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-white border border-indigo-200 rounded-lg shadow-2xl text-xs z-50 pointer-events-none animate-in fade-in zoom-in-95 duration-150">
+          <div className="font-bold text-indigo-600 border-b border-slate-200 pb-1 mb-1.5 flex items-center justify-between">
             <span>{term}</span>
             <span className="text-[10px] font-mono uppercase text-slate-500">TECHNICAL METRIC</span>
           </div>
-          <p className="text-slate-300 leading-relaxed font-sans">{definition}</p>
+          <p className="text-slate-700 leading-relaxed font-sans">{definition}</p>
           {importance && (
-            <p className="mt-1.5 pt-1 border-t border-slate-850 text-[11px] text-amber-400 font-mono">
+            <p className="mt-1.5 pt-1 border-t border-slate-100 text-[11px] text-amber-600 font-mono">
               ⚡ {importance}
             </p>
           )}

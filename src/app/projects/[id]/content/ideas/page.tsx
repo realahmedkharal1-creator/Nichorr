@@ -53,13 +53,13 @@ export default function ContentIdeasPage({ params }: { params: { id: string } })
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-4 font-sans">
       {/* Header */}
-      <div className="border-b border-slate-800/80 pb-6">
-        <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider block mb-1">CONTENT INTELLIGENCE ENGINE</span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2.5">
-          <Sparkles className="w-7 h-7 text-indigo-400" />
+      <div className="border-b border-slate-200 pb-6">
+        <span className="text-xs font-mono text-indigo-600 font-semibold uppercase tracking-wider block mb-1">CONTENT INTELLIGENCE ENGINE</span>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+          <Sparkles className="w-7 h-7 text-indigo-600" />
           Ranked Content Ideas & Opportunity Generator
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">High-demand content opportunities generated automatically from verified project intelligence and audience signals.</p>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1">High-demand content opportunities generated automatically from verified project intelligence and audience signals.</p>
       </div>
 
       {/* Ideas List */}
@@ -69,21 +69,21 @@ export default function ContentIdeasPage({ params }: { params: { id: string } })
           <SkeletonCard />
         </div>
       ) : ideas.length === 0 ? (
-        <div className="slate-card p-12 text-center space-y-3 bg-slate-900/50">
+        <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-12 text-center space-y-3 bg-white">
           <Sparkles className="w-10 h-10 text-slate-600 mx-auto" />
-          <p className="text-sm font-semibold text-slate-300">No Content Ideas Generated</p>
+          <p className="text-sm font-semibold text-slate-700">No Content Ideas Generated</p>
           <p className="text-xs text-slate-500">Launch a research run in this project to automatically generate content opportunities.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {ideas.map((idea) => (
-            <div key={idea.id} className="slate-card p-6 bg-slate-900/90 border-slate-800 space-y-4 hover:border-indigo-500/60 transition">
-              <div className="flex items-center justify-between border-b border-slate-850 pb-3">
+            <div key={idea.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 bg-white border-slate-200 space-y-4 hover:border-indigo-500/60 transition">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-800 uppercase">
+                  <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-50 text-indigo-600 border border-indigo-200 uppercase">
                     {idea.recommendedFormat}
                   </span>
-                  <span className="text-xs font-mono text-slate-400 font-bold">OPPORTUNITY SCORE: <strong className="text-emerald-400">{idea.score}/100</strong></span>
+                  <span className="text-xs font-mono text-slate-500 font-bold">OPPORTUNITY SCORE: <strong className="text-emerald-600">{idea.score}/100</strong></span>
                 </div>
 
                 <button
@@ -95,11 +95,11 @@ export default function ContentIdeasPage({ params }: { params: { id: string } })
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-base font-bold text-slate-100">{idea.title}</h3>
-                <p className="text-xs text-indigo-300 bg-slate-950 p-3 rounded-xl border border-slate-850 font-mono">
+                <h3 className="text-base font-bold text-slate-900">{idea.title}</h3>
+                <p className="text-xs text-indigo-600 bg-slate-50 p-3 rounded-xl border border-slate-100 font-mono">
                   Suggested Hook: "{idea.suggestedHook}"
                 </p>
-                <p className="text-xs text-slate-400 leading-relaxed">Rationale: {idea.reasonForRecommendation}</p>
+                <p className="text-xs text-slate-500 leading-relaxed">Rationale: {idea.reasonForRecommendation}</p>
               </div>
             </div>
           ))}

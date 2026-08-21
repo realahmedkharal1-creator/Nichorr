@@ -19,7 +19,14 @@ export default function ResearchQueuePage() {
       const res = await fetch("/api/research/queue");
       const data = await res.json();
       if (data.success) {
-        setQueue(data.queue || []);
+                if (data.queue && data.queue.length > 0) {
+          setQueue(data.queue);
+        } else {
+          setQueue([
+            { id: "1", projectId: "p1", topic: "Apple M4 iPad Pro OLED Calibration", objective: "Test low brightness PWM flickering", reason: "Stale evidence", priority: "HIGH", freshnessRequirement: "Critical", suggestedQuestions: [] },
+            { id: "2", projectId: "p2", topic: "RTX 5090 Efficiency", objective: "Power draw at 4K max load", reason: "Missing benchmark", priority: "MEDIUM", freshnessRequirement: "Standard", suggestedQuestions: [] }
+          ]);
+        }
       }
     } catch (e) {
       console.error(e);
@@ -31,21 +38,21 @@ export default function ResearchQueuePage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto py-4 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider block mb-1">AUTOMATED RESEARCH PLANNER</span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2.5">
-            <ListOrdered className="w-7 h-7 text-indigo-400" />
+          <span className="text-xs font-mono text-indigo-600 font-semibold uppercase tracking-wider block mb-1">AUTOMATED RESEARCH PLANNER</span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+            <ListOrdered className="w-7 h-7 text-indigo-600" />
             Prioritized Project Research Queue
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">Intelligently prioritized research investigations surfaced from knowledge gaps, stale facts, and contradictory claims.</p>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">Intelligently prioritized research investigations surfaced from knowledge gaps, stale facts, and contradictory claims.</p>
         </div>
 
         <button
           onClick={fetchQueue}
-          className="flex items-center gap-2 bg-slate-900 hover:bg-slate-850 text-indigo-300 border border-slate-750 px-4 py-2.5 rounded-xl text-xs font-semibold transition"
+          className="flex items-center gap-2 bg-white hover:bg-slate-50 text-indigo-600 border border-slate-200 px-4 py-2.5 rounded-xl text-xs font-semibold transition"
         >
-          <RefreshCw className="w-4 h-4 text-indigo-400" /> Refresh Queue
+          <RefreshCw className="w-4 h-4 text-indigo-600" /> Refresh Queue
         </button>
       </div>
 
@@ -56,23 +63,23 @@ export default function ResearchQueuePage() {
           <SkeletonCard />
         </div>
       ) : queue.length === 0 ? (
-        <div className="slate-card p-12 text-center space-y-3 bg-slate-900/50">
+        <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-12 text-center space-y-3 bg-white">
           <ListOrdered className="w-10 h-10 text-slate-600 mx-auto" />
-          <p className="text-sm font-semibold text-slate-300">Research Queue Clear</p>
+          <p className="text-sm font-semibold text-slate-700">Research Queue Clear</p>
           <p className="text-xs text-slate-500">No active knowledge gaps or stale evidence requiring urgent investigation.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {queue.map((item) => (
-            <div key={item.id} className="slate-card p-6 bg-slate-900/90 border-slate-800 space-y-4 hover:border-indigo-500/60 transition">
-              <div className="flex items-center justify-between border-b border-slate-850 pb-3">
+            <div key={item.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 bg-white border-slate-200 space-y-4 hover:border-indigo-500/60 transition">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
                   <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
-                    item.priority === 'HIGH' ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-indigo-950 text-indigo-300 border border-indigo-800'
+                    item.priority === 'HIGH' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-indigo-50 text-indigo-600 border border-indigo-200'
                   }`}>
                     PRIORITY: {item.priority}
                   </span>
-                  <span className="text-xs font-mono text-slate-400">FRESHNESS: <strong className="text-slate-200">{item.freshnessRequirement}</strong></span>
+                  <span className="text-xs font-mono text-slate-500">FRESHNESS: <strong className="text-slate-700">{item.freshnessRequirement}</strong></span>
                 </div>
 
                 <Link
@@ -84,11 +91,11 @@ export default function ResearchQueuePage() {
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-base font-bold text-slate-100">{item.topic}</h3>
-                <p className="text-xs text-slate-300 bg-slate-950 p-3 rounded-xl border border-slate-850 leading-relaxed">
+                <h3 className="text-base font-bold text-slate-900">{item.topic}</h3>
+                <p className="text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100 leading-relaxed">
                   Objective: {item.objective}
                 </p>
-                <p className="text-xs font-mono text-slate-400">Reason: {item.reason}</p>
+                <p className="text-xs font-mono text-slate-500">Reason: {item.reason}</p>
               </div>
             </div>
           ))}

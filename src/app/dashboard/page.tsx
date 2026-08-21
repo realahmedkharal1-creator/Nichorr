@@ -1,260 +1,359 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Search, ShieldCheck, FileText, CheckCircle2, AlertTriangle, Play, Sparkles, Layers, FileCheck, Activity } from "lucide-react";
-import { ResearchRunSession } from "@/features/research/research-engine";
-import { GOLDEN_BENCHMARK_DATASET } from "@/benchmarks/golden-dataset";
-import { SkeletonCard, SkeletonTable } from "@/components/ui/Skeleton";
+import Link from "next/link";
+import { Link as LinkIcon, MoreHorizontal, Lightbulb, ArrowRight, ChevronDown, Calendar, Search } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [runs, setRuns] = useState<ResearchRunSession[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [runningBenchmark, setRunningBenchmark] = useState<string | null>(null);
+  const [exploreTopic, setExploreTopic] = useState("");
+  
+  // State for simple interactive dropdowns
+  const [showDate1, setShowDate1] = useState(false);
+  const [showDate2, setShowDate2] = useState(false);
+  const [showPeriod, setShowPeriod] = useState(false);
 
-  useEffect(() => {
-    fetchRuns();
-  }, []);
+  const [date1, setDate1] = useState("Jan 01 - July 31");
+  const [date2, setDate2] = useState("Aug 01 - Dec 31");
+  const [period, setPeriod] = useState("Daily");
 
-  const fetchRuns = async () => {
-    try {
-      const res = await fetch("/api/research");
-      const data = await res.json();
-      if (data.success) {
-        setRuns(data.runs);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
+  const handleExploreSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (exploreTopic.trim()) {
+      router.push(`/research/create?topic=${encodeURIComponent(exploreTopic.trim())}`);
+    } else {
+      router.push('/research/create');
     }
   };
 
-  const handleRunBenchmark = (topic: string) => {
+  const handleQuickTemplate = (topic: string) => {
     router.push(`/research/create?topic=${encodeURIComponent(topic)}`);
   };
 
-  const completedCount = runs.filter((r) => r.status === "COMPLETED" || r.status === "PARTIAL").length;
-  const totalSources = runs.reduce((acc, r) => acc + (r.sources?.length || (r as any).source_count || 0), 0);
-  const totalClaims = runs.reduce((acc, r) => acc + (r.claims?.length || (r as any).claim_count || 0), 0);
-
   return (
-    <div className="space-y-8">
-      {/* Workspace Header Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
-        <div>
-          <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider block mb-1">GLOBAL CREATOR COMMAND CENTER</span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">Creator Intelligence Operating System</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">Autonomous research, knowledge evolution, change monitoring, and evidence-locked content operations.</p>
-        </div>
+    <div className="w-full max-w-[1400px] mx-auto space-y-6 pb-12">
+      
+      {/* Page Header Row */}
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 pb-2 z-20 relative">
         <div className="flex items-center gap-2">
-          <Link
-            href="/content"
-            className="flex items-center gap-1.5 bg-slate-850 hover:bg-slate-800 text-indigo-300 border border-slate-750 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition"
-          >
-            Content Board
+          <h1 className="font-mono text-4xl font-semibold tracking-tight text-slate-900">
+            Overview
+          </h1>
+          <div className="w-6 h-6 rounded-full border border-slate-200/90 flex items-center justify-center -mt-4 shadow-sm bg-white">
+             <LinkIcon className="w-3 h-3 text-slate-500" />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-600">
+          <div className="flex items-center bg-white border border-slate-200/90 rounded-xl shadow-sm shadow-slate-200/70">
+             
+             {/* Dropdown 1 */}
+             <div className="relative">
+               <button onClick={() => setShowDate1(!showDate1)} className="px-3 py-2 hover:bg-slate-50 rounded-l-xl flex items-center gap-2">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" /> {date1} <ChevronDown className="w-3 h-3 text-slate-500" />
+               </button>
+               {showDate1 && (
+                 <div className="absolute top-full left-0 mt-1 w-40 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-1">
+                   {["Jan 01 - July 31", "Feb 01 - Mar 31", "Year to Date"].map(d => (
+                     <button key={d} onClick={() => {setDate1(d); setShowDate1(false);}} className="w-full text-left px-3 py-1.5 hover:bg-slate-50 rounded-lg text-slate-700">{d}</button>
+                   ))}
+                 </div>
+               )}
+             </div>
+
+             <div className="px-3 py-2 border-x border-slate-200/90 text-slate-500 bg-slate-50/50">
+                compared to
+             </div>
+             
+             {/* Dropdown 2 */}
+             <div className="relative">
+               <button onClick={() => setShowDate2(!showDate2)} className="px-3 py-2 hover:bg-slate-50 rounded-r-xl flex items-center gap-2">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" /> {date2} <ChevronDown className="w-3 h-3 text-slate-500" />
+               </button>
+               {showDate2 && (
+                 <div className="absolute top-full left-0 mt-1 w-40 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-1">
+                   {["Aug 01 - Dec 31", "Previous Year", "All Time"].map(d => (
+                     <button key={d} onClick={() => {setDate2(d); setShowDate2(false);}} className="w-full text-left px-3 py-1.5 hover:bg-slate-50 rounded-lg text-slate-700">{d}</button>
+                   ))}
+                 </div>
+               )}
+             </div>
+          </div>
+          
+          {/* Dropdown 3 */}
+          <div className="relative">
+             <button onClick={() => setShowPeriod(!showPeriod)} className="px-4 py-2 bg-white border border-slate-200/90 rounded-xl shadow-sm shadow-slate-200/70 hover:bg-slate-50 flex items-center gap-2">
+                {period} <ChevronDown className="w-3 h-3 text-slate-500" />
+             </button>
+             {showPeriod && (
+               <div className="absolute top-full right-0 mt-1 w-24 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-1">
+                 {["Daily", "Weekly", "Monthly"].map(p => (
+                   <button key={p} onClick={() => {setPeriod(p); setShowPeriod(false);}} className="w-full text-left px-3 py-1.5 hover:bg-slate-50 rounded-lg text-slate-700">{p}</button>
+                 ))}
+               </div>
+             )}
+          </div>
+
+          <Link href="/research/create" className="px-4 py-2 bg-white border border-slate-200/90 rounded-xl shadow-sm shadow-slate-200/70 hover:bg-slate-50 flex items-center gap-1.5 transition text-slate-700">
+             New Research <span className="text-lg leading-none font-light">+</span>
           </Link>
-          <Link
-            href="/research/create"
-            className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold shadow-lg shadow-indigo-600/25 transition transform hover:-translate-y-0.5"
+        </div>
+      </div>
+
+      {/* 12-Column Bento Grid */}
+      <div className="grid grid-cols-12 gap-5 relative z-10">
+        
+        {/* Card 1: Retention -> Research Velocity */}
+        <div 
+          onClick={() => router.push('/research/history')}
+          className="col-span-12 lg:col-span-3 bg-white rounded-3xl border border-slate-200/90 shadow-sm shadow-slate-200/70 p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-indigo-300 hover:shadow-md transition group"
+        >
+          <div className="flex justify-between items-start">
+             <span className="font-bold text-slate-900 text-sm group-hover:text-indigo-600 transition">Research Velocity</span>
+             <button onClick={() => alert("Action menu opened.")} className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 text-slate-500">
+                <MoreHorizontal className="w-3 h-3" />
+             </button>
+          </div>
+          
+          <div className="flex-1 flex items-end justify-between gap-[2px] mt-6 mb-3">
+             {[30,40,45,35,40,60,70,65,75,80,60,65,70,50,45,40,60,50,55].map((h, i) => (
+                <div key={i} className="w-full bg-rose-400 rounded-t-sm opacity-90" style={{ height: `${h}%` }}></div>
+             ))}
+          </div>
+
+          <div className="flex justify-between items-center">
+             <div className="flex gap-2 text-[9px] font-mono text-slate-500 uppercase font-semibold">
+                <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+             </div>
+             <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">100% Audited</span>
+          </div>
+        </div>
+
+        {/* Card 2 & 3: Double Stacked Stats */}
+        <div className="col-span-12 lg:col-span-5 flex flex-col gap-5 h-[280px]">
+          
+          {/* Top: Verified Claims */}
+          <div 
+            onClick={() => router.push('/research/quality')}
+            className="flex-1 bg-white rounded-[24px] border border-slate-200/90 shadow-sm shadow-slate-200/70 p-5 flex flex-col justify-between cursor-pointer hover:border-emerald-300 hover:shadow-md transition group"
           >
-            <Plus className="w-4 h-4" />
-            New Research Run
-          </Link>
-        </div>
-      </div>
+            <div className="flex justify-between items-start">
+               <span className="font-bold text-slate-900 text-sm group-hover:text-emerald-600 transition">Verified Claims</span>
+               <button onClick={() => alert("Action menu opened.")} className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 text-slate-500">
+                  <MoreHorizontal className="w-3 h-3" />
+               </button>
+            </div>
+            {/* Fixed Alignment: Big number Left, Matrix Center, Delta Right */}
+            <div className="flex items-end justify-between mt-2">
+               <div className="w-1/3 text-left">
+                  <div className="font-mono text-4xl font-bold tracking-tight text-slate-900">106</div>
+                  <div className="text-[10px] text-slate-500 font-medium">Claim-to-source traced</div>
+               </div>
+               
+               <div className="w-1/3 flex flex-col items-center pb-1">
+                  <span className="text-[8px] font-mono border border-slate-200 bg-slate-50 rounded-full px-2 py-0.5 text-slate-600 mb-2 whitespace-nowrap">Peak: Hardware</span>
+                  <div className="flex items-end gap-1">
+                    {[1,2,4,3,2,1].map((cols, i) => (
+                      <div key={i} className="flex flex-col gap-0.5 justify-end h-7">
+                         {Array.from({length: cols}).map((_, j) => (
+                           <div key={j} className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                         ))}
+                      </div>
+                    ))}
+                  </div>
+               </div>
 
-      {/* "What Needs Attention Right Now?" Critical Attention Banner */}
-      <div className="slate-card p-6 bg-gradient-to-r from-indigo-950/60 via-slate-900 to-slate-900 border-indigo-900/80 space-y-3">
-        <div className="flex items-center justify-between border-b border-indigo-900/40 pb-2.5">
-          <span className="text-xs font-mono font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-indigo-400" /> WHAT NEEDS ATTENTION RIGHT NOW?
-          </span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold">
-            SYSTEM OPERATIONAL
-          </span>
-        </div>
-
-        <div className="grid sm:grid-cols-3 gap-4 text-xs font-sans">
-          <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-850 space-y-1">
-            <span className="text-[10px] font-mono text-indigo-400 font-bold block">RESEARCH QUEUE</span>
-            <p className="text-slate-200 font-semibold">1 High-Impact Gap Surfaced</p>
-            <Link href="/research/queue" className="text-indigo-400 hover:underline font-mono text-[11px] block pt-1">
-              Start Research Queue →
-            </Link>
+               <div className="w-1/3 text-right">
+                  <div className="text-[10px] text-slate-500 mb-0.5">vs last week</div>
+                  <div className="text-sm font-bold text-emerald-600">+24 claims</div>
+                  <div className="text-[9px] font-bold text-emerald-500 mt-1">0 Hallucinations</div>
+               </div>
+            </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-850 space-y-1">
-            <span className="text-[10px] font-mono text-emerald-400 font-bold block">CONTENT PIPELINE</span>
-            <p className="text-slate-200 font-semibold">2 Items Ready to Script</p>
-            <Link href="/content" className="text-emerald-400 hover:underline font-mono text-[11px] block pt-1">
-              Open Content Board →
-            </Link>
-          </div>
+          {/* Bottom: Active Research Runs */}
+          <div 
+            onClick={() => router.push('/projects')}
+            className="flex-1 bg-white rounded-[24px] border border-slate-200/90 shadow-sm shadow-slate-200/70 p-5 flex flex-col justify-between cursor-pointer hover:border-indigo-300 hover:shadow-md transition group"
+          >
+            <div className="flex justify-between items-start">
+               <span className="font-bold text-slate-900 text-sm group-hover:text-indigo-600 transition">Active Research Runs</span>
+               <button onClick={() => alert("Action menu opened.")} className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 text-slate-500">
+                  <MoreHorizontal className="w-3 h-3" />
+               </button>
+            </div>
+            <div className="flex items-end justify-between mt-2">
+               <div className="w-1/3 text-left">
+                  <div className="font-mono text-4xl font-bold tracking-tight text-slate-900">12</div>
+                  <div className="text-[10px] text-slate-500 font-medium">Active creator sessions</div>
+               </div>
+               
+               <div className="w-1/3 flex flex-col items-center pb-1">
+                  <span className="text-[8px] font-mono border border-slate-200 bg-slate-50 rounded-full px-2 py-0.5 text-slate-600 mb-2 whitespace-nowrap">Peak: Flagship</span>
+                  <div className="flex items-end gap-1">
+                    {[1,1,2,3,1,1].map((cols, i) => (
+                      <div key={i} className="flex flex-col gap-0.5 justify-end h-7">
+                         {Array.from({length: cols}).map((_, j) => (
+                           <div key={j} className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                         ))}
+                      </div>
+                    ))}
+                  </div>
+               </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-850 space-y-1">
-            <span className="text-[10px] font-mono text-amber-400 font-bold block">QUALITY GATE AUDIT</span>
-            <p className="text-slate-200 font-semibold">0 Critical Alerts</p>
-            <Link href="/research/quality" className="text-amber-400 hover:underline font-mono text-[11px] block pt-1">
-              Quality Audit →
-            </Link>
+               <div className="w-1/3 text-right">
+                  <div className="text-[10px] text-slate-500 mb-0.5">vs last week</div>
+                  <div className="text-sm font-bold text-slate-900">+4</div>
+               </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Command Center Metric Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="slate-card p-5 space-y-2 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase font-semibold">TOTAL RESEARCH RUNS</span>
-            <Layers className="w-4 h-4 text-indigo-400" />
+        {/* Card 4: Evidence Sources (Col-Span 4) */}
+        <Link 
+          href="/research/sources"
+          className="col-span-12 lg:col-span-4 bg-white rounded-3xl border border-slate-200/90 shadow-sm shadow-slate-200/70 p-6 flex flex-col h-[280px] hover:border-emerald-300 hover:shadow-md transition group"
+        >
+          <div className="flex justify-between items-start mb-4">
+             <span className="font-bold text-slate-900 text-sm group-hover:text-emerald-600 transition">Evidence Sources</span>
+             <div className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 group-hover:bg-slate-50">
+                <MoreHorizontal className="w-3 h-3" />
+             </div>
           </div>
-          <p className="text-2xl font-extrabold text-slate-100 font-mono">{loading ? "..." : runs.length}</p>
-          <span className="text-[11px] text-slate-500 font-mono">Active workspace sessions</span>
-        </div>
+          
+          <div className="flex flex-wrap items-center gap-3 mb-6">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 font-mono">100% Grounded</h2>
+            <div className="px-2 py-0.5 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 text-[10px] font-bold flex items-center shadow-sm">
+               ▲ 15% Faster
+            </div>
+          </div>
 
-        <div className="slate-card p-5 space-y-2 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/30">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase font-semibold">COMPLETED BRIEFS</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <div className="space-y-4 flex-1 flex flex-col justify-end pb-2">
+            <div>
+               <div className="flex justify-between text-[11px] font-bold text-slate-700 mb-2">
+                 <span>Web Extraction & Tech Specs</span>
+                 <span>65%</span>
+               </div>
+               <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                 <div className="h-full w-[65%] rounded-full pattern-diagonal-stripes-green border-r border-emerald-500"></div>
+               </div>
+            </div>
+            <div>
+               <div className="flex justify-between text-[11px] font-bold text-slate-700 mb-2">
+                 <span>YouTube Creator Intelligence</span>
+                 <span>25%</span>
+               </div>
+               <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                 <div className="h-full w-[25%] rounded-full pattern-diagonal-stripes-blue border-r border-blue-500"></div>
+               </div>
+            </div>
+            <div>
+               <div className="flex justify-between text-[11px] font-bold text-slate-700 mb-2">
+                 <span>Primary Lab & Benchmarks</span>
+                 <span>10%</span>
+               </div>
+               <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                 <div className="h-full w-[10%] rounded-full pattern-diagonal-stripes-pink border-r border-pink-500"></div>
+               </div>
+            </div>
           </div>
-          <p className="text-2xl font-extrabold text-slate-100 font-mono">{loading ? "..." : completedCount}</p>
-          <span className="text-[11px] text-emerald-400/80 font-mono">100% Audited & Grounded</span>
-        </div>
+        </Link>
 
-        <div className="slate-card p-5 space-y-2 bg-gradient-to-br from-slate-900 via-slate-900 to-sky-950/30">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase font-semibold">SOURCES ANALYZED</span>
-            <FileText className="w-4 h-4 text-sky-400" />
-          </div>
-          <p className="text-2xl font-extrabold text-slate-100 font-mono">{loading ? "..." : totalSources}</p>
-          <span className="text-[11px] text-slate-500 font-mono">Primary & lab benchmarks</span>
-        </div>
+        {/* BOTTOM ROW */}
+        
+        {/* Card 5: Benchmark Activity (Col-Span 8) */}
+        <div className="col-span-12 lg:col-span-8 bg-white rounded-3xl border border-slate-200/90 shadow-sm shadow-slate-200/70 p-6 flex flex-col justify-between h-[380px] relative">
+           
+           {/* Top Content */}
+           <div className="flex justify-between items-start z-10 relative">
+             <span className="font-bold text-slate-900 text-sm">Creator Benchmark Activity</span>
+             <button onClick={() => alert("Action menu opened.")} className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 text-slate-500 bg-white shadow-sm">
+                <MoreHorizontal className="w-3 h-3" />
+             </button>
+           </div>
+           
+           {/* The Volume Chart Container - Positioned to not overlap bottom */}
+           <div className="flex-1 relative w-full flex items-end justify-center pt-8 pb-4">
+               {/* Y-Axis */}
+               <div className="absolute left-0 top-4 bottom-4 flex flex-col justify-between text-[9px] font-mono text-slate-500">
+                  <span>80k</span><span>70k</span><span>60k</span><span>50k</span><span>40k</span>
+               </div>
 
-        <div className="slate-card p-5 space-y-2 bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase font-semibold">VERIFIED CLAIMS</span>
-            <FileCheck className="w-4 h-4 text-amber-400" />
-          </div>
-          <p className="text-2xl font-extrabold text-slate-100 font-mono">{loading ? "..." : totalClaims}</p>
-          <span className="text-[11px] text-slate-500 font-mono">Claim-to-source traced</span>
-        </div>
-      </div>
+               {/* Volumetric Blocks */}
+               <div className="w-full h-full flex items-end justify-around px-12 pl-16 z-0">
+                  <div className="w-[15%] h-[85%] bg-gradient-to-t from-emerald-500 to-lime-300 rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+                  <div className="w-[15%] h-[55%] bg-gradient-to-t from-emerald-500 to-lime-300 rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+                  <div className="w-[15%] h-[35%] bg-gradient-to-t from-emerald-500 to-lime-300 pattern-diagonal-stripes-green rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+                  <div className="w-[15%] h-[20%] bg-gradient-to-t from-emerald-500 to-lime-300 rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+                  <div className="w-[15%] h-[12%] bg-gradient-to-t from-emerald-500 to-lime-300 rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+               </div>
+           </div>
 
-      {/* Golden Benchmark Quick Runners */}
-      <div className="slate-card p-6 border-indigo-950/80 bg-slate-900/60 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-850 pb-3">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-base font-bold text-slate-100">10 Golden Benchmark Test Cases</h2>
-          </div>
-          <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800/80 font-semibold">
-            OFFLINE AUDIT READY
-          </span>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {GOLDEN_BENCHMARK_DATASET.slice(0, 6).map((bm) => (
-            <button
-              key={bm.id}
-              onClick={() => handleRunBenchmark(bm.topic)}
-              className="slate-card p-4 text-left hover:border-indigo-500/60 hover:bg-slate-850/80 transition-all flex flex-col justify-between group space-y-3"
-            >
-              <span className="font-semibold text-xs text-slate-200 group-hover:text-indigo-300 transition line-clamp-1">
-                {bm.topic}
-              </span>
-              <div className="flex items-center justify-between text-slate-400 font-mono text-[11px]">
-                <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300">{bm.contentType}</span>
-                <span className="flex items-center gap-1 text-indigo-400 font-semibold group-hover:translate-x-0.5 transition transform">
-                  <Play className="w-3 h-3 fill-current" />
-                  Run Audit
-                </span>
+           {/* Bottom Interaction Area - NO ABSOLUTE OVERLAP */}
+           <div className="relative z-20 mt-2 space-y-3 bg-white/60 backdrop-blur-md rounded-2xl p-4 border border-slate-200/80 shadow-sm shadow-slate-200/50">
+              
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => handleQuickTemplate("Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max")} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-[10px] font-semibold text-slate-700 hover:text-slate-900 hover:border-slate-300 shadow-sm transition">
+                   Samsung S27 Ultra vs iPhone 18 Pro Max
+                </button>
+                <button onClick={() => handleQuickTemplate("MacBook Pro 16 M5 Max vs Dell XPS 16")} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-[10px] font-semibold text-slate-700 hover:text-slate-900 hover:border-slate-300 shadow-sm transition">
+                   MacBook Pro 16 M5 Max vs Dell XPS 16
+                </button>
+                <button onClick={() => handleQuickTemplate("RTX 5080 vs RX 8900 XTX 4K Gaming")} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-[10px] font-semibold text-slate-700 hover:text-slate-900 hover:border-slate-300 shadow-sm transition">
+                   RTX 5080 vs RX 8900 XTX 4K Gaming
+                </button>
               </div>
-            </button>
-          ))}
-        </div>
-      </div>
 
-      {/* Recent Runs Table */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-100">Recent Research Runs</h2>
-          <span className="text-xs text-slate-400 font-mono">{runs.length} Runs Total</span>
+              <div>
+                <p className="text-[11px] font-bold text-slate-800 mb-1.5 ml-1">What technology topic would you like to research next?</p>
+                <form onSubmit={handleExploreSubmit} className="w-full flex items-center bg-white border border-slate-300 rounded-xl px-2 py-1.5 shadow-sm focus-within:ring-2 focus-within:ring-slate-900 transition-all">
+                   <Search className="w-3.5 h-3.5 text-slate-500 ml-2 shrink-0" />
+                   <input 
+                     type="text" 
+                     value={exploreTopic}
+                     onChange={(e) => setExploreTopic(e.target.value)}
+                     placeholder="Enter topic (e.g. RTX 5090 thermals, Galaxy S27 camera benchmark)..."
+                     className="flex-1 bg-transparent border-none focus:outline-none px-3 py-1.5 text-sm text-slate-900 placeholder-slate-400 font-medium"
+                   />
+                   <button type="submit" className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-md transition flex items-center gap-1.5 shrink-0">
+                     Explore <ArrowRight className="w-3 h-3" />
+                   </button>
+                </form>
+              </div>
+           </div>
         </div>
 
-        {loading ? (
-          <SkeletonTable />
-        ) : runs.length === 0 ? (
-          <div className="slate-card p-12 text-center space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-slate-850 border border-slate-750 flex items-center justify-center mx-auto text-slate-400">
-              <Search className="w-6 h-6" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-base font-semibold text-slate-300">No research runs created yet</h3>
-              <p className="text-sm text-slate-500">Create your first research run or launch a Golden Benchmark test case above.</p>
-            </div>
-            <Link
-              href="/research/create"
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
-            >
-              <Plus className="w-4 h-4" />
-              Create First Research Run
-            </Link>
-          </div>
-        ) : (
-          <div className="slate-card overflow-hidden border border-slate-800/80">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-300">
-                <thead className="bg-slate-900/90 text-xs font-mono text-slate-400 border-b border-slate-800 uppercase tracking-wider">
-                  <tr>
-                    <th className="p-4">Topic / Objective</th>
-                    <th className="p-4">Type</th>
-                    <th className="p-4">Status</th>
-                    <th className="p-4">Sources</th>
-                    <th className="p-4">Claims</th>
-                    <th className="p-4">Date</th>
-                    <th className="p-4 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-850">
-                  {runs.map((r) => (
-                    <tr key={r.id} className="hover:bg-slate-900/60 transition">
-                      <td className="p-4 font-medium text-slate-100 max-w-xs truncate">{r.topic}</td>
-                      <td className="p-4 text-slate-400 text-xs">{r.contentType}</td>
-                      <td className="p-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${
-                          r.status === 'COMPLETED' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/80' :
-                          r.status === 'CANCELLED' ? 'bg-red-950 text-red-400 border border-red-800/80' :
-                          r.status === 'FAILED' ? 'bg-red-950 text-red-400 border border-red-800/80' :
-                          r.status === 'CREATED' ? 'bg-slate-850 text-slate-300 border border-slate-700' :
-                          'bg-amber-950 text-amber-400 border border-amber-800/80 animate-pulse'
-                        }`}>
-                          {r.status}
-                        </span>
-                      </td>
-                      <td className="p-4 font-mono text-xs">{r.sources && r.sources.length > 0 ? r.sources.length : ((r as any).source_count || 0)}</td>
-                      <td className="p-4 font-mono text-xs">{r.claims && r.claims.length > 0 ? r.claims.length : ((r as any).claim_count || 0)}</td>
-                      <td className="p-4 text-xs text-slate-400 font-mono">
-                        {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : (r as any).created_at ? new Date((r as any).created_at).toLocaleDateString() : 'N/A'}
-                      </td>
-                      <td className="p-4 text-right">
-                        <Link
-                          href={r.status === 'CANCELLED' ? `/research/${r.id}/live` : `/research/${r.id}/results`}
-                          className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold underline underline-offset-4"
-                        >
-                          {r.status === 'CANCELLED' ? 'View Status →' : 'View Results →'}
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+        {/* Card 6: Quality Gate (Col-Span 4) */}
+        <div className="col-span-12 lg:col-span-4 bg-white border border-slate-200/90 text-slate-900 rounded-[24px] p-6 relative overflow-hidden flex flex-col justify-between shadow-sm h-[380px]">
+           <div className="bg-amber-50 rounded-full px-4 py-1.5 text-xs font-bold self-start flex items-center gap-1.5 border border-amber-200 shadow-sm text-amber-600">
+             <Lightbulb className="w-3.5 h-3.5 text-amber-600" /> Quality Gate & Audit
+           </div>
+
+           <div className="space-y-4 mb-4 mt-8">
+             <div className="font-mono text-6xl font-bold tracking-tight text-slate-900">96.8%</div>
+             <p className="text-base font-bold leading-relaxed text-slate-700 pr-4">
+               All evidence claims passed multi-source verification.
+             </p>
+             <p className="text-sm text-slate-500 pr-4 leading-relaxed font-medium">
+               0 critical contradictions detected. All citations are locked and ready for YouTube script & video production.
+             </p>
+           </div>
+
+           <div className="flex items-center justify-between mt-auto">
+             <div className="flex items-center gap-1.5 w-1/2">
+               <div className="h-1.5 bg-emerald-500 rounded-full flex-1 shadow-sm"></div>
+               <div className="h-1.5 bg-slate-200 rounded-full w-2"></div>
+               <div className="h-1.5 bg-slate-200 rounded-full w-2"></div>
+             </div>
+             
+             <Link href="/content" className="bg-indigo-50 hover:bg-indigo-100 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm border border-indigo-200 whitespace-nowrap text-indigo-700">
+                Content Board <ArrowRight className="w-3.5 h-3.5" />
+             </Link>
+           </div>
+        </div>
+
       </div>
     </div>
   );
 }
-

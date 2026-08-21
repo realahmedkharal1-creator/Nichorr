@@ -15,7 +15,11 @@ import {
   X, 
   ShieldAlert, 
   CheckCircle2, 
-  Sliders 
+  Sliders,
+  Video,
+  VideoOff,
+  Save,
+  Camera
 } from "lucide-react";
 import { ScriptSection, TalkingPoint } from "@/lib/creator/creator-studio.types";
 
@@ -33,7 +37,7 @@ export function CreatorTeleprompter({
   onClose,
 }: CreatorTeleprompterProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [scrollSpeed, setScrollSpeed] = useState(2); // 1 (slow) to 5 (fast)
+  const [scrollSpeed, setScrollSpeed] = useState(2);
   const [fontSize, setFontSize] = useState<"sm" | "md" | "lg" | "xl">("lg");
   const [textWidth, setTextWidth] = useState<"narrow" | "normal" | "wide">("normal");
   const [isMirrored, setIsMirrored] = useState(false);
@@ -41,9 +45,18 @@ export function CreatorTeleprompter({
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
+  // Webcam & Recording State
+  const [isWebcamActive, setIsWebcamActive] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
 
   // Timer effect when playing
   useEffect(() => {
@@ -56,6 +69,15 @@ export function CreatorTeleprompter({
     return () => clearInterval(interval);
   }, [isPlaying]);
 
+  // Cleanup Webcam on unmount
+  useEffect(() => {
+    return () => {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [mediaStream]);
+
   // Smooth Auto-scroll animation loop
   useEffect(() => {
     let lastTime = performance.now();
@@ -66,13 +88,11 @@ export function CreatorTeleprompter({
       const deltaTime = currentTime - lastTime;
       lastTime = currentTime;
 
-      // scroll pixels per second based on speed (1x = 25px/s, 2x = 45px/s, 3x = 70px/s, 4x = 100px/s, 5x = 140px/s)
       const speedMultiplier = [0, 25, 45, 70, 100, 140][scrollSpeed] || 45;
       const scrollDelta = (speedMultiplier * deltaTime) / 1000;
 
       scrollContainerRef.current.scrollTop += scrollDelta;
 
-      // Track active section based on scroll position
       const scrollPos = scrollContainerRef.current.scrollTop + 150;
       const sectionElements = scrollContainerRef.current.querySelectorAll<HTMLElement>("[data-section-index]");
       sectionElements.forEach((el) => {
@@ -84,7 +104,6 @@ export function CreatorTeleprompter({
         }
       });
 
-      // Check if reached bottom
       const isAtBottom =
         scrollContainerRef.current.scrollHeight - scrollContainerRef.current.scrollTop <=
         scrollContainerRef.current.clientHeight + 5;
@@ -107,9 +126,11 @@ export function CreatorTeleprompter({
     };
   }, [isPlaying, scrollSpeed]);
 
-  // Keyboard Shortcuts: Space (Play/Pause), R (Restart), ArrowUp (Faster), ArrowDown (Slower), Esc (Exit)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is interacting with webcam controls
+      if (e.target instanceof HTMLButtonElement || e.target instanceof HTMLAnchorElement) return;
+
       if (e.code === "Space") {
         e.preventDefault();
         setIsPlaying((prev) => !prev);
@@ -168,6 +189,73 @@ export function CreatorTeleprompter({
     }
   };
 
+  const toggleWebcam = async () => {
+    if (isWebcamActive) {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+      }
+      setMediaStream(null);
+      setIsWebcamActive(false);
+      if (isRecording) {
+        stopRecording();
+      }
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        setMediaStream(stream);
+        setIsWebcamActive(true);
+        // Wait for the video element to render
+        setTimeout(() => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        }, 100);
+      } catch (err) {
+        console.error("Error accessing webcam:", err);
+        alert("Please allow webcam and microphone permissions to use the recording feature.");
+      }
+    }
+  };
+
+  const startRecording = () => {
+    if (!mediaStream) return;
+    recordedChunksRef.current = [];
+    
+    // Ensure we start scroll automatically when recording starts
+    if (!isPlaying) setIsPlaying(true);
+    
+    const options = { mimeType: 'video/webm' };
+    try {
+      const mediaRecorder = new MediaRecorder(mediaStream, options);
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+      
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        setRecordedVideoUrl(url);
+      };
+      
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Error starting recording:", err);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      setIsPlaying(false); // Auto-pause script when recording stops
+    }
+  };
+
   const formatTimer = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
     const secs = totalSeconds % 60;
@@ -194,6 +282,73 @@ export function CreatorTeleprompter({
         isFullscreen ? "fixed inset-0 z-50 h-screen w-screen" : "relative rounded-2xl border border-slate-800 h-[750px]"
       }`}
     >
+      {/* Floating Webcam Recorder */}
+      {isWebcamActive && (
+        <div className="absolute top-20 right-8 w-72 rounded-xl overflow-hidden border-2 border-slate-700 shadow-2xl z-40 bg-black flex flex-col">
+          <div className="relative bg-slate-900 flex-1 aspect-video flex items-center justify-center">
+            {recordedVideoUrl ? (
+              <video 
+                src={recordedVideoUrl} 
+                controls 
+                className="w-full h-full object-cover" 
+              />
+            ) : (
+              <>
+                {!mediaStream && <Camera className="w-8 h-8 text-slate-700 animate-pulse" />}
+                <video 
+                  ref={videoRef} 
+                  autoPlay 
+                  muted 
+                  playsInline 
+                  className={`w-full h-full object-cover ${isMirrored ? '' : 'scale-x-[-1]'}`} 
+                />
+                {isRecording && (
+                  <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-rose-600/90 text-white px-2 py-0.5 rounded shadow text-[10px] font-bold font-mono animate-pulse tracking-widest">
+                    <div className="w-1.5 h-1.5 rounded-full bg-white"></div> REC
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+          
+          <div className="p-2 bg-slate-800 flex items-center justify-between border-t border-slate-700">
+            {!recordedVideoUrl ? (
+              !isRecording ? (
+                <button 
+                  onClick={startRecording} 
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                >
+                  <Video className="w-3.5 h-3.5" /> Start Record
+                </button>
+              ) : (
+                <button 
+                  onClick={stopRecording} 
+                  className="flex-1 bg-slate-900 border border-rose-500 hover:bg-slate-950 text-rose-500 text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <Play className="w-3.5 h-3.5" /> Stop Record
+                </button>
+              )
+            ) : (
+              <div className="flex w-full gap-2">
+                <button 
+                  onClick={() => setRecordedVideoUrl(null)} 
+                  className="flex-1 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Retake
+                </button>
+                <a 
+                  href={recordedVideoUrl} 
+                  download={`teleprompter-recording-${Date.now()}.webm`} 
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors text-center"
+                >
+                  <Save className="w-3.5 h-3.5" /> Save
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Top Header Bar */}
       <div className="flex items-center justify-between px-6 py-3 bg-slate-950/90 border-b border-slate-850 backdrop-blur z-20">
         <div className="flex items-center gap-3">
@@ -212,6 +367,18 @@ export function CreatorTeleprompter({
             <span className="text-slate-500">/</span>
             <span className="text-slate-400">~{targetDurationMinutes}:00</span>
           </div>
+
+          <button
+            onClick={toggleWebcam}
+            className={`p-1.5 rounded-lg transition ${
+              isWebcamActive 
+                ? "bg-rose-950/80 text-rose-400 hover:bg-rose-900" 
+                : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+            }`}
+            title="Toggle Webcam Recording"
+          >
+            {isWebcamActive ? <VideoOff className="w-4 h-4" /> : <Video className="w-4 h-4" />}
+          </button>
 
           <button
             onClick={toggleFullscreen}
@@ -234,7 +401,7 @@ export function CreatorTeleprompter({
       </div>
 
       {/* Section Quick Jump Bar */}
-      <div className="flex items-center gap-1.5 px-6 py-2 bg-slate-950/70 border-b border-slate-850 overflow-x-auto text-[11px] font-mono z-10">
+      <div className="flex items-center gap-1.5 px-6 py-2 bg-slate-950/70 border-b border-slate-850 overflow-x-auto text-[11px] font-mono z-10" style={{ scrollbarWidth: 'none' }}>
         <span className="text-slate-500 uppercase font-semibold mr-1">Section:</span>
         {sections.map((sec, idx) => (
           <button
@@ -260,6 +427,7 @@ export function CreatorTeleprompter({
         className={`flex-1 overflow-y-auto px-6 sm:px-12 py-24 scroll-smooth ${
           isMirrored ? "scale-x-[-1]" : ""
         }`}
+        style={{ scrollbarWidth: 'none' }}
       >
         <div className={`mx-auto ${textWidthClass} space-y-16`}>
           {sections.map((sec, secIdx) => (
@@ -273,7 +441,7 @@ export function CreatorTeleprompter({
               {/* Section Header Marker */}
               <div className="border-b-2 border-indigo-500/50 pb-2 mb-6 flex items-center justify-between">
                 <span className="font-mono text-sm uppercase tracking-widest text-indigo-400 font-bold">
-                  {sec.estimatedTimestamp} • {sec.title}
+                  {sec.estimatedTimestamp}  {sec.title}
                 </span>
                 <span className="font-mono text-xs text-slate-500">Goal: {sec.goal}</span>
               </div>
@@ -282,20 +450,20 @@ export function CreatorTeleprompter({
               <div className={`space-y-8 ${fontSizeClass} font-serif tracking-wide`}>
                 {sec.talkingPoints.map((tp) => (
                   <div key={tp.id} className="space-y-2">
-                    <p className="text-slate-100 font-medium leading-relaxed">
+                    <p className="text-slate-100 font-medium leading-relaxed" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}>
                       {tp.statement}
                     </p>
 
                     {/* Teleprompter Cue Notes (Smaller font for eye reference) */}
                     {tp.contextNote && (
                       <div className="font-sans text-xs font-mono text-amber-400/90 bg-amber-950/30 px-3 py-1 rounded border border-amber-800/40 inline-block">
-                        💡 CUE: {tp.contextNote}
+                        ?? CUE: {tp.contextNote}
                       </div>
                     )}
 
                     {tp.doNotSayWarning && (
                       <div className="font-sans text-xs font-mono text-rose-400/90 bg-rose-950/30 px-3 py-1 rounded border border-rose-800/40 inline-block">
-                        ⚠️ DO NOT SAY: {tp.doNotSayWarning}
+                        ?? DO NOT SAY: {tp.doNotSayWarning}
                       </div>
                     )}
                   </div>
@@ -305,7 +473,7 @@ export function CreatorTeleprompter({
               {/* B-Roll Video Cue Indicator */}
               {sec.bRollSuggestions.length > 0 && (
                 <div className="mt-6 pt-3 border-t border-slate-800/50 flex flex-wrap gap-2 text-xs font-mono text-cyan-400/80">
-                  <span className="font-bold text-cyan-300">🎥 B-ROLL CUE:</span>
+                  <span className="font-bold text-cyan-300">?? B-ROLL CUE:</span>
                   {sec.bRollSuggestions.map((b) => (
                     <span key={b.id} className="bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-800/30">
                       {b.visualTitle} ({b.durationSeconds}s)
@@ -317,8 +485,8 @@ export function CreatorTeleprompter({
           ))}
 
           {/* End of Script Indicator */}
-          <div className="text-center py-24 text-slate-600 font-mono text-sm">
-            — END OF SCRIPT —
+          <div className="text-center py-24 text-slate-600 font-mono text-sm uppercase tracking-widest font-bold">
+            ?? END OF SCRIPT ??
           </div>
         </div>
       </div>
@@ -417,3 +585,4 @@ export function CreatorTeleprompter({
     </div>
   );
 }
+

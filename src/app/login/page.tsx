@@ -82,23 +82,23 @@ export default function LoginPage() {
         <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-indigo-500/20">
           <ShieldCheck className="w-6 h-6" />
         </div>
-        <h1 className="text-2xl font-bold text-slate-100">
+        <h1 className="text-2xl font-bold text-slate-900">
           {isMagicLink ? "Sign In with Magic Link" : isSignUp ? "Create Creator Account" : "Sign In to VeritasTech"}
         </h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-500">
           Access private research runs and evidence-first tech briefs.
         </p>
       </div>
 
       {message && (
-        <div className="p-3 rounded bg-slate-900 border border-indigo-800 text-xs font-mono text-indigo-300 text-center leading-relaxed">
+        <div className="p-3 rounded bg-white border border-indigo-200 text-xs font-mono text-indigo-600 text-center leading-relaxed">
           {message}
         </div>
       )}
 
-      <form onSubmit={handleAuth} className="slate-card p-6 space-y-4">
+      <form onSubmit={handleAuth} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-4">
         <div className="space-y-1.5">
-          <label className="block text-xs font-semibold text-slate-300">Email Address</label>
+          <label className="block text-xs font-semibold text-slate-700">Email Address</label>
           <div className="relative">
             <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
             <input
@@ -107,14 +107,14 @@ export default function LoginPage() {
               placeholder="creator@tech-channel.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-indigo-500"
             />
           </div>
         </div>
 
         {!isMagicLink && (
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-300">Password</label>
+            <label className="block text-xs font-semibold text-slate-700">Password</label>
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
               <input
@@ -123,7 +123,7 @@ export default function LoginPage() {
                 placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-indigo-500"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function LoginPage() {
                 setIsSignUp(!isSignUp);
                 setIsMagicLink(false);
               }}
-              className="text-xs text-slate-400 hover:text-indigo-300 underline underline-offset-4"
+              className="text-xs text-slate-500 hover:text-indigo-600 underline underline-offset-4"
             >
               {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
             </button>
@@ -164,7 +164,7 @@ export default function LoginPage() {
                 setIsMagicLink(!isMagicLink);
                 setIsSignUp(false);
               }}
-              className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center justify-center gap-1 mx-auto"
+              className="text-xs text-indigo-600 hover:text-indigo-600 flex items-center justify-center gap-1 mx-auto"
             >
               <Sparkles className="w-3 h-3" />
               {isMagicLink ? "Use Email & Password instead" : "Use Magic Link (Passwordless)"}

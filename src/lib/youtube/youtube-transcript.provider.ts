@@ -99,7 +99,8 @@ export class YouTubeTranscriptProvider {
         // Attempt timedtext caption retrieval
         const response = await fetch(`https://www.youtube.com/watch?v=${cleanId}`, {
           headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
           },
         });
 
@@ -112,7 +113,12 @@ export class YouTubeTranscriptProvider {
             const englishTrack = tracks.find((t: any) => t.languageCode === "en" || t.vssId?.includes(".en")) || tracks[0];
 
             if (englishTrack?.baseUrl) {
-              const captionRes = await fetch(englishTrack.baseUrl);
+              const captionRes = await fetch(englishTrack.baseUrl, {
+                headers: {
+                  "Accept-Language": "en-US,en;q=0.9",
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                }
+              });
               if (captionRes.ok) {
                 const xmlText = await captionRes.text();
                 const parsedSegments = this.parseTimedTextXml(xmlText, cleanId);

@@ -49,8 +49,9 @@ export class WebExtractionEngine {
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "User-Agent": "VeritasTechBot/1.0 (+https://veritastech.ai)",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml",
+          "Accept-Language": "en-US,en;q=0.9",
         },
         signal: AbortSignal.timeout(6000),
       });
@@ -105,10 +106,29 @@ export class WebExtractionEngine {
         };
       }
 
+      // Boilerplate Sanitizer
+      let finalCleanText = cleanText;
+      const boilerplateTerms = [
+        "About Press Copyright Contact us Creators Advertise Developers",
+        "Terms Privacy Policy & Safety",
+        "How YouTube works Test new features",
+        "تعارف پریس کاپی رائٹ ہم سے رابطہ کریں",
+        "© 20",
+        "All rights reserved",
+        "Cookie Consent",
+        "We use cookies",
+        "Accept All Cookies"
+      ];
+      boilerplateTerms.forEach(term => {
+         const regex = new RegExp(term, 'gi');
+         finalCleanText = finalCleanText.replace(regex, ' ');
+      });
+      finalCleanText = finalCleanText.replace(/\s+/g, ' ').trim();
+
       return {
         url,
         title,
-        extractedText: cleanText.slice(0, 5000), // Limit payload length
+        extractedText: finalCleanText.slice(0, 5000), // Limit payload length
         isAccessible: true,
         statusMessage: "Successfully extracted",
       };

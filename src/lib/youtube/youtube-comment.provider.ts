@@ -96,8 +96,13 @@ export class YouTubeCommentProvider {
 
     if (apiKey && apiKey !== "your-youtube-api-key") {
       try {
-        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${cleanId}&maxResults=25&order=relevance&key=${apiKey}`;
-        const res = await fetch(url);
+        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${cleanId}&maxResults=25&order=relevance&textFormat=plainText&key=${apiKey}`;
+        const res = await fetch(url, {
+          headers: {
+            "Accept-Language": "en-US,en;q=0.9",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+          }
+        });
         if (res.ok) {
           const data = await res.json();
           for (const item of (data.items || [])) {

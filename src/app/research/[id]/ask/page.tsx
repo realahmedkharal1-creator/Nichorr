@@ -49,36 +49,33 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
 
     const userMsg: Message = { role: "user", content: q };
     setMessages((prev) => [...prev, userMsg]);
-    if (!textToSend) setQuestion("");
+    setQuestion("");
     setLoading(true);
 
     try {
       const res = await fetch(`/api/research/${run.id}/ask`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
       });
       const data = await res.json();
+      
       if (data.success) {
         setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: data.answer,
+          ...prev, 
+          { 
+            role: "assistant", 
+            content: data.answer, 
             citations: data.citations || [],
-            hasSufficientEvidence: data.hasSufficientEvidence,
-          },
+            hasSufficientEvidence: data.hasSufficientEvidence
+          }
         ]);
       } else {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: "Error querying research assistant: " + data.error },
-        ]);
+        throw new Error(data.error);
       }
     } catch (e) {
       setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Network error connecting to research assistant." },
+        ...prev, 
+        { role: "assistant", content: "I encountered an error trying to process that question against the evidence graph." }
       ]);
     } finally {
       setLoading(false);
@@ -93,96 +90,75 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
     );
   }
 
-  const [mode, setMode] = useState<"RUN" | "PROJECT">("RUN");
-
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-slate-200 pb-4 gap-4">
         <div>
-          <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider block mb-1">GROUNDED AI INTERROGATION</span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2.5">
-            <Bot className="w-7 h-7 text-indigo-400" />
-            Research-Grounded AI Assistant
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <Bot className="w-8 h-8 text-indigo-600" /> Grounded Q&A Assistant
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">Interrogate this research investigation with zero hallucinations. Answers are strictly backed by verified claims & sources.</p>
-        </div>
-
-        {/* Mode Selector Toggle */}
-        <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
-          <button
-            onClick={() => setMode("RUN")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition ${
-              mode === "RUN" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            Run Session Mode
-          </button>
-          <button
-            onClick={() => setMode("PROJECT")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition ${
-              mode === "PROJECT" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            Project Knowledge Mode
-          </button>
+          <p className="text-sm text-slate-500 mt-1 font-medium">Ask questions strictly constrained to the verified evidence in this research session.</p>
         </div>
       </div>
 
       <ResearchTabNav runId={run.id} />
 
-      {/* Starter Prompt Chips */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-mono text-slate-400 font-semibold uppercase mr-1">Suggested Prompts:</span>
-        {starterPrompts.map((prompt, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleSend(prompt)}
-            className="text-xs font-medium bg-slate-900 hover:bg-slate-850 text-indigo-300 border border-slate-800 px-3 py-1.5 rounded-xl transition shadow-sm"
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
-
-      {/* Chat Messages Container */}
-      <div className="slate-card p-6 bg-slate-900/90 border-slate-800 min-h-[380px] space-y-4 flex flex-col justify-between">
-        <div className="space-y-4">
-          {messages.map((msg, idx) => (
-            <div
+      <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-[500px]">
+        {/* Starter Prompts */}
+        <div className="bg-slate-50 border-b border-slate-100 p-4 flex flex-wrap gap-2 items-center">
+          <span className="text-xs font-bold text-slate-500 font-mono tracking-widest uppercase mr-2 flex items-center gap-1"><Sparkles className="w-3.5 h-3.5 text-indigo-600" /> STARTER PROMPTS:</span>
+          {starterPrompts.map((prompt, idx) => (
+            <button
               key={idx}
-              className={`flex items-start gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              onClick={() => handleSend(prompt)}
+              className="text-xs font-bold bg-white hover:bg-indigo-50 text-indigo-600 border border-indigo-100 hover:border-indigo-200 px-3.5 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
             >
-              {msg.role === "assistant" && (
-                <div className="w-8 h-8 rounded-xl bg-indigo-950 border border-indigo-850 flex items-center justify-center text-indigo-400 shrink-0 mt-1">
-                  <Bot className="w-4 h-4" />
+              {prompt}
+            </button>
+          ))}
+        </div>
+
+        {/* Chat Messages */}
+        <div className="flex-1 p-6 space-y-6 overflow-y-auto bg-slate-50/50">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[85%] sm:max-w-[75%] rounded-[20px] p-5 shadow-sm ${
+                msg.role === "user" 
+                  ? "bg-indigo-600 text-white rounded-br-none" 
+                  : "bg-white border border-slate-200 text-slate-800 rounded-bl-none"
+              }`}>
+                {msg.role === "assistant" && (
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
+                    <Bot className="w-4 h-4 text-indigo-500" />
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest font-mono">EVIDENCE ENGINE</span>
+                    {msg.hasSufficientEvidence === false && (
+                      <span className="ml-auto flex items-center gap-1 text-[10px] font-mono font-bold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-md border border-amber-200">
+                        <AlertTriangle className="w-3 h-3" /> LOW EVIDENCE COVERAGE
+                      </span>
+                    )}
+                  </div>
+                )}
+                
+                <div className="text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                  {msg.content}
                 </div>
-              )}
 
-              <div
-                className={`p-4 rounded-2xl max-w-2xl text-xs sm:text-sm space-y-2 leading-relaxed ${
-                  msg.role === "user"
-                    ? "bg-indigo-600 text-white font-medium shadow-md"
-                    : msg.hasSufficientEvidence === false
-                    ? "bg-amber-950/20 border border-amber-900/40 text-amber-200"
-                    : "bg-slate-950 border border-slate-850 text-slate-200"
-                }`}
-              >
-                <p className="whitespace-pre-line">{msg.content}</p>
-
-                {/* Citations block */}
-                {msg.citations && msg.citations.length > 0 && (
-                  <div className="pt-2 border-t border-slate-800 space-y-1">
-                    <span className="text-[10px] font-mono text-indigo-400 font-bold uppercase block">CITED RESEARCH SOURCES:</span>
+                {msg.role === "assistant" && msg.citations && msg.citations.length > 0 && (
+                  <div className="mt-4 pt-3 border-t border-slate-100 space-y-2">
+                    <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> TRACEABLE CITATIONS ({msg.citations.length})
+                    </span>
                     <div className="flex flex-wrap gap-2">
-                      {msg.citations.map((c) => (
-                        <a
-                          key={c.id}
-                          href={c.url}
+                      {msg.citations.map((cit, i) => (
+                        <a 
+                          key={i} 
+                          href={cit.url} 
                           target="_blank"
                           rel="noreferrer"
-                          className="text-[11px] font-mono text-indigo-300 bg-indigo-950/80 px-2.5 py-1 rounded border border-indigo-850 flex items-center gap-1 hover:underline"
+                          className="inline-flex items-center gap-1.5 text-[10px] font-mono bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-md transition-colors font-semibold"
                         >
-                          {c.publisher || c.title} <ExternalLink className="w-3 h-3" />
+                          <ExternalLink className="w-3 h-3" />
+                          {cit.publisher}
                         </a>
                       ))}
                     </div>
@@ -193,42 +169,43 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
           ))}
 
           {loading && (
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-indigo-950 border border-indigo-850 flex items-center justify-center text-indigo-400 shrink-0">
-                <Bot className="w-4 h-4 animate-spin" />
-              </div>
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-850 text-xs font-mono text-indigo-400 animate-pulse">
-                Synthesizing evidence-backed response...
+            <div className="flex justify-start">
+              <div className="bg-white border border-slate-200 rounded-[20px] rounded-bl-none p-5 shadow-sm flex items-center gap-3 text-sm font-bold text-slate-500">
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+                Querying verification graph...
               </div>
             </div>
           )}
         </div>
 
-        {/* Input Bar */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSend();
-          }}
-          className="flex items-center gap-2 pt-4 border-t border-slate-850"
-        >
-          <input
-            type="text"
-            placeholder="Ask a technical question grounded in this research..."
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            disabled={loading}
-            className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition disabled:opacity-50"
-          />
-          <button
-            type="submit"
-            disabled={!question.trim() || loading}
-            className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition shadow-md shadow-indigo-600/20 disabled:opacity-50 flex items-center gap-1.5"
+        {/* Input Area */}
+        <div className="p-4 bg-white border-t border-slate-200">
+          <form 
+            onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+            className="relative flex items-center"
           >
-            <Send className="w-4 h-4" />
-            <span>Ask AI</span>
-          </button>
-        </form>
+            <HelpCircle className="w-5 h-5 text-slate-500 absolute left-4" />
+            <input
+              type="text"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="Ask a technical question about the findings..."
+              className="w-full bg-slate-50 border-2 border-slate-200 rounded-[16px] pl-12 pr-14 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500 placeholder:font-medium"
+              disabled={loading}
+            />
+            <button
+              type="submit"
+              disabled={!question.trim() || loading}
+              className="absolute right-3 bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-xl disabled:opacity-50 transition-colors shadow-sm active:scale-95"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

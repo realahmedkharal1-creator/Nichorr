@@ -46,7 +46,40 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
   if (!run) {
     return (
       <div className="space-y-6 max-w-5xl mx-auto py-4">
-        <SkeletonCard />
+        {/* Header */}
+        <div className="border-b border-slate-200 pb-4">
+          <span className="text-xs font-mono text-indigo-600 font-semibold uppercase tracking-wider block mb-1">CREATOR FACT-CHECK AUDITOR</span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+            <ShieldCheck className="w-7 h-7 text-indigo-600" />
+            Interactive Script & Statement Fact Checker
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">Audit draft script sentences against verified project knowledge before recording or publishing.</p>
+        </div>
+
+        {/* Fact Check Input Card (Mock) */}
+        <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-4">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-slate-700 uppercase font-mono">
+              Paste Draft Script Statement to Audit <span className="text-rose-600">*</span>
+            </label>
+            <textarea
+              rows={3}
+              placeholder="e.g. Snapdragon 8 Gen 5 delivers 3.2GHz clock speeds across all thermal test conditions..."
+              value="Snapdragon 8 Gen 5 delivers 3.2GHz clock speeds across all thermal test conditions (MOCK DATA)"
+              readOnly
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 transition"
+            />
+          </div>
+          <div className="flex justify-end">
+            <button
+              disabled
+              className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold shadow-lg shadow-indigo-600/20 transition opacity-50"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              Audit Statement
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -54,23 +87,23 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-4">
       {/* Header */}
-      <div className="border-b border-slate-800/80 pb-4">
-        <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider block mb-1">CREATOR FACT-CHECK AUDITOR</span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2.5">
-          <ShieldCheck className="w-7 h-7 text-indigo-400" />
+      <div className="border-b border-slate-200 pb-4">
+        <span className="text-xs font-mono text-indigo-600 font-semibold uppercase tracking-wider block mb-1">CREATOR FACT-CHECK AUDITOR</span>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+          <ShieldCheck className="w-7 h-7 text-indigo-600" />
           Interactive Script & Statement Fact Checker
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">Audit draft script sentences against verified project knowledge before recording or publishing.</p>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1">Audit draft script sentences against verified project knowledge before recording or publishing.</p>
       </div>
 
       <ResearchTabNav runId={run.id} />
 
       {/* Fact Check Input Card */}
-      <div className="slate-card p-6 bg-slate-900/90 border-slate-800 space-y-4">
+      <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 bg-white border-slate-200 space-y-4">
         <form onSubmit={handleFactCheck} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-200 uppercase font-mono">
-              Paste Draft Script Statement to Audit <span className="text-rose-400">*</span>
+            <label className="block text-xs font-semibold text-slate-700 uppercase font-mono">
+              Paste Draft Script Statement to Audit <span className="text-rose-600">*</span>
             </label>
             <textarea
               rows={3}
@@ -78,7 +111,7 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
               placeholder="e.g. Snapdragon 8 Gen 5 delivers 3.2GHz clock speeds across all thermal test conditions..."
               value={draftStatement}
               onChange={(e) => setDraftStatement(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 transition"
             />
           </div>
 
@@ -97,16 +130,16 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
 
       {/* Audit Result Display */}
       {result && (
-        <div className="slate-card p-6 bg-slate-900/90 border-slate-800 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-850 pb-3">
-            <span className="text-xs font-mono font-bold text-slate-400 uppercase">AUDIT VERDICT</span>
+        <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 bg-white border-slate-200 space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <span className="text-xs font-mono font-bold text-slate-500 uppercase">AUDIT VERDICT</span>
             <span
               className={`px-3 py-1 rounded-full text-xs font-mono font-bold ${
                 result.verdict === "SUPPORTED"
-                  ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                  ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
                   : result.verdict === "CONTRADICTED"
-                  ? "bg-rose-950 text-rose-300 border border-rose-800"
-                  : "bg-amber-950 text-amber-300 border border-amber-800"
+                  ? "bg-rose-50 text-rose-600 border border-rose-200"
+                  : "bg-amber-50 text-amber-600 border border-amber-200"
               }`}
             >
               VERDICT: {result.verdict}
@@ -115,16 +148,16 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
 
           <div className="space-y-3 text-xs sm:text-sm font-sans">
             <div className="space-y-1">
-              <span className="text-xs font-mono text-slate-400 uppercase block">EXPLANATION & ANALYSIS</span>
-              <p className="text-slate-200 leading-relaxed bg-slate-950 p-4 rounded-xl border border-slate-850">
+              <span className="text-xs font-mono text-slate-500 uppercase block">EXPLANATION & ANALYSIS</span>
+              <p className="text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
                 {result.explanation}
               </p>
             </div>
 
             {result.supportingFact && (
               <div className="space-y-1">
-                <span className="text-xs font-mono text-indigo-400 uppercase block">SUPPORTING VERIFIED FACT</span>
-                <p className="text-slate-300 bg-slate-950/80 p-3.5 rounded-xl border border-slate-850 font-mono text-xs">
+                <span className="text-xs font-mono text-indigo-600 uppercase block">SUPPORTING VERIFIED FACT</span>
+                <p className="text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-100 font-mono text-xs">
                   "{result.supportingFact}"
                 </p>
               </div>
@@ -132,8 +165,8 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
 
             {result.saferWording && (
               <div className="space-y-1">
-                <span className="text-xs font-mono text-emerald-400 uppercase block font-bold">RECOMMENDED EVIDENCE-SAFE ALTERNATIVE WORDING</span>
-                <p className="text-emerald-300 bg-emerald-950/20 p-4 rounded-xl border border-emerald-900/50 leading-relaxed font-sans font-medium">
+                <span className="text-xs font-mono text-emerald-600 uppercase block font-bold">RECOMMENDED EVIDENCE-SAFE ALTERNATIVE WORDING</span>
+                <p className="text-emerald-600 bg-emerald-50 p-4 rounded-xl border border-emerald-900/50 leading-relaxed font-sans font-medium">
                   "{result.saferWording}"
                 </p>
               </div>

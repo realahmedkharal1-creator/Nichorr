@@ -22,7 +22,13 @@ export function ResearchTabNav({ runId }: { runId: string }) {
   ];
 
   return (
-    <div className="border-b border-slate-800/80 flex overflow-x-auto gap-1.5 pb-2 mb-6 no-scrollbar">
+    <div 
+      className="border-b border-slate-200 flex overflow-x-auto gap-1.5 pb-2 mb-6" 
+      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+    >
+      <style dangerouslySetInnerHTML={{__html: `
+        ::-webkit-scrollbar { display: none; }
+      `}} />
       {tabs.map((t) => {
         const isActive = pathname === t.href;
         const Icon = t.icon;
@@ -31,13 +37,13 @@ export function ResearchTabNav({ runId }: { runId: string }) {
           <Link
             key={t.href}
             href={t.href}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
               isActive
-                ? "bg-indigo-950/80 text-indigo-300 border border-indigo-800/80 shadow-sm shadow-indigo-950/50"
-                : "border border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/60"
+                ? "bg-indigo-600 text-white shadow-md"
+                : "bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
-            <Icon className={`w-3.5 h-3.5 ${isActive ? "text-indigo-400" : "text-slate-500"}`} />
+            <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-500"}`} />
             {t.label}
           </Link>
         );
@@ -45,4 +51,3 @@ export function ResearchTabNav({ runId }: { runId: string }) {
     </div>
   );
 }
-

@@ -43,9 +43,14 @@ export class YouTubeSearchProvider {
       try {
         for (const vector of vectors.slice(0, 3)) { // Query top 3 vectors to preserve API quota
           const encodedQuery = encodeURIComponent(vector.query);
-          const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=4&q=${encodedQuery}&key=${apiKey}`;
+          const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=4&q=${encodedQuery}&relevanceLanguage=en&regionCode=US&key=${apiKey}`;
           
-          const res = await fetch(url);
+          const res = await fetch(url, {
+            headers: {
+              'Accept-Language': 'en-US,en;q=0.9',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            }
+          });
           if (res.ok) {
             const data = await res.json();
             for (const item of (data.items || [])) {

@@ -1,244 +1,349 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { 
-  ShieldCheck, 
-  Search, 
-  FileCheck, 
-  AlertTriangle, 
-  Layers, 
-  ArrowRight, 
-  Sparkles, 
-  Database, 
-  Globe, 
-  ListOrdered, 
-  Video
-} from "lucide-react";
+import { Link as LinkIcon, MoreHorizontal, Lightbulb, ArrowRight, ChevronDown, Calendar, Search } from "lucide-react";
 
-export default function LandingPage() {
+export default function DashboardPage() {
   const router = useRouter();
-  const [topicInput, setTopicInput] = useState("");
+  const [exploreTopic, setExploreTopic] = useState("");
+  
+  // State for simple interactive dropdowns
+  const [showDate1, setShowDate1] = useState(false);
+  const [showDate2, setShowDate2] = useState(false);
+  const [showPeriod, setShowPeriod] = useState(false);
 
-  const handleStartResearch = (e: React.FormEvent) => {
+  const [date1, setDate1] = useState("Jan 01 - July 31");
+  const [date2, setDate2] = useState("Aug 01 - Dec 31");
+  const [period, setPeriod] = useState("Daily");
+
+  const handleExploreSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!topicInput.trim()) {
-      router.push("/research/create");
+    if (exploreTopic.trim()) {
+      router.push(`/research/create?topic=${encodeURIComponent(exploreTopic.trim())}`);
     } else {
-      router.push(`/research/create?topic=${encodeURIComponent(topicInput.trim())}`);
+      router.push('/research/create');
     }
   };
 
-  const templates = [
-    {
-      title: "Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max",
-      desc: "Compare 4K thermal throttling, camera dynamic range, and battery endurance.",
-      badge: "FLAGSHIP SHOWDOWN",
-    },
-    {
-      title: "RTX 5090 vs RX 8900 XTX Power Efficiency & 4K Ray Tracing",
-      desc: "Measure wattage draw, DLSS 4 vs FSR 4, and 1% low frame time stability.",
-      badge: "GPU EFFICIENCY",
-    },
-    {
-      title: "MacBook Pro 16 M5 Max vs Dell XPS 16 Sustained Thermals",
-      desc: "Audit Cinebench R24 multi-core power limits and fan acoustic decibels.",
-      badge: "LAPTOP THERMALS",
-    },
-    {
-      title: "DeepSeek R1 vs Claude 3.5 Sonnet Coding & Reasoning",
-      desc: "Benchmark HumanEval pass@1, token economics, and mathematical proofs.",
-      badge: "AI REASONING",
-    },
-  ];
-
-  const workflowSteps = [
-    { step: "01", name: "Topic & Goal", desc: "Define device or technology focus" },
-    { step: "02", name: "Search Plan", desc: "Multi-vector queries & query expansion" },
-    { step: "03", name: "Source Discovery", desc: "Primary docs & lab review tiering" },
-    { step: "04", name: "Text Extraction", desc: "Direct text capture & syndication audit" },
-    { step: "05", name: "Evidence & Claims", desc: "Grounded claim-to-excerpt mapping" },
-    { step: "06", name: "Entity Resolution", desc: "Hardware SoC variant compatibility" },
-    { step: "07", name: "Conflict Matrix", desc: "Methodology & thermal delta detection" },
-    { step: "08", name: "Community Signals", desc: "Reddit & forum real-world issues" },
-    { step: "09", name: "Audience & Gaps", desc: "Viewer questions & video angles" },
-    { step: "10", name: "Defensible Brief", desc: "100% evidence-backed script ready" },
-  ];
+  const handleQuickTemplate = (topic: string) => {
+    router.push(`/research/create?topic=${encodeURIComponent(topic)}`);
+  };
 
   return (
-    <div className="space-y-16 py-6 font-sans">
-      {/* Hero Section */}
-      <div className="text-center space-y-6 max-w-4xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-indigo-400 shadow-sm">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>EVIDENCE-FIRST TECHNOLOGY RESEARCH INTELLIGENCE</span>
+    <div className="w-full max-w-[1400px] mx-auto space-y-6 pb-12">
+      
+      {/* Page Header Row */}
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 pb-2 z-20 relative">
+        <div className="flex items-center gap-2">
+          <h1 className="font-mono text-4xl font-semibold tracking-tight text-slate-900">
+            Overview
+          </h1>
+          <div className="w-6 h-6 rounded-full border border-slate-200/90 flex items-center justify-center -mt-4 shadow-sm bg-white">
+             <LinkIcon className="w-3 h-3 text-slate-500" />
+          </div>
         </div>
 
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
-          Turn Scattered Tech Web Data Into{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-sky-300 to-emerald-400">
-            Defensible Research Briefs
-          </span>
-        </h1>
-
-        <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-          Tailored for YouTube tech reviewers, hardware analysts, and technology creators. Every claim is verified, source-traced, and cross-audited against independent lab tests, official technical specifications, and community signals.
-        </p>
-
-        {/* Instant Topic Input Bar */}
-        <form onSubmit={handleStartResearch} className="max-w-2xl mx-auto pt-2">
-          <div className="slate-card p-2 bg-slate-900/90 border-slate-750 flex items-center gap-2 shadow-2xl">
-            <Search className="w-5 h-5 text-indigo-400 ml-3 shrink-0" />
-            <input
-              type="text"
-              placeholder="Enter tech topic (e.g., Galaxy S27 Ultra Thermals, RTX 5090 Efficiency)..."
-              value={topicInput}
-              onChange={(e) => setTopicInput(e.target.value)}
-              className="w-full bg-transparent text-sm text-slate-100 placeholder-slate-500 focus:outline-none px-2"
-            />
-            <button
-              type="submit"
-              className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm shadow-md shadow-indigo-600/30 transition shrink-0 transform hover:-translate-y-0.5"
-            >
-              Start Research Run
-              <ArrowRight className="w-4 h-4" />
-            </button>
+        <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-600">
+          <div className="flex items-center bg-white border border-slate-200/90 rounded-xl shadow-sm shadow-slate-200/70">
+             
+             {/* Dropdown 1 */}
+             <div className="relative border-r border-slate-200/90">
+               <button onClick={() => setShowDate1(!showDate1)} className="px-3 py-2 hover:bg-slate-50 rounded-l-xl flex items-center gap-2">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" /> {date1} <ChevronDown className="w-3 h-3 text-slate-500" />
+               </button>
+               {showDate1 && (
+                 <div className="absolute top-full left-0 mt-1 w-40 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-1">
+                   {["Jan 01 - July 31", "Previous Year", "All Time"].map(d => (
+                     <button key={d} onClick={() => {setDate1(d); setShowDate1(false);}} className="w-full text-left px-3 py-1.5 hover:bg-slate-50 rounded-lg text-slate-700">{d}</button>
+                   ))}
+                 </div>
+               )}
+             </div>
+             
+             {/* Dropdown 2 */}
+             <div className="relative">
+               <button onClick={() => setShowDate2(!showDate2)} className="px-3 py-2 hover:bg-slate-50 rounded-r-xl flex items-center gap-2">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" /> {date2} <ChevronDown className="w-3 h-3 text-slate-500" />
+               </button>
+               {showDate2 && (
+                 <div className="absolute top-full left-0 mt-1 w-40 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-1">
+                   {["Aug 01 - Dec 31", "Previous Year", "All Time"].map(d => (
+                     <button key={d} onClick={() => {setDate2(d); setShowDate2(false);}} className="w-full text-left px-3 py-1.5 hover:bg-slate-50 rounded-lg text-slate-700">{d}</button>
+                   ))}
+                 </div>
+               )}
+             </div>
           </div>
-        </form>
+          
+          {/* Dropdown 3 */}
+          <div className="relative">
+             <button onClick={() => setShowPeriod(!showPeriod)} className="px-4 py-2 bg-white border border-slate-200/90 rounded-xl shadow-sm shadow-slate-200/70 hover:bg-slate-50 flex items-center gap-2">
+                {period} <ChevronDown className="w-3 h-3 text-slate-500" />
+             </button>
+             {showPeriod && (
+               <div className="absolute top-full right-0 mt-1 w-24 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-1">
+                 {["Daily", "Weekly", "Monthly"].map(p => (
+                   <button key={p} onClick={() => {setPeriod(p); setShowPeriod(false);}} className="w-full text-left px-3 py-1.5 hover:bg-slate-50 rounded-lg text-slate-700">{p}</button>
+                 ))}
+               </div>
+             )}
+          </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-2 text-xs font-mono text-slate-400">
-          <Link href="/dashboard" className="hover:text-indigo-300 flex items-center gap-1.5 transition">
-            <Database className="w-3.5 h-3.5 text-indigo-400" />
-            Creator Dashboard
-          </Link>
-          <span>•</span>
-          <Link href="/research/history" className="hover:text-indigo-300 flex items-center gap-1.5 transition">
-            <Layers className="w-3.5 h-3.5 text-sky-400" />
-            Research Archive
-          </Link>
-          <span>•</span>
-          <Link href="/research/sources" className="hover:text-indigo-300 flex items-center gap-1.5 transition">
-            <Globe className="w-3.5 h-3.5 text-emerald-400" />
-            Source Trust Explorer
-          </Link>
-          <span>•</span>
-          <Link href="/research/queue" className="hover:text-indigo-300 flex items-center gap-1.5 transition">
-            <ListOrdered className="w-3.5 h-3.5 text-amber-400" />
-            Research Queue
+          <Link href="/research/create" className="px-4 py-2 bg-white border border-slate-200/90 rounded-xl shadow-sm shadow-slate-200/70 hover:bg-slate-50 flex items-center gap-1.5 transition text-slate-700">
+             New Research <span className="text-lg leading-none font-light">+</span>
           </Link>
         </div>
       </div>
 
-      {/* Quick Start Benchmark Templates */}
-      <div className="space-y-4 max-w-5xl mx-auto">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-mono text-slate-400 flex items-center gap-1.5 font-semibold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400" /> INSTANT BENCHMARK RESEARCH TEMPLATES
-          </span>
-          <Link href="/research/create" className="text-xs font-mono text-indigo-400 hover:underline">
-            Custom Setup Wizard →
-          </Link>
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          {templates.map((tpl, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => {
-                router.push(`/research/create?topic=${encodeURIComponent(tpl.title)}`);
-              }}
-              className="slate-card p-5 text-left hover:border-indigo-500/60 hover:bg-slate-850/80 transition-all space-y-2 group"
-            >
-              <div className="flex items-center justify-between text-indigo-400 font-mono text-[10px]">
-                <span>{tpl.badge}</span>
-                <span className="group-hover:translate-x-0.5 transition transform text-indigo-300">Run Research →</span>
-              </div>
-              <h3 className="font-bold text-slate-100 text-sm sm:text-base group-hover:text-indigo-300 transition">
-                {tpl.title}
-              </h3>
-              <p className="text-slate-400 text-xs line-clamp-2 leading-relaxed">
-                {tpl.desc}
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Veritas Ethos Banner */}
-      <div className="slate-card p-6 sm:p-8 border-indigo-900/50 bg-gradient-to-r from-slate-900 via-indigo-950/30 to-slate-900 relative overflow-hidden max-w-5xl mx-auto">
-        <div className="flex flex-col sm:flex-row items-center gap-6 justify-between">
-          <div className="space-y-2">
-            <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-400" />
-              The Central Veritas Ethos
-            </h3>
-            <p className="text-slate-300 font-mono text-sm sm:text-base">
-              "Never optimize for an answer that sounds convincing. Optimize for an answer that can be defended."
-            </p>
+      {/* 12-Column Bento Grid */}
+      <div className="grid grid-cols-12 gap-5 relative z-10">
+        
+        {/* Card 1: Retention -> Research Velocity */}
+        <Link 
+          href="/research/history"
+          className="col-span-12 lg:col-span-3 bg-white rounded-3xl border border-slate-200/90 shadow-sm shadow-slate-200/70 p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-indigo-300 hover:shadow-md transition group"
+        >
+          <div className="flex justify-between items-start">
+             <span className="font-bold text-slate-900 text-sm group-hover:text-indigo-600 transition">Research Velocity</span>
+             <button onClick={(e) => e.preventDefault()} className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 text-slate-500">
+                <MoreHorizontal className="w-3 h-3" />
+             </button>
           </div>
-          <div className="shrink-0 flex gap-3 text-xs font-mono">
-            <span className="px-3 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-800 text-emerald-300 font-bold">
-              100% TRACEABLE
-            </span>
-            <span className="px-3 py-1.5 rounded-lg bg-amber-950/80 border border-amber-800 text-amber-300 font-bold">
-              HONEST CONFLICTS
-            </span>
+          
+          <div className="flex-1 flex items-end justify-between gap-[2px] mt-6 mb-3">
+             {[30,40,45,35,40,60,70,65,75,80,60,65,70,50,45,40,60,50,55].map((h, i) => (
+                <div key={i} className="w-full bg-rose-400 rounded-t-sm opacity-90" style={{ height: `${h}%` }}></div>
+             ))}
           </div>
-        </div>
-      </div>
 
-      {/* 10-Step Creator Research Workflow */}
-      <div className="space-y-6 max-w-5xl mx-auto">
-        <div className="text-center space-y-1">
-          <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider">END-TO-END RESEARCH WORKFLOW</span>
-          <h2 className="text-2xl font-extrabold text-slate-100 tracking-tight">The 10-Stage Evidence-First Pipeline</h2>
-          <p className="text-xs sm:text-sm text-slate-400">How raw scattered internet specs transform into an authoritative, video-ready research brief.</p>
-        </div>
+          <div className="flex justify-between items-center">
+             <div className="flex gap-2 text-[9px] font-mono text-slate-500 uppercase font-semibold">
+                <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+             </div>
+             <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">100% Audited</span>
+          </div>
+        </Link>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          {workflowSteps.map((ws, i) => (
-            <div key={i} className="slate-card p-3.5 bg-slate-900/80 border-slate-800 space-y-1 text-left hover:border-slate-700 transition">
-              <span className="text-[10px] font-mono font-bold text-indigo-400">{ws.step}</span>
-              <h4 className="text-xs font-bold text-slate-200">{ws.name}</h4>
-              <p className="text-[11px] text-slate-400 leading-tight">{ws.desc}</p>
+        {/* Card 2 & 3: Double Stacked Stats */}
+        <div className="col-span-12 lg:col-span-5 flex flex-col gap-5 h-[280px]">
+          
+          {/* Top: Verified Claims */}
+          <Link 
+            href="/research/quality"
+            className="flex-1 bg-white rounded-[24px] border border-slate-200/90 shadow-sm shadow-slate-200/70 p-5 flex flex-col justify-between cursor-pointer hover:border-emerald-300 hover:shadow-md transition group"
+          >
+            <div className="flex justify-between items-start">
+               <span className="font-bold text-slate-900 text-sm group-hover:text-emerald-600 transition">Verified Claims</span>
+               <button onClick={(e) => e.preventDefault()} className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 text-slate-500">
+                  <MoreHorizontal className="w-3 h-3" />
+               </button>
             </div>
-          ))}
-        </div>
-      </div>
+            <div className="flex items-center justify-between mt-2">
+               <div className="w-1/3 text-left">
+                  <div className="font-mono text-4xl font-bold tracking-tight text-slate-900">106</div>
+                  <div className="text-[10px] text-slate-500 font-medium">Claim-to-source traced</div>
+               </div>
+               
+               <div className="w-1/3 flex flex-col items-center pb-1">
+                  <div className="flex items-end gap-1 mb-2">
+                    {[1,2,4,3,2,1].map((cols, i) => (
+                      <div key={i} className="flex flex-col gap-0.5 justify-end h-7">
+                         {Array.from({length: cols}).map((_, j) => (
+                           <div key={j} className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                         ))}
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-[8px] font-mono border border-slate-200 bg-slate-50 rounded-full px-2 py-0.5 text-slate-600 whitespace-nowrap">Peak: Hardware</span>
+               </div>
 
-      {/* Core Methodology Pillars */}
-      <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-        <div className="slate-card p-6 space-y-3 bg-slate-900/80">
-          <div className="w-10 h-10 rounded-xl bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400">
-            <FileCheck className="w-5 h-5" />
-          </div>
-          <h3 className="text-base font-bold text-slate-100">Claim-to-Source Provenance</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Finding → Claim → Verbatim Excerpt → Source URL. Zero ungrounded AI claims allowed without explicit unsupported status alerts.
-          </p>
+               <div className="w-1/3 text-right">
+                  <div className="text-[10px] text-slate-500 mb-0.5">vs last week</div>
+                  <div className="text-sm font-bold text-emerald-600">+24 claims</div>
+                  <div className="text-[9px] font-bold text-emerald-500 mt-1">0 Hallucinations</div>
+               </div>
+            </div>
+          </Link>
+
+          {/* Bottom: Active Research Runs */}
+          <Link 
+            href="/projects"
+            className="flex-1 bg-white rounded-[24px] border border-slate-200/90 shadow-sm shadow-slate-200/70 p-5 flex flex-col justify-between cursor-pointer hover:border-indigo-300 hover:shadow-md transition group"
+          >
+            <div className="flex justify-between items-start">
+               <span className="font-bold text-slate-900 text-sm group-hover:text-indigo-600 transition">Active Research Runs</span>
+               <button onClick={(e) => e.preventDefault()} className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 text-slate-500">
+                  <MoreHorizontal className="w-3 h-3" />
+               </button>
+            </div>
+            <div className="flex items-center justify-between mt-2">
+               <div className="w-1/3 text-left">
+                  <div className="font-mono text-4xl font-bold tracking-tight text-slate-900">12</div>
+                  <div className="text-[10px] text-slate-500 font-medium">Active creator sessions</div>
+               </div>
+               
+               <div className="w-1/3 flex flex-col items-center pb-1">
+                  <div className="flex items-end gap-1 mb-2">
+                    {[1,1,2,3,1,1].map((cols, i) => (
+                      <div key={i} className="flex flex-col gap-0.5 justify-end h-7">
+                         {Array.from({length: cols}).map((_, j) => (
+                           <div key={j} className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                         ))}
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-[8px] font-mono border border-slate-200 bg-slate-50 rounded-full px-2 py-0.5 text-slate-600 whitespace-nowrap">Peak: Smartphone</span>
+               </div>
+
+               <div className="w-1/3 text-right">
+                  <div className="text-[10px] text-slate-500 mb-0.5">vs last week</div>
+                  <div className="text-sm font-bold text-rose-500">-2 runs</div>
+                  <div className="text-[9px] font-bold text-slate-500 mt-1">Faster completion</div>
+               </div>
+            </div>
+          </Link>
         </div>
 
-        <div className="slate-card p-6 space-y-3 bg-slate-900/80">
-          <div className="w-10 h-10 rounded-xl bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400">
-            <AlertTriangle className="w-5 h-5" />
+        {/* Card 4: Hardware Distribution (Col-Span 4) */}
+        <Link 
+          href="/research/history"
+          className="col-span-12 lg:col-span-4 bg-white rounded-3xl border border-slate-200/90 shadow-sm shadow-slate-200/70 p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-amber-300 hover:shadow-md transition group"
+        >
+          <div className="flex justify-between items-start mb-6">
+             <span className="font-bold text-slate-900 text-sm group-hover:text-amber-600 transition">Topic Distribution</span>
+             <button onClick={(e) => e.preventDefault()} className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 text-slate-500">
+                <MoreHorizontal className="w-3 h-3" />
+             </button>
           </div>
-          <h3 className="text-base font-bold text-slate-100">Methodological Conflict Matrix</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Automatically surfaces when AnandTech, Tom's Hardware, and GSMArena lab tests disagree due to ambient thermals, hardware variants, or firmware updates.
-          </p>
+          <div className="flex-1 space-y-4 flex flex-col justify-center">
+            <div>
+               <div className="flex justify-between text-[11px] font-bold text-slate-700 mb-2">
+                 <span>Smartphone Deep Dives</span>
+                 <span>65%</span>
+               </div>
+               <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                 <div className="h-full w-[65%] rounded-full pattern-diagonal-stripes-orange border-r border-amber-500"></div>
+               </div>
+            </div>
+            <div>
+               <div className="flex justify-between text-[11px] font-bold text-slate-700 mb-2">
+                 <span>PC Hardware Reviews</span>
+                 <span>25%</span>
+               </div>
+               <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                 <div className="h-full w-[25%] rounded-full pattern-diagonal-stripes-blue border-r border-blue-500"></div>
+               </div>
+            </div>
+            <div>
+               <div className="flex justify-between text-[11px] font-bold text-slate-700 mb-2">
+                 <span>Primary Lab & Benchmarks</span>
+                 <span>10%</span>
+               </div>
+               <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                 <div className="h-full w-[10%] rounded-full pattern-diagonal-stripes-pink border-r border-pink-500"></div>
+               </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* BOTTOM ROW */}
+        
+        {/* Card 5: Benchmark Activity (Col-Span 8) */}
+        <div className="col-span-12 lg:col-span-8 bg-white rounded-3xl border border-slate-200/90 shadow-sm shadow-slate-200/70 p-6 flex flex-col justify-between h-[380px] relative">
+           
+           {/* Top Content */}
+           <div className="flex justify-between items-start z-10 relative">
+             <span className="font-bold text-slate-900 text-sm">Creator Benchmark Activity</span>
+             <button onClick={() => alert("Action menu opened.")} className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 text-slate-500 bg-white shadow-sm">
+                <MoreHorizontal className="w-3 h-3" />
+             </button>
+           </div>
+           
+           {/* The Volume Chart Container - Positioned to not overlap bottom */}
+           <div className="flex-1 relative w-full flex items-end justify-center pt-8 pb-4 pointer-events-none">
+               {/* Y-Axis */}
+               <div className="absolute left-0 top-4 bottom-4 flex flex-col justify-between text-[9px] font-mono text-slate-500">
+                  <span>80k</span><span>70k</span><span>60k</span><span>50k</span><span>40k</span>
+               </div>
+
+               {/* Volumetric Blocks */}
+               <div className="w-full h-full flex items-end justify-around px-12 pl-16 z-0">
+                  <div className="w-[15%] h-[85%] bg-gradient-to-t from-emerald-500 to-lime-300 rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+                  <div className="w-[15%] h-[55%] bg-gradient-to-t from-emerald-500 to-lime-300 rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+                  <div className="w-[15%] h-[35%] bg-gradient-to-t from-emerald-500 to-lime-300 pattern-diagonal-stripes-green rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+                  <div className="w-[15%] h-[20%] bg-gradient-to-t from-emerald-500 to-lime-300 rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+                  <div className="w-[15%] h-[12%] bg-gradient-to-t from-emerald-500 to-lime-300 rounded-t-sm shadow-xl relative border border-emerald-400"><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/70 rounded-full"></div></div>
+               </div>
+           </div>
+
+           {/* Bottom Interaction Area */}
+           <div className="relative z-20 mt-2 space-y-3 bg-white/60 backdrop-blur-md rounded-2xl p-4 border border-slate-200/80 shadow-sm shadow-slate-200/50">
+              
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => handleQuickTemplate("Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max")} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-[10px] font-semibold text-slate-700 hover:text-slate-900 hover:border-slate-300 shadow-sm transition cursor-pointer">
+                   Samsung S27 Ultra vs iPhone 18 Pro Max
+                </button>
+                <button onClick={() => handleQuickTemplate("MacBook Pro 16 M5 Max vs Dell XPS 16")} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-[10px] font-semibold text-slate-700 hover:text-slate-900 hover:border-slate-300 shadow-sm transition cursor-pointer">
+                   MacBook Pro 16 M5 Max vs Dell XPS 16
+                </button>
+                <button onClick={() => handleQuickTemplate("RTX 5080 vs RX 8900 XTX 4K Gaming")} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-[10px] font-semibold text-slate-700 hover:text-slate-900 hover:border-slate-300 shadow-sm transition cursor-pointer">
+                   RTX 5080 vs RX 8900 XTX 4K Gaming
+                </button>
+              </div>
+
+              <div>
+                <p className="text-[11px] font-bold text-slate-800 mb-1.5 ml-1">What technology topic would you like to research next?</p>
+                <form onSubmit={handleExploreSubmit} className="w-full flex items-center bg-white border border-slate-300 rounded-xl px-2 py-1.5 shadow-sm focus-within:ring-2 focus-within:ring-slate-900 transition-all cursor-text">
+                   <Search className="w-3.5 h-3.5 text-slate-500 ml-2 shrink-0" />
+                   <input 
+                     type="text" 
+                     value={exploreTopic}
+                     onChange={(e) => setExploreTopic(e.target.value)}
+                     placeholder="Enter topic (e.g. RTX 5090 thermals, Galaxy S27 camera benchmark)..."
+                     className="flex-1 bg-transparent border-none focus:outline-none px-3 py-1.5 text-sm text-slate-900 placeholder-slate-400 font-medium cursor-text"
+                   />
+                   <button type="submit" className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-md transition flex items-center gap-1.5 shrink-0 cursor-pointer">
+                     Explore <ArrowRight className="w-3 h-3" />
+                   </button>
+                </form>
+              </div>
+           </div>
         </div>
 
-        <div className="slate-card p-6 space-y-3 bg-slate-900/80">
-          <div className="w-10 h-10 rounded-xl bg-indigo-950 border border-indigo-800 flex items-center justify-center text-indigo-400">
-            <Layers className="w-5 h-5" />
-          </div>
-          <h3 className="text-base font-bold text-slate-100">Community & Gap Signals</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Parses Reddit and forum posts to detect real-world user complaints, PWM display flickering, and unanswered audience questions for content differentiation.
-          </p>
-        </div>
+        {/* Card 6: Quality Gate (Col-Span 4) */}
+        <Link 
+          href="/content"
+          className="col-span-12 lg:col-span-4 bg-gradient-to-br from-emerald-950 via-emerald-800 to-teal-950 text-white rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between shadow-md h-[380px] cursor-pointer group hover:shadow-xl transition"
+        >
+           <div className="bg-white/15 backdrop-blur-md rounded-full px-4 py-1.5 text-xs font-bold self-start flex items-center gap-1.5 border border-white/20 shadow-sm text-white">
+             <Lightbulb className="w-3.5 h-3.5 text-amber-600" /> Quality Gate & Audit
+           </div>
+
+           <div className="space-y-4 mb-4 mt-8">
+             <div className="font-mono text-6xl font-bold tracking-tight text-white group-hover:scale-105 transition-transform origin-left">96.8%</div>
+             <p className="text-base font-bold leading-relaxed text-white/95 pr-4">
+               All evidence claims passed multi-source verification.
+             </p>
+             <p className="text-sm text-white/80 pr-4 leading-relaxed font-medium">
+               0 critical contradictions detected. All citations are locked and ready for YouTube script & video production.
+             </p>
+           </div>
+
+           <div className="flex items-center justify-between mt-auto">
+             <div className="flex items-center gap-1.5 w-1/2">
+               <div className="h-1.5 bg-white rounded-full flex-1 shadow-sm"></div>
+               <div className="h-1.5 bg-white/30 rounded-full w-2"></div>
+               <div className="h-1.5 bg-white/30 rounded-full w-2"></div>
+             </div>
+             
+             <button onClick={(e) => e.preventDefault()} className="bg-white/20 hover:bg-white/30 px-5 py-2.5 rounded-xl text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm border border-white/20 whitespace-nowrap text-white">
+                Content Board <ArrowRight className="w-3.5 h-3.5" />
+             </button>
+           </div>
+        </Link>
+
       </div>
     </div>
   );

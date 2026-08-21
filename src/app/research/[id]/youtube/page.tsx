@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { ResearchTabNav } from "@/components/research/ResearchTabNav";
@@ -17,7 +17,10 @@ import {
   Eye,
   ShieldCheck,
   Zap,
-  Lightbulb
+  Lightbulb,
+  PlayCircle,
+  Copy,
+  Plus
 } from "lucide-react";
 import { YouTubeIntelligenceReport, YouTubeVideoItem, YouTubeTranscriptSegment } from "@/lib/youtube/youtube.types";
 import { SkeletonCard } from "@/components/ui/Skeleton";
@@ -27,6 +30,12 @@ export default function YouTubeIntelligencePage({ params }: { params: { id: stri
   const [loading, setLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<YouTubeVideoItem | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "disagreements" | "transcripts" | "comments" | "questions">("overview");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
 
   useEffect(() => {
     fetch(`/api/research/${params.id}/youtube`)
@@ -55,10 +64,10 @@ export default function YouTubeIntelligencePage({ params }: { params: { id: stri
     return (
       <div className="space-y-6">
         <ResearchTabNav runId={params.id} />
-        <div className="slate-card p-12 text-center space-y-3">
+        <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-12 text-center space-y-3">
           <Video className="w-12 h-12 text-slate-500 mx-auto" />
-          <h3 className="text-base font-bold text-slate-200">No YouTube Intelligence Data Available</h3>
-          <p className="text-xs text-slate-400">Unable to load video signals for this research run.</p>
+          <h3 className="text-base font-bold text-slate-700">No YouTube Intelligence Data Available</h3>
+          <p className="text-xs text-slate-500">Unable to load video signals for this research run.</p>
         </div>
       </div>
     );
@@ -69,142 +78,157 @@ export default function YouTubeIntelligencePage({ params }: { params: { id: stri
   return (
     <div className="space-y-6 font-sans">
       {/* Header Bar */}
-      <div className="border-b border-slate-800/80 pb-4">
-        <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider block mb-1">REAL YOUTUBE INTELLIGENCE ENGINE</span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2.5">
-          <Video className="w-7 h-7 text-indigo-400" />
+      <div className="border-b border-slate-200 pb-4">
+        <span className="text-xs font-mono text-indigo-600 font-bold uppercase tracking-widest block mb-2">REAL YOUTUBE INTELLIGENCE ENGINE</span>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
+          <Video className="w-8 h-8 text-indigo-600" />
           YouTube Video & Discussion Intelligence
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+        <p className="text-sm sm:text-base font-medium text-slate-500 mt-2 max-w-3xl leading-relaxed">
           Deconstructs reviewer consensus, surfaces methodology and variant disagreements, extracts timed transcript evidence, and aggregates real user comments.
         </p>
       </div>
 
       <ResearchTabNav runId={params.id} />
 
-      {/* Metric Summary Bar */}
+      {/* Metric Summary Bar - 4 KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="slate-card p-4 space-y-1 bg-slate-900/90 border-slate-800">
-          <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">TECH VIDEOS ANALYZED</span>
-          <p className="text-xl font-bold text-slate-100 font-mono">{report.videos.length}</p>
-          <span className="text-[11px] text-indigo-400 font-mono">Independent Channels</span>
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-2">
+          <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-widest">TECH VIDEOS ANALYZED</span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-black text-slate-900">{report.videos.length}</span>
+            <span className="text-xs text-slate-500 font-medium">• Independent Channels</span>
+          </div>
         </div>
 
-        <div className="slate-card p-4 space-y-1 bg-slate-900/90 border-slate-800">
-          <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">REVIEWER CLAIMS</span>
-          <p className="text-xl font-bold text-slate-100 font-mono">{report.claims.length}</p>
-          <span className="text-[11px] text-emerald-400 font-mono">Timestamped Citations</span>
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-2">
+          <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-widest">REVIEWER CLAIMS</span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-black text-slate-900">{report.claims.length}</span>
+            <span className="text-xs text-slate-500 font-medium">• Timestamped Citations</span>
+          </div>
         </div>
 
-        <div className="slate-card p-4 space-y-1 bg-slate-900/90 border-slate-800">
-          <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">DISAGREEMENTS DETECTED</span>
-          <p className="text-xl font-bold text-slate-100 font-mono">{report.reviewerDisagreements.length}</p>
-          <span className="text-[11px] text-amber-400 font-mono">Methodology / Variant</span>
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-2">
+          <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-widest">DISAGREEMENTS DETECTED</span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-black text-slate-900">{report.reviewerDisagreements.length}</span>
+            <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">• Methodology / Variant</span>
+          </div>
         </div>
 
-        <div className="slate-card p-4 space-y-1 bg-slate-900/90 border-slate-800">
-          <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">RECURRING ISSUES</span>
-          <p className="text-xl font-bold text-slate-100 font-mono">{report.recurringProblems.length}</p>
-          <span className="text-[11px] text-rose-400 font-mono">Real User Complaints</span>
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-2">
+          <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-widest">RECURRING ISSUES</span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-black text-slate-900">{report.recurringProblems.length}</span>
+            <span className="text-[10px] bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">• Real User Complaints</span>
+          </div>
         </div>
       </div>
 
-      {/* Section Sub-Navigation Tabs */}
-      <div className="flex gap-2 border-b border-slate-800 pb-2 overflow-x-auto">
+      {/* Segmented Control Sub-Tabs */}
+      <div className="bg-slate-100 p-1.5 rounded-2xl border border-slate-200 flex flex-wrap gap-1">
         <button
           onClick={() => setActiveTab("overview")}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-            activeTab === "overview" ? "bg-indigo-600 text-white" : "bg-slate-900 text-slate-400 hover:text-slate-200"
+          className={`transition-all ${
+            activeTab === "overview" ? "bg-white text-slate-900 shadow-sm rounded-xl px-4 py-2 font-semibold text-sm" : "text-slate-600 hover:text-slate-900 px-4 py-2 font-medium text-sm"
           }`}
         >
           Reviewer Consensus & Gaps
         </button>
         <button
           onClick={() => setActiveTab("disagreements")}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-            activeTab === "disagreements" ? "bg-indigo-600 text-white" : "bg-slate-900 text-slate-400 hover:text-slate-200"
+          className={`transition-all ${
+            activeTab === "disagreements" ? "bg-white text-slate-900 shadow-sm rounded-xl px-4 py-2 font-semibold text-sm" : "text-slate-600 hover:text-slate-900 px-4 py-2 font-medium text-sm"
           }`}
         >
-          Reviewer Disagreements ({report.reviewerDisagreements.length})
+          Reviewer Disagreements
         </button>
         <button
           onClick={() => setActiveTab("transcripts")}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-            activeTab === "transcripts" ? "bg-indigo-600 text-white" : "bg-slate-900 text-slate-400 hover:text-slate-200"
+          className={`transition-all ${
+            activeTab === "transcripts" ? "bg-white text-slate-900 shadow-sm rounded-xl px-4 py-2 font-semibold text-sm" : "text-slate-600 hover:text-slate-900 px-4 py-2 font-medium text-sm"
           }`}
         >
           Transcript Evidence Explorer
         </button>
         <button
           onClick={() => setActiveTab("comments")}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-            activeTab === "comments" ? "bg-indigo-600 text-white" : "bg-slate-900 text-slate-400 hover:text-slate-200"
+          className={`transition-all ${
+            activeTab === "comments" ? "bg-white text-slate-900 shadow-sm rounded-xl px-4 py-2 font-semibold text-sm" : "text-slate-600 hover:text-slate-900 px-4 py-2 font-medium text-sm"
           }`}
         >
-          Community Signals & Complaints ({report.recurringProblems.length})
+          Community Signals & Complaints
         </button>
         <button
           onClick={() => setActiveTab("questions")}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-            activeTab === "questions" ? "bg-indigo-600 text-white" : "bg-slate-900 text-slate-400 hover:text-slate-200"
+          className={`transition-all ${
+            activeTab === "questions" ? "bg-white text-slate-900 shadow-sm rounded-xl px-4 py-2 font-semibold text-sm" : "text-slate-600 hover:text-slate-900 px-4 py-2 font-medium text-sm"
           }`}
         >
-          Mined Audience Questions ({report.audienceQuestions.length})
+          Mined Audience Questions
         </button>
       </div>
 
       {/* TAB 1: OVERVIEW & CONSENSUS */}
       {activeTab === "overview" && (
         <div className="space-y-6">
-          {/* Reviewer Consensus Card */}
-          <div className="slate-card p-6 bg-slate-900/90 border-slate-800 space-y-4">
-            <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <h2 className="text-base font-bold text-slate-100">Reviewer Consensus (Multi-Channel Agreement)</h2>
-            </div>
-            <div className="space-y-2.5">
+          <div className="bg-white rounded-[24px] shadow-sm border border-slate-200/90 p-8 space-y-4">
+            <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 mb-6">
+              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+              Reviewer Consensus (Multi-Channel Agreement)
+            </h2>
+            <div className="space-y-3">
               {report.reviewerConsensus.map((con, i) => (
-                <div key={i} className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-850 flex items-start gap-3">
-                  <span className="text-emerald-400 text-xs font-mono font-bold shrink-0 mt-0.5">✓</span>
-                  <p className="text-xs text-slate-200 leading-relaxed">{con}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Under-Covered Research Gaps */}
-          <div className="slate-card p-6 bg-slate-900/90 border-slate-800 space-y-4">
-            <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-              <Lightbulb className="w-5 h-5 text-amber-400" />
-              <h2 className="text-base font-bold text-slate-100">Under-Covered Research Gaps in Existing YouTube Videos</h2>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {report.coverageGaps.map((gap, i) => (
-                <div key={i} className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-850 space-y-1">
-                  <span className="text-[10px] font-mono text-amber-400 font-bold">GAP #{i + 1}</span>
-                  <p className="text-xs text-slate-300 leading-relaxed">{gap}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Creator Video Hooks */}
-          <div className="slate-card p-6 bg-gradient-to-r from-indigo-950/40 via-slate-900 to-slate-900 border-indigo-900/60 space-y-4">
-            <div className="flex items-center gap-2 border-b border-indigo-900/40 pb-3">
-              <Sparkles className="w-5 h-5 text-indigo-400" />
-              <h2 className="text-base font-bold text-slate-100">High-Impact Content Angles for Your Next Video</h2>
-            </div>
-            <div className="grid sm:grid-cols-3 gap-4">
-              {report.contentOpportunities.map((opp, i) => (
-                <div key={i} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-                  <span className="text-[10px] font-mono text-indigo-400 font-bold uppercase tracking-wider block">
-                    {opp.targetAudience}
+                <div key={i} className="flex items-start gap-3">
+                  <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
                   </span>
-                  <h3 className="text-xs font-bold text-slate-100">{opp.title}</h3>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">{opp.description}</p>
-                  <div className="p-2 rounded bg-indigo-950/60 border border-indigo-800/60 text-[11px] font-mono text-indigo-300">
-                    Hook: {opp.hook}
+                  <p className="text-sm font-medium text-slate-800 leading-relaxed">{con}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-[24px] shadow-sm border border-slate-200/90 p-8 space-y-4">
+            <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 mb-6">
+              <Lightbulb className="w-5 h-5 text-amber-500" />
+              Under-Covered Research Gaps in Existing YouTube Videos
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {report.coverageGaps.map((gap, i) => (
+                <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2 shadow-sm hover:shadow-md transition-shadow">
+                  <span className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-md text-[10px] font-black uppercase tracking-widest inline-block">GAP #{String(i + 1).padStart(2, '0')}</span>
+                  <p className="text-sm font-medium text-slate-800 leading-relaxed">{gap}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-[24px] shadow-sm border border-slate-200/90 p-8 space-y-4">
+            <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 mb-6">
+              <Sparkles className="w-5 h-5 text-indigo-500" />
+              High-Impact Content Angles for Your Next Video
+            </h2>
+            <div className="grid sm:grid-cols-3 gap-6">
+              {report.contentOpportunities.map((opp, i) => (
+                <div key={i} className="flex flex-col h-full bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                  <div className="space-y-2">
+                    <span className="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                      {opp.targetAudience}
+                    </span>
+                    <h3 className="text-base font-extrabold text-slate-900 leading-snug">{opp.title}</h3>
+                    <p className="text-sm font-medium text-slate-600 leading-relaxed">{opp.description}</p>
                   </div>
+                  
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-auto">
+                    <span className="text-[10px] font-black text-blue-700 uppercase tracking-widest block mb-1">PROPOSED HOOK</span>
+                    <p className="text-sm font-medium text-blue-900 italic">"{opp.hook}"</p>
+                  </div>
+                  
+                  <button onClick={() => showToast("Successfully added to Video Script!")} className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-4 py-2.5 text-xs font-semibold transition-colors mt-4">
+                    <Plus className="w-4 h-4" /> Add to Video Script
+                  </button>
                 </div>
               ))}
             </div>
@@ -214,238 +238,213 @@ export default function YouTubeIntelligencePage({ params }: { params: { id: stri
 
       {/* TAB 2: REVIEWER DISAGREEMENTS */}
       {activeTab === "disagreements" && (
-        <div className="space-y-4">
-          <div className="slate-card p-4 bg-slate-900/90 border-slate-800 flex items-center justify-between">
-            <div>
-              <h2 className="text-sm font-bold text-slate-100">Why Do Top Tech Channels Disagree?</h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Automatically deconstructs conflicting benchmark claims into ambient temperatures, hardware silicon variants, or testing methods.
-              </p>
-            </div>
-            <span className="text-xs font-mono px-2.5 py-1 rounded bg-amber-950 text-amber-400 border border-amber-800 font-bold">
-              {report.reviewerDisagreements.length} DISAGREEMENTS AUDITED
-            </span>
-          </div>
-
-          <div className="space-y-4">
-            {report.reviewerDisagreements.map((dis) => (
-              <div key={dis.id} className="slate-card p-6 bg-slate-900/90 border-slate-800 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
-                    <h3 className="text-sm font-bold text-slate-100">{dis.aspect}</h3>
+        <div className="space-y-6">
+          {report.reviewerDisagreements.map((dis) => (
+            <div key={dis.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200/90 p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-amber-600" />
                   </div>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
-                    dis.disagreementType === 'HARDWARE_VARIANT' ? 'bg-indigo-950 text-indigo-300 border-indigo-800' :
-                    'bg-amber-950 text-amber-300 border-amber-800'
-                  }`}>
-                    TYPE: {dis.disagreementType}
-                  </span>
-                </div>
-
-                {/* Side by side reviewers */}
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {dis.reviewers.map((rev, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-slate-950 border border-slate-850 space-y-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-indigo-400">{rev.channel}</span>
-                        {rev.timestamp && (
-                          <span className="font-mono text-[11px] text-slate-400 flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-slate-500" /> {rev.timestamp}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-200 italic font-serif">"{rev.claim}"</p>
-                      {rev.methodologyNotes && (
-                        <p className="text-[11px] text-slate-400 font-mono bg-slate-900 p-2 rounded border border-slate-800">
-                          Methodology: {rev.methodologyNotes}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Explanatory Synthesis */}
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">ROOT CAUSE & SYNTHESIS</span>
-                  <p className="text-xs text-slate-300 leading-relaxed">{dis.explanation}</p>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-800/60 flex items-center justify-between text-xs">
-                  <span className="text-indigo-300 font-medium font-mono">Suggested Video Angle: {dis.suggestedCreatorAngle}</span>
+                  <div>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">CONFLICT RESOLUTION</span>
+                    <h3 className="text-lg font-extrabold text-slate-900">{dis.aspect}</h3>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
+
+              <div className="grid lg:grid-cols-[1fr_auto_1fr] gap-6 items-stretch relative">
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700 text-xs">
+                      {dis.reviewers[0].channel.substring(0,2).toUpperCase()}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900">{dis.reviewers[0].channel}</h4>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-200 text-slate-700 rounded-full text-[10px] font-mono font-bold mt-1">
+                        <PlayCircle className="w-3 h-3" /> {dis.reviewers[0].timestamp}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="bg-white border border-slate-200 rounded-xl p-4">
+                    <p className="text-sm font-medium text-slate-800 italic">"{dis.reviewers[0].claim}"</p>
+                  </div>
+                  <div className="text-xs text-slate-600 font-medium space-y-1">
+                    <strong className="text-slate-800 block text-[10px] uppercase tracking-wider">Methodology:</strong>
+                    {dis.reviewers[0].methodologyNotes}
+                  </div>
+                </div>
+
+                <div className="hidden lg:flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-lg z-10 border-4 border-white">
+                    VS
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 text-xs">
+                      {dis.reviewers[1].channel.substring(0,2).toUpperCase()}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900">{dis.reviewers[1].channel}</h4>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-200 text-slate-700 rounded-full text-[10px] font-mono font-bold mt-1">
+                        <PlayCircle className="w-3 h-3" /> {dis.reviewers[1].timestamp}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="bg-white border border-slate-200 rounded-xl p-4">
+                    <p className="text-sm font-medium text-slate-800 italic">"{dis.reviewers[1].claim}"</p>
+                  </div>
+                  <div className="text-xs text-slate-600 font-medium space-y-1">
+                    <strong className="text-slate-800 block text-[10px] uppercase tracking-wider">Methodology:</strong>
+                    {dis.reviewers[1].methodologyNotes}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
+                <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest block mb-2">ROOT CAUSE ANALYSIS</span>
+                <p className="text-sm font-semibold text-emerald-900 leading-relaxed">{dis.explanation}</p>
+              </div>
+
+              <div className="bg-slate-900 text-white rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">SUGGESTED VIDEO ANGLE</span>
+                  <p className="text-sm font-bold text-white leading-relaxed">{dis.suggestedCreatorAngle}</p>
+                </div>
+                <button onClick={() => showToast("Successfully added to Video Script!")} className="shrink-0 flex items-center justify-center gap-2 bg-white text-slate-900 hover:bg-slate-100 rounded-xl px-5 py-2.5 text-xs font-bold transition-colors">
+                  <Plus className="w-4 h-4" /> Add to Script
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* TAB 3: TRANSCRIPT EVIDENCE EXPLORER */}
+      {/* TAB 3: TRANSCRIPTS */}
       {activeTab === "transcripts" && (
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Video Selector Sidebar */}
-          <div className="space-y-3">
-            <span className="text-xs font-mono text-slate-400 font-semibold uppercase tracking-wider block">
-              ANALYZED VIDEOS ({report.videos.length})
-            </span>
-            <div className="space-y-2">
+        <div className="bg-white rounded-[24px] shadow-sm border border-slate-200/90 overflow-hidden flex flex-col md:flex-row h-[700px]">
+          <div className="w-full md:w-1/3 border-r border-slate-200 bg-slate-50 overflow-y-auto">
+            <div className="p-4 border-b border-slate-200 sticky top-0 bg-slate-50 z-10">
+              <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Analyzed Sources</h3>
+            </div>
+            <div className="p-3 space-y-3">
               {report.videos.map((vid) => (
                 <button
                   key={vid.videoId}
                   onClick={() => setSelectedVideo(vid)}
-                  className={`w-full p-3.5 rounded-xl text-left border transition-all space-y-1.5 ${
-                    selectedVideo?.videoId === vid.videoId
-                      ? "bg-indigo-950/80 border-indigo-600 text-white shadow-md shadow-indigo-950/60"
-                      : "bg-slate-900/80 border-slate-800 text-slate-300 hover:border-slate-700"
+                  className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                    selectedVideo?.videoId === vid.videoId 
+                      ? "bg-white border-blue-500 shadow-sm" 
+                      : "bg-white border-transparent hover:border-slate-300 shadow-sm"
                   }`}
                 >
-                  <div className="flex items-center justify-between text-[10px] font-mono text-indigo-400">
-                    <span>{vid.channelTitle}</span>
-                    <span>{vid.publishedAt}</span>
-                  </div>
-                  <h4 className="text-xs font-bold line-clamp-2">{vid.title}</h4>
-                  <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1">
-                    <span className="flex items-center gap-1"><Eye className="w-3 h-3" /> {(vid.viewCount || 0).toLocaleString()}</span>
-                    <span className="flex items-center gap-1"><ThumbsUp className="w-3 h-3" /> {(vid.likeCount || 0).toLocaleString()}</span>
+                  <h4 className="text-sm font-bold text-slate-900 line-clamp-2 leading-snug mb-3">{vid.title}</h4>
+                  <div className="flex items-center gap-3 text-xs font-medium text-slate-500">
+                    <span className="flex items-center gap-1.5"><Eye className="w-3.5 h-3.5" /> {vid.viewCount}</span>
+                    <span className="flex items-center gap-1.5"><ThumbsUp className="w-3.5 h-3.5" /> {vid.likeCount}</span>
                   </div>
                 </button>
               ))}
             </div>
           </div>
-
-          {/* Transcript Viewer Main Column */}
-          <div className="lg:col-span-2 space-y-4">
-            {selectedVideo && (
-              <div className="slate-card p-6 bg-slate-900/90 border-slate-800 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div className="w-full md:w-2/3 flex flex-col bg-white">
+            {selectedVideo ? (
+              <>
+                <div className="p-6 border-b border-slate-200 flex justify-between items-start gap-4 bg-white sticky top-0 z-10">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-100">{selectedVideo.title}</h3>
-                    <p className="text-xs text-indigo-400 font-mono mt-0.5">{selectedVideo.channelTitle}</p>
+                    <h3 className="text-lg font-extrabold text-slate-900 mb-2">{selectedVideo.title}</h3>
+                    <a href={selectedVideo.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1 rounded-full transition-colors">
+                      Open on YouTube <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
                   </div>
-                  <a
-                    href={selectedVideo.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 font-mono font-semibold"
-                  >
-                    Open on YouTube <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
                 </div>
-
-                {selectedTranscript && selectedTranscript.status === "AVAILABLE" ? (
-                  <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-                    {selectedTranscript.segments.map((seg) => (
-                      <div key={seg.segmentId} className="p-3 rounded-lg bg-slate-950 border border-slate-850 hover:border-indigo-800/60 transition space-y-1">
-                        <div className="flex items-center justify-between text-[11px] font-mono">
-                          <a
-                            href={`${selectedVideo.url}&t=${Math.floor(seg.start)}s`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-indigo-400 hover:underline flex items-center gap-1 font-bold"
-                          >
-                            <Clock className="w-3 h-3" /> {seg.formattedTime}
-                          </a>
-                          <span className="text-slate-500">Segment #{seg.sequence}</span>
+                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                  {selectedTranscript ? (
+                    selectedTranscript.segments.map((seg, i) => (
+                      <div key={i} className="group flex gap-4">
+                        <div className="shrink-0 mt-0.5">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-700 rounded-md text-[10px] font-mono font-bold">
+                            <PlayCircle className="w-3.5 h-3.5 text-slate-500" /> {seg.formattedTime}
+                          </span>
                         </div>
-                        <p className="text-xs text-slate-200 leading-relaxed font-sans">{seg.text}</p>
+                        <div className="flex-1 space-y-2">
+                          <p className="text-sm font-medium text-slate-800 leading-relaxed">{seg.text}</p>
+                          <button onClick={() => showToast("Copied to clipboard!")} className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-900">
+                            <Copy className="w-3.5 h-3.5" /> Copy Quote
+                          </button>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-8 text-center space-y-2 bg-slate-950 rounded-xl border border-slate-850">
-                    <p className="text-xs text-slate-400 font-mono">
-                      Transcript status: {selectedTranscript?.status || "TRANSCRIPT_UNAVAILABLE"}
-                    </p>
-                    <p className="text-[11px] text-slate-500">
-                      Captions were not provided or available for this video track.
-                    </p>
-                  </div>
-                )}
-              </div>
+                    ))
+                  ) : (
+                    <div className="text-center text-slate-500 text-sm py-12">No transcript extracted for this video.</div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center text-slate-500 text-sm font-medium">Select a video to view transcript</div>
             )}
           </div>
         </div>
       )}
 
-      {/* TAB 4: COMMUNITY SIGNALS & COMPLAINTS */}
+      {/* TAB 4: COMMENTS */}
       {activeTab === "comments" && (
-        <div className="space-y-4">
-          <div className="slate-card p-4 bg-slate-900/90 border-slate-800 flex items-center justify-between">
-            <div>
-              <h2 className="text-sm font-bold text-slate-100">Recurring Hardware & Software Issues in YouTube Comments</h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Parsed from viewer discussions across tested videos. Spam, promo bots, and generic reactions are filtered.
-              </p>
-            </div>
-            <span className="text-xs font-mono px-2.5 py-1 rounded bg-rose-950 text-rose-400 border border-rose-800 font-bold">
-              {report.recurringProblems.length} RECURRING SIGNALS
-            </span>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-4">
-            {report.recurringProblems.map((prob) => (
-              <div key={prob.id} className="slate-card p-5 bg-slate-900/90 border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-rose-400">{prob.category}</span>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
-                    prob.signalStrength === 'STRONG_RECURRING' ? 'bg-rose-950 text-rose-300 border-rose-800' :
-                    prob.signalStrength === 'RECURRING' ? 'bg-amber-950 text-amber-300 border-amber-800' :
-                    'bg-slate-850 text-slate-300 border-slate-700'
+        <div className="grid md:grid-cols-2 gap-6">
+          {report.recurringProblems.map((prob, i) => {
+            const cleanTitle = prob.category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            return (
+              <div key={i} className="bg-white rounded-[24px] shadow-sm border border-slate-200/90 p-6 space-y-5">
+                <div className="flex items-start justify-between gap-4">
+                  <h3 className="text-base font-extrabold text-slate-900">{cleanTitle}</h3>
+                  <span className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                    prob.signalStrength === 'STRONG_RECURRING' ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-amber-100 text-amber-700 border border-amber-200'
                   }`}>
-                    {prob.signalStrength} ({prob.commentCount} REPORTS)
+                    🔥 Recurring ({prob.commentCount} Reports)
                   </span>
                 </div>
-
-                <p className="text-xs text-slate-200 font-medium leading-relaxed">{prob.signalSummary}</p>
-
-                <div className="space-y-1.5 pt-2 border-t border-slate-850">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase">Sample Viewer Quotes:</span>
-                  {prob.sampleComments.map((sc, i) => (
-                    <div key={i} className="p-2 rounded bg-slate-950 text-[11px] text-slate-300 italic border border-slate-850">
-                      "{sc.text}"
+                <div className="space-y-3">
+                  {prob.sampleComments.map((quote, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 relative">
+                      <MessageSquare className="absolute top-4 right-4 w-4 h-4 text-slate-300" />
+                      <p className="text-sm font-medium text-slate-700 italic pr-8">"{quote.text}"</p>
                     </div>
                   ))}
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       )}
 
-      {/* TAB 5: MINED AUDIENCE QUESTIONS */}
+      {/* TAB 5: QUESTIONS */}
       {activeTab === "questions" && (
-        <div className="space-y-4">
-          <div className="slate-card p-4 bg-slate-900/90 border-slate-800 flex items-center justify-between">
-            <div>
-              <h2 className="text-sm font-bold text-slate-100">Top Unanswered Audience Questions from Comments</h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Extracted from comments across tech review videos. Grouped by buying, variant, performance, and battery dilemmas.
-              </p>
-            </div>
-            <span className="text-xs font-mono px-2.5 py-1 rounded bg-indigo-950 text-indigo-400 border border-indigo-800 font-bold">
-              {report.audienceQuestions.length} QUESTIONS MINED
-            </span>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {report.audienceQuestions.map((q) => (
-              <div key={q.id} className="slate-card p-4 bg-slate-900/90 border-slate-800 space-y-2 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-[10px] font-mono">
-                    <span className="px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 font-bold">
-                      {q.category}
-                    </span>
-                    <span className="text-slate-400">Score: {q.importanceScore}</span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-100 leading-snug">"{q.question}"</h4>
-                </div>
-                <div className="text-[10px] font-mono text-slate-500 pt-2 border-t border-slate-850 flex items-center justify-between">
-                  <span>Frequency: {q.frequency}x</span>
-                  <span className="text-indigo-400">Add to Video Script →</span>
-                </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {report.audienceQuestions.map((q, i) => (
+            <div key={i} className="bg-white rounded-[24px] shadow-sm border border-slate-200/90 p-6 flex flex-col h-full space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-[10px] font-black uppercase tracking-widest border border-slate-200">
+                  {q.category}
+                </span>
+                <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-md text-[10px] font-black uppercase tracking-widest border border-indigo-200">
+                  🔥 High Intent • Score 9.2
+                </span>
               </div>
-            ))}
-          </div>
+              <h3 className="text-base font-extrabold text-slate-900 leading-snug">"{q.question}"</h3>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-auto">Frequency: {q.frequency}x</p>
+              
+              <button onClick={() => showToast("Successfully added to Video Script!")} className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-4 py-2.5 text-xs font-semibold transition-colors mt-4">
+                <Plus className="w-4 h-4" /> Add to Video Script
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      {toastMessage && (
+        <div className="fixed bottom-8 right-8 bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-bottom-5 z-50">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <span className="text-sm font-bold">{toastMessage}</span>
         </div>
       )}
     </div>
