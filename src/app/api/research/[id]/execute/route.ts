@@ -1,3 +1,5 @@
+export const maxDuration = 60;
+
 import { NextResponse } from "next/server";
 import { ResearchEngine } from "@/features/research/research-engine";
 import { createClient } from "@/lib/supabase/server";

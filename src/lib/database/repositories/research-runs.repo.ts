@@ -14,6 +14,7 @@ export class ResearchRunsRepository {
         status: session.status,
         source_count: session.sources.length,
         claim_count: session.claims.length,
+        token_usage: { sources: session.sources },
       };
 
       if (session.projectId) {
@@ -70,7 +71,7 @@ export class ResearchRunsRepository {
       const supabase = createClient();
       let query = supabase
         .from("research_runs")
-        .select("*, sources(*), claims(*), evidence(*), conflicts(*), research_briefs(*)")
+        .select("*, claims(*), evidence(*), conflicts(*), research_briefs(*)")
         .eq("id", id);
 
       if (userId) {
