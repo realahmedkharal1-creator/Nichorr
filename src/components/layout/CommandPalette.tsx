@@ -31,7 +31,7 @@ export function CommandPalette() {
     { label: "Prioritized Research Queue", href: "/research/queue", icon: ListOrdered },
     { label: "Content Production & Script Board", href: "/content", icon: Video },
     { label: "Project Workspaces & Research Projects", href: "/projects", icon: Database },
-    { label: "Platform Methodology & API Docs", href: "/developers/docs", icon: BookOpen },
+    
     { label: "Global Technical Search", href: "/search", icon: Search },
   ];
 

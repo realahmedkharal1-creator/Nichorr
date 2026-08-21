@@ -74,7 +74,7 @@ export function Header() {
     { href: "/research/sources", label: "Sources" },
     { href: "/content", label: "Content" },
     { href: "/research/quality", label: "Quality" },
-    { href: "/developers/docs", label: "Docs" },
+    
   ];
 
   return (
@@ -91,7 +91,7 @@ export function Header() {
 
       {/* Centered Floating Pill Navbar (Only show if logged in, or show docs if logged out) */}
       <nav className="bg-white border border-slate-200/90 rounded-full px-2 py-1 shadow-sm shadow-slate-200/70 flex items-center gap-1">
-        {user ? navItems.map((item) => {
+        {user && navItems.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
           return (
             <Link
@@ -106,9 +106,7 @@ export function Header() {
               {item.label}
             </Link>
           );
-        }) : (
-           <Link href="/developers/docs" className="px-5 py-1.5 rounded-full text-sm transition-all font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50">Docs</Link>
-        )}
+        })}
       </nav>
 
       {/* Right Actions */}
