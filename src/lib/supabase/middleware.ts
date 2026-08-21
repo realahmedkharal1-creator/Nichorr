@@ -48,22 +48,18 @@ export async function updateSession(request: NextRequest) {
   const isProtected = protectedPrefixes.some(prefix => pathname.startsWith(prefix)) || isRoot;
   
   const isAuthPage = pathname === "/login" || pathname === "/signup";
-  const isSupabaseConfigured = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL !== "https://placeholder-project.supabase.co";
+  // Enforce auth strictly
+  if (isProtected && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("redirectTo", request.nextUrl.pathname);
+    return NextResponse.redirect(url);
+  }
 
-  // Enforce auth conditionally
-  if (isSupabaseConfigured) {
-    if (isProtected && !user) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      url.searchParams.set("redirectTo", request.nextUrl.pathname);
-      return NextResponse.redirect(url);
-    }
-
-    if (isAuthPage && user) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
+  if (isAuthPage && user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;
