@@ -44,7 +44,8 @@ export async function updateSession(request: NextRequest) {
   }
 
   const protectedPrefixes = ["/dashboard", "/projects", "/research", "/content", "/sources", "/settings"];
-  const isProtected = protectedPrefixes.some(prefix => pathname.startsWith(prefix));
+  const isRoot = pathname === "/";
+  const isProtected = protectedPrefixes.some(prefix => pathname.startsWith(prefix)) || isRoot;
   
   const isAuthPage = pathname === "/login" || pathname === "/signup";
   const isSupabaseConfigured = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL !== "https://placeholder-project.supabase.co";
