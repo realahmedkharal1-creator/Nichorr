@@ -165,7 +165,7 @@ export default function SourceTrustIntelligencePage() {
 
       {/* Add Custom Source Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-[24px] shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <h2 className="text-lg font-extrabold text-slate-900">Add Custom Source</h2>
@@ -184,7 +184,7 @@ export default function SourceTrustIntelligencePage() {
                     placeholder="e.g. AnandTech" 
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
-                    className="w-full border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500"
+                    className="w-full border-2 border-indigo-200/80 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500"
                   />
                 </div>
                 
@@ -196,7 +196,7 @@ export default function SourceTrustIntelligencePage() {
                     placeholder="e.g. anandtech.com" 
                     value={newUrl}
                     onChange={(e) => setNewUrl(e.target.value)}
-                    className="w-full border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500"
+                    className="w-full border-2 border-indigo-200/80 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500"
                   />
                 </div>
 
@@ -206,7 +206,7 @@ export default function SourceTrustIntelligencePage() {
                     <select 
                       value={newProximity}
                       onChange={(e) => setNewProximity(e.target.value)}
-                      className="w-full border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all bg-white"
+                      className="w-full border-2 border-indigo-200/80 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all bg-white"
                     >
                       <option value="PRIMARY">PRIMARY</option>
                       <option value="SECONDARY">SECONDARY</option>
@@ -221,7 +221,7 @@ export default function SourceTrustIntelligencePage() {
                       placeholder="e.g. 95" 
                       value={newTrustScore}
                       onChange={(e) => setNewTrustScore(e.target.value)}
-                      className="w-full border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500"
+                      className="w-full border-2 border-indigo-200/80 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500"
                     />
                   </div>
                 </div>
@@ -234,7 +234,7 @@ export default function SourceTrustIntelligencePage() {
                     placeholder="e.g. 42" 
                     value={newCitations}
                     onChange={(e) => setNewCitations(e.target.value)}
-                    className="w-full border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500"
+                    className="w-full border-2 border-indigo-200/80 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500"
                   />
                 </div>
               </div>
@@ -243,13 +243,13 @@ export default function SourceTrustIntelligencePage() {
                 <button 
                   type="button" 
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+                  className="px-5 py-2.5 rounded-xl text-sm font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-white hover:bg-slate-50 shadow-md transition-colors active:scale-95 flex items-center gap-2"
+                  className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-colors active:scale-95 flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" /> Add Source
                 </button>
