@@ -26,7 +26,9 @@ const config: Config = {
         },
         rose: {
           500: '#f43f5e',
-        }
+        },
+        surface: '#A9A9A9',
+        bento: '#A9A9A9',
       },
     },
   },

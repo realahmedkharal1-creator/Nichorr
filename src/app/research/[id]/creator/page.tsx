@@ -3208,7 +3208,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* 2. Project Status & Metadata Hero Card */}
-     <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden group">
+     <div className="bg-[#A9A9A9] border border-slate-400/80 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-transform group-hover:scale-110"></div>
       
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 relative z-10">
@@ -3262,7 +3262,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        { step: 4, title: "PUBLISHING PREFLIGHT", score: 100, subtitle: "Multi-Platform Checks", color: "emerald" },
        { step: 5, title: "DISTRIBUTION STAGING", score: 69, subtitle: "Staged Release Plans", color: "amber" }
       ].map(kpi => (
-       <div key={kpi.step} className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-4 group hover:border-slate-300 transition-colors">
+       <div key={kpi.step} className="bg-[#A9A9A9] border border-slate-400/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-4 group hover:border-slate-500 transition-colors">
         <div>
          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block mb-1">
           {kpi.step}. {kpi.title}
@@ -3287,7 +3287,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* 4. End-to-End Pipeline Integrity (9 Stages 3x3 Bento Matrix) */}
-     <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
+     <div className="bg-[#A9A9A9] border border-slate-400/80 rounded-3xl p-6 sm:p-8 shadow-sm">
       <div className="mb-6">
        <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
         <Activity className="w-5 h-5 text-indigo-600" />
@@ -3312,7 +3312,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        ].map(stage => (
         <div 
          key={stage.i} 
-         className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between min-h-[170px]"
+         className="bg-[#A9A9A9] border border-slate-400/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-slate-500 transition-all flex flex-col justify-between min-h-[170px]"
         >
          <div>
           <div className="flex items-center justify-between gap-2">
@@ -3343,7 +3343,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* 5. Unified Project Asset Inventory */}
-     <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
+     <div className="bg-[#A9A9A9] border border-slate-400/80 rounded-3xl p-6 sm:p-8 shadow-sm">
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
        <div>
         <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
@@ -3420,7 +3420,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* 6. "What Breaks If This Changes?" Read-Only Impact Simulator */}
-     <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
+     <div className="bg-[#A9A9A9] border border-slate-400/80 rounded-3xl p-6 sm:p-8 shadow-sm">
       <div className="mb-6">
        <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
         <Zap className="w-5 h-5 text-amber-500" />
