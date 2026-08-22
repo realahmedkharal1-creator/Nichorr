@@ -20,7 +20,7 @@ export * from "./production-matrix/production-matrix.provider";
 export * from "./export/creator-export.provider";
 export * from "./publication-integrity/publication-integrity.provider";
 export * from "./research-calibration/research-calibration.provider";
-export * from "./collective-intelligence/collective-intelligence.provider";
+
 export * from "./hypothesis-reconciliation/hypothesis.provider";
 export * from "./script-intelligence.engine";
 

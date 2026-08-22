@@ -54,6 +54,7 @@ Design principle: desktop-first, evidence-first, no fake AI-chat gimmicks. The c
 - `src/app/creator/**` — creator studio pages
 - `src/app/content/**`, `src/app/projects/**`
 - The underlying `src/lib/creator/` engines that power the above (research/evidence/claims logic only — NOT the hardware/silicon ones listed below)
+- `src/lib/creator/hypothesis-reconciliation/` — kept as a core feature implementing the conflict-detection requirement (Section 2)
 - Supabase, Gemini, Tavily integrations used by the research pipeline
 
 ## 5. What is OUT OF SCOPE — must be archived, not extended
@@ -64,11 +65,13 @@ The codebase has accumulated a large amount of work that has **nothing to do wit
 `treasury`, `workforce`, `supply-chain`, `legal`, `investor-relations`, `accounting`, `compliance`, `risk`, `billing`, `fpa`, `customer-experience`, `commercial`, `operations`, `operating-model`, `process`, `strategy`, `market`, `foresight`, `innovation`, `resilience`, `security` (enterprise version), `knowledge`, `autonomy`, `command-center`, `control-tower`, `control-plane`, `decision-intelligence`, `decisions`, `adaptive`, `causal`, `simulation` (enterprise), `execution` (enterprise), `automation` (enterprise), `workspaces`, `admin` (unless used for real user admin), `docs` (if enterprise-related), `product` (if this is a separate enterprise "product management" module, not our own app's product pages)
 
 **Hardware/silicon-lab simulation modules (these were built by mistake — real scope creep, not real product features):**
-`src/lib/creator/microarchitecture/`, `src/lib/creator/microarchitectural-attribution/`, `src/lib/creator/co-design-workbench/`, `src/lib/creator/silicon-regression/`, `src/lib/creator/testbench/`, `src/lib/creator/testbench-cluster/`, `src/lib/creator/cross-lab-regression/`, `src/lib/creator/architectural-forecast/`, `src/lib/creator/hypothesis-reconciliation/`, `src/lib/creator/collective-intelligence/`
+`src/lib/creator/microarchitecture/`, `src/lib/creator/microarchitectural-attribution/`, `src/lib/creator/co-design-workbench/`, `src/lib/creator/silicon-regression/`, `src/lib/creator/testbench/`, `src/lib/creator/testbench-cluster/`, `src/lib/creator/cross-lab-regression/`, `src/lib/creator/architectural-forecast/`, `src/lib/creator/collective-intelligence/`
 And their corresponding API routes and test files (phase88–phase95 and similar).
 
-**Archived Dead API Routes (Phase 1 Cleanup):**
-`src/app/api/anomalies/`, `src/app/api/predictions/`, `src/app/api/residency/`, `src/app/api/entities/`, `src/app/api/relationships/`, `src/app/api/graph/`, `src/app/api/incidents/`, `src/app/api/objectives/`, `src/app/api/outcomes/`, `src/app/api/optimizations/` (and their associated repositories/engines) are confirmed dead enterprise-BI scaffolding, now archived in `/_archive/`.
+**Archived Dead API Routes (Phase 1 & Phase 8 Cleanup):**
+`src/app/api/anomalies/`, `src/app/api/predictions/`, `src/app/api/residency/`, `src/app/api/entities/`, `src/app/api/relationships/`, `src/app/api/graph/`, `src/app/api/incidents/`, `src/app/api/objectives/`, `src/app/api/outcomes/`, `src/app/api/optimizations/`
+`src/app/api/v1/innovation/`, `src/app/api/v1/assets/`, `src/app/api/v1/security/`, `src/app/api/v1/intelligence/`, `src/app/api/v1/control-plane/`, `src/app/api/v1/command-center/`, `src/app/api/v1/autonomy/`, `src/app/api/v1/foresight/`, `src/app/api/v1/control-tower/`, `src/app/api/v1/adaptive/`
+(and their associated repositories/engines) are confirmed dead enterprise-BI scaffolding, now archived in `/_archive/`.
 
 **Rule going forward:** if a requested feature is not clearly part of Section 2/3/4 above (tech-creator research pipeline), it does not get built, no matter how the request is phrased or how good the "next phase" idea sounds.
 
@@ -84,7 +87,8 @@ And their corresponding API routes and test files (phase88–phase95 and similar
 
 - **Phase 1 Archived Dead API Routes:** `src/app/api/anomalies/`, `src/app/api/predictions/`, `src/app/api/residency/`, `src/app/api/entities/`, `src/app/api/relationships/`, `src/app/api/graph/`, `src/app/api/incidents/`, `src/app/api/objectives/`, `src/app/api/outcomes/`, `src/app/api/optimizations/` (and their associated repositories/engines) have been archived to `/_archive/`. These must never be rebuilt.
 - **Phase 2 Bucket A (Archived Hardware/Silicon Simulation Modules):** The following 8 modules and their UI sections were confirmed to be chip-lab scope creep and archived to `/_archive/src/lib/creator/`: `microarchitecture`, `microarchitectural-attribution`, `co-design-workbench`, `silicon-regression`, `testbench`, `testbench-cluster`, `cross-lab-regression`, `architectural-forecast`.
-- **Phase 2 Bucket B (Flagged for Human Decision - 2026-08-22):**
-  - `hypothesis-reconciliation`: Kept active in code. Provides 13 live routes under `/api/research/[id]/hypotheses/*` and renders competing claims & falsification analysis in Creator Studio. Closely matches the core "Conflict detection" feature in Section 2.
-  - `collective-intelligence`: Kept active in code. Provides multi-source cross-hardware correlation & observation normalization in Creator Studio.
+- **Phase 2 Bucket B (Resolved - 2026-08-22):**
+  - `hypothesis-reconciliation`: Resolved: kept as core feature, see Section 4.
+  - `collective-intelligence`: Resolved: Archived to `/_archive/src/lib/creator/collective-intelligence/` along with its frontend components.
+- **Phase 8 Scope Cleanup (August 2026):** Archived `src/lib/creator/collective-intelligence/`. Archived 10 dead API route domains from `src/app/api/v1/` (`innovation`, `assets`, `security`, `intelligence`, `control-plane`, `command-center`, `autonomy`, `foresight`, `control-tower`, `adaptive`) alongside their backing enterprise repository engines. Confirmed `hypothesis-reconciliation` remains in scope.
 - **System Verification Status:** For current verified build and test suite outputs, refer to [STATUS.md](file:///C:/Users/ahmed/.gemini/antigravity/scratch/tech-research-platform/STATUS.md).
