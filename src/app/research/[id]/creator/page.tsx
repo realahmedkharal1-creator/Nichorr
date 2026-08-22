@@ -3298,40 +3298,43 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
        {[
-        { i: 1, title: "Research & Sources", status: "IN_PROGRESS", score: null },
-        { i: 2, title: "Evidence Health", status: "READY", score: "29%" },
-        { i: 3, title: "Health Decisions", status: "READY", score: null },
-        { i: 4, title: "Script & Narration", status: "READY", score: null },
-        { i: 5, title: "Quality Review", status: "WARNING", score: "25%" },
-        { i: 6, title: "Production Assets", status: "READY", score: "95%" },
-        { i: 7, title: "Publishing Preflight", status: "READY", score: "100%" },
-        { i: 8, title: "Distribution & Release", status: "WARNING", score: "69%" },
-        { i: 9, title: "Video Editor Sync", status: "READY", score: null }
+        { i: 1, title: "Research & Sources", status: "IN_PROGRESS", score: "Status: Active Collection" },
+        { i: 2, title: "Evidence Health", status: "READY", score: "Score: 29%" },
+        { i: 3, title: "Health Decisions", status: "READY", score: "Status: Verified" },
+        { i: 4, title: "Script & Narration", status: "READY", score: "Status: Ready for Inspection" },
+        { i: 5, title: "Quality Review", status: "WARNING", score: "Score: 25%" },
+        { i: 6, title: "Production Assets", status: "READY", score: "Score: 95%" },
+        { i: 7, title: "Publishing Preflight", status: "READY", score: "Score: 100%" },
+        { i: 8, title: "Distribution & Release", status: "WARNING", score: "Score: 69%" },
+        { i: 9, title: "Video Editor Sync", status: "READY", score: "Status: Ready for Inspection" }
        ].map(stage => (
-        <div key={stage.i} className="border border-slate-200 rounded-2xl p-5 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/10 transition-all flex flex-col justify-between gap-6 group">
-         <div className="flex items-start justify-between gap-2">
-          <div>
-           <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block mb-1">
+        <div 
+         key={stage.i} 
+         className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between min-h-[170px]"
+        >
+         <div>
+          <div className="flex items-center justify-between gap-2">
+           <span className="font-mono text-xs font-bold text-slate-400 uppercase tracking-wider">
             STAGE {stage.i}
            </span>
-           <h4 className="font-bold text-slate-900">{stage.title}</h4>
-           {stage.score && (
-            <p className="text-xs font-mono text-slate-500 mt-1">Score: <span className="font-bold text-slate-700">{stage.score}</span></p>
-           )}
+           <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+            stage.status === 'READY' 
+             ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+             : stage.status === 'WARNING'
+             ? 'bg-amber-50 text-amber-700 border-amber-200'
+             : 'bg-blue-50 text-blue-700 border-blue-200'
+           }`}>
+            {stage.status}
+           </span>
           </div>
-          <span className={`px-2 py-1 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider border ${
-           stage.status === 'READY' 
-            ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-            : stage.status === 'WARNING'
-            ? 'bg-amber-50 text-amber-700 border-amber-200'
-            : 'bg-blue-50 text-blue-700 border-blue-200'
-          }`}>
-           {stage.status}
-          </span>
+
+          <h4 className="text-slate-900 font-bold text-base mt-2 mb-1">{stage.title}</h4>
+          <p className="text-xs font-mono font-medium text-slate-500">{stage.score}</p>
          </div>
-         <button className="w-full py-2.5 rounded-xl text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 focus:opacity-100">
+
+         <button className="w-full mt-4 bg-slate-50 hover:bg-slate-900 hover:text-white text-slate-700 border border-slate-200/80 rounded-xl py-2 px-3 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-2xs">
           Open Subsystem <ArrowRight className="w-3.5 h-3.5" />
          </button>
         </div>
