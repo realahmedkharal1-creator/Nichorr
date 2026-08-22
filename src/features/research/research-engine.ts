@@ -1,6 +1,6 @@
 import { ResearchStateMachine, RunStatus } from "@/lib/state-machine/state-machine";
 import { getLLMProvider } from "@/lib/ai/factory";
-import { WebSearchProvider } from "@/lib/search/web.search.provider";
+import { getSearchProvider } from "@/lib/search";
 import { WebExtractionEngine } from "@/lib/extraction/web-extractor";
 import { SyndicationDetector } from "@/lib/extraction/syndication-detector";
 import { QualityGateValidator } from "./quality-gate";
@@ -81,7 +81,7 @@ function pruneRunStore() {
 }
 
 export class ResearchEngine {
-  private searchProvider = new WebSearchProvider();
+  private searchProvider = getSearchProvider();
   private extractionEngine = new WebExtractionEngine();
   private runsRepo = new ResearchRunsRepository();
   private claimsRepo = new ClaimsRepository();

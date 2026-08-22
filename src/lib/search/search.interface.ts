@@ -11,5 +11,5 @@ export interface SearchResult {
 
 export interface SearchProvider {
   name: string;
-  search(query: string, queryType?: string): Promise<SearchResult[]>;
+  search(query: string, queryType?: string, isTestMode?: boolean): Promise<SearchResult[]>;
 }

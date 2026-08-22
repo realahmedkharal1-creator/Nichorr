@@ -21,14 +21,6 @@ export * from "./export/creator-export.provider";
 export * from "./publication-integrity/publication-integrity.provider";
 export * from "./research-calibration/research-calibration.provider";
 export * from "./collective-intelligence/collective-intelligence.provider";
-export * from "./silicon-regression/silicon-regression.provider";
-export * from "./architectural-forecast/architectural-forecast.provider";
-export * from "./testbench/testbench.provider";
-export * from "./testbench-cluster/cluster-provider";
-export * from "./cross-lab-regression/cross-lab-regression.provider";
-export * from "./microarchitecture/microarchitecture.provider";
-export * from "./microarchitectural-attribution/microarchitectural-attribution.provider";
-export * from "./co-design-workbench/co-design.provider";
 export * from "./hypothesis-reconciliation/hypothesis.provider";
 export * from "./script-intelligence.engine";
 
