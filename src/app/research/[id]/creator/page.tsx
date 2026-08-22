@@ -3108,911 +3108,304 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
    {/* Top Navigation */}
    <ResearchTabNav runId={params.id} />
 
-   {/* Primary Workflow Stepper Bar (Phases 70-77) */}
-   <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 sm:p-4 shadow-sm">
-    <div className="flex items-center justify-between overflow-x-auto gap-2 text-xs font-mono">
-     <button
-      onClick={() => setActiveTab("outline")}
-      className="flex items-center gap-1.5 text-emerald-600 font-bold hover:underline"
-     >
-      <CheckCircle className="w-4 h-4 text-emerald-600" />
-      <span>1. RESEARCH</span>
-     </button>
-     <ArrowRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-     <button
-      onClick={() => { setActiveTab("health"); loadHealth(); }}
-      className="flex items-center gap-1.5 text-teal-600 font-bold hover:underline"
-     >
-      <HeartPulse className="w-4 h-4 text-teal-600" />
-      <span>2. EVIDENCE HEALTH</span>
-     </button>
-     <ArrowRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-     <button
-      onClick={() => { setActiveTab("decisions"); loadDecisions(); }}
-      className="flex items-center gap-1.5 text-indigo-600 font-bold hover:underline"
-     >
-      <Compass className="w-4 h-4 text-indigo-600" />
-      <span>3. HEALTH DECISIONS</span>
-     </button>
-     <ArrowRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-     <button
-      onClick={() => setActiveTab("narration")}
-      className="flex items-center gap-1.5 text-emerald-600 font-bold hover:underline"
-     >
-      <CheckCircle className="w-4 h-4 text-emerald-600" />
-      <span>4. SCRIPT</span>
-     </button>
-     <ArrowRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-     <button
-      onClick={() => setActiveTab("quality")}
-      className="flex items-center gap-1.5 text-emerald-600 font-bold hover:underline"
-     >
-      <CheckCircle className="w-4 h-4 text-emerald-600" />
-      <span>5. QUALITY</span>
-     </button>
-     <ArrowRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-     <button
-      onClick={() => setActiveTab("benchmarkCards")}
-      className="flex items-center gap-1.5 text-emerald-600 font-bold hover:underline"
-     >
-      <CheckCircle className="w-4 h-4 text-emerald-600" />
-      <span>6. PRODUCTION</span>
-     </button>
-     <ArrowRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-     <button
-      onClick={() => { setActiveTab("publishing"); loadPreflight(preferences); }}
-      className="flex items-center gap-1.5 text-purple-600 font-bold hover:underline"
-     >
-      <Send className="w-4 h-4 text-purple-600" />
-      <span>7. PUBLISHING</span>
-     </button>
-     <ArrowRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-     <button
-      onClick={() => { setActiveTab("distribution"); loadDistribution(); }}
-      className="flex items-center gap-1.5 text-rose-600 font-bold hover:underline"
-     >
-      <Globe className="w-4 h-4 text-rose-600" />
-      <span>8. DISTRIBUTION</span>
-     </button>
-     <ArrowRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-     <button
-      onClick={() => { setActiveTab("editorSync"); loadEditorSync(); }}
-      className="flex items-center gap-1.5 text-cyan-600 font-bold hover:underline"
-     >
-      <SlidersHorizontal className="w-4 h-4 text-cyan-600" />
-      <span>9. EDITOR SYNC</span>
-     </button>
-    </div>
+   {/* NEW OVERHAULED PILL BAR */}
+   <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-hide w-full whitespace-nowrap">
+    {[
+     { id: "project", label: "Project Control Center", icon: Network },
+     { id: "matrix", label: "Production Matrix", icon: Layers },
+     { id: "exportWorkspace", label: "Production Export", icon: Download },
+     { id: "publishingOrchestrator", label: "Publishing Orchestrator", icon: Send },
+     { id: "publicationIntegrity", label: "Publication Integrity", icon: ShieldCheck },
+     { id: "researchCalibration", label: "Research Calibration", icon: Scale }
+    ].map((tab) => {
+     const isActive = activeTab === tab.id;
+     const Icon = tab.icon;
+     return (
+      <button
+       key={tab.id}
+       onClick={() => setActiveTab(tab.id as any)}
+       className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all shrink-0 ${
+        isActive 
+         ? "bg-indigo-600 text-white shadow-md shadow-indigo-200" 
+         : "bg-white text-slate-600 border border-slate-200/90 hover:bg-slate-50 hover:text-slate-900"
+       }`}
+      >
+       <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-500"}`} />
+       {tab.label}
+      </button>
+     );
+    })}
    </div>
 
-   {/* Header Bar */}
-   <div className="border-b border-slate-200 pb-4">
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-     <div>
-      <span className="text-xs font-mono text-indigo-600 font-semibold uppercase tracking-wider block mb-1">
-       CREATOR PROJECT INTELLIGENCE WORKSPACE
-      </span>
-      <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-       <Network className="w-7 h-7 text-indigo-600" />
-       Creator Project Control Center
-      </h1>
-      <p className="text-xs sm:text-sm text-slate-500 mt-1">
-       Unified asset dependency graph, end-to-end evidence integrity, non-bypassable blocker intelligence, and read-only impact simulation.
-      </p>
-     </div>
-
-     <div className="flex flex-wrap items-center gap-3">
-      {/* Output Mode Switcher */}
-      <div className="flex items-center gap-1 bg-white rounded-[24px] shadow-sm border border-slate-200 p-1 rounded-xl">
-       <span className="text-xs text-slate-500 font-mono ml-2 mr-1">Mode:</span>
-       <button
-        onClick={() => handleModeChange("OUTLINE")}
-        className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition ${
-         outputMode === "OUTLINE"
-          ? "bg-indigo-600 text-slate-900 shadow-sm"
-          : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
-        }`}
-       >
-        Outline
-       </button>
-       <button
-        onClick={() => handleModeChange("SCRIPT_READY")}
-        className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition ${
-         outputMode === "SCRIPT_READY"
-          ? "bg-indigo-600 text-slate-900 shadow-sm"
-          : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
-        }`}
-       >
-        Script-Ready
-       </button>
-       <button
-        onClick={() => handleModeChange("FULL_NARRATION")}
-        className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition ${
-         outputMode === "FULL_NARRATION"
-          ? "bg-indigo-600 text-slate-900 shadow-sm"
-          : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
-        }`}
-       >
-        Full Spoken
-       </button>
-      </div>
-
-      {/* Duration Selector */}
-      <div className="flex items-center gap-1 bg-white rounded-[24px] shadow-sm border border-slate-200 p-1 rounded-xl">
-       <Clock className="w-3.5 h-3.5 text-slate-500 ml-2" />
-       <span className="text-xs text-slate-500 font-mono mr-1">Duration:</span>
-       {([8, 12, 18] as TargetVideoDuration[]).map((d) => (
-        <button
-         key={d}
-         onClick={() => handleDurationChange(d)}
-         className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition ${
-          duration === d
-           ? "bg-indigo-600 text-slate-900 shadow-sm"
-           : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
-         }`}
-        >
-         {d}m
-        </button>
-       ))}
-      </div>
-
-      {/* Teleprompter Button */}
-      {preferences.enableTeleprompter && preferences.generateScript ? (
-       <button
-        onClick={() => setIsTeleprompterOpen(true)}
-        className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-slate-900 px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition"
-       >
-        <MonitorPlay className="w-4 h-4" />
-        Teleprompter
-       </button>
-      ) : null}
-     </div>
-    </div>
-   </div>
-
-   {/* Navigation Sub-Tabs */}
-   <div className="flex gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
-    {/* Phase 77: Primary Project Control Center Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("project");
-      loadProjectOverview();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "project"
-       ? "bg-indigo-600 text-slate-900 border-indigo-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-indigo-600 border-indigo-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <Network className="w-3.5 h-3.5 inline mr-1.5" />
-     Project Control Center
-    </button>
-
-    {/* Phase 82: Production Matrix, Benchmark Diff & Asset Assembly Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("matrix");
-      loadMatrixState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "matrix"
-       ? "bg-teal-600 text-slate-900 border-teal-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-teal-700 border-teal-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <Layers className="w-3.5 h-3.5 inline mr-1.5" />
-     Production Matrix {productionMatrix ? `(${productionMatrix.totalVariantsCount} variants)` : ""}
-    </button>
-
-    {/* Phase 83: Production Export & Render Manifest Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("exportWorkspace");
-      loadExportState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "exportWorkspace"
-       ? "bg-blue-600 text-slate-900 border-blue-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-blue-700 border-blue-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <FileArchive className="w-3.5 h-3.5 inline mr-1.5" />
-     Production Export {exportPackage ? `(${exportPackage.status})` : ""}
-    </button>
-
-    {/* Phase 84: Creator Multi-Channel Publishing Orchestrator Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("publishingOrchestrator");
-      loadPublishingState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "publishingOrchestrator"
-       ? "bg-violet-600 text-slate-900 border-violet-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-violet-300 border-violet-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <SendHorizontal className="w-3.5 h-3.5 inline mr-1.5" />
-     Publishing Orchestrator {publishingPlan ? `(${publishingPlan.status})` : ""}
-    </button>
-
-    {/* Phase 85: Post-Publication Integrity Monitor & Release Health Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("publicationIntegrity");
-      loadPublicationIntegrityState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "publicationIntegrity"
-       ? "bg-rose-600 text-slate-900 border-rose-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-rose-600 border-rose-200 hover:bg-slate-100"
-     }`}
-    >
-     <ShieldAlert className="w-3.5 h-3.5 inline mr-1.5" />
-     Publication Integrity {releaseHealthReport ? `(${releaseHealthReport.overallStatus})` : ""}
-    </button>
-
-    {/* Phase 86: Closed-Loop Research Calibration Engine Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("researchCalibration");
-      loadCalibrationState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "researchCalibration"
-       ? "bg-amber-600 text-slate-900 border-amber-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-amber-600 border-amber-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <Scale className="w-3.5 h-3.5 inline mr-1.5" />
-     Research Calibration {calibrationQueue.length > 0 ? `(${calibrationQueue.length} queued)` : ""}
-    </button>
-
-    {/* Phase 87: Multi-Project Collective Intelligence Federation Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("collectiveIntelligence");
-      loadCollectiveIntelligenceState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "collectiveIntelligence"
-       ? "bg-indigo-600 text-slate-900 border-indigo-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-indigo-600 border-indigo-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <Network className="w-3.5 h-3.5 inline mr-1.5" />
-     Collective Intelligence {collectiveCorrelations.length > 0 ? `(${collectiveCorrelations.length} active)` : ""}
-    </button>
-
-    {/* Phase 88: Continuous Cross-Architecture Silicon Regression Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("siliconRegression");
-      loadSiliconRegressionState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "siliconRegression"
-       ? "bg-cyan-600 text-slate-900 border-cyan-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-cyan-600 border-cyan-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <Cpu className="w-3.5 h-3.5 inline mr-1.5" />
-     Silicon Regression {siliconMatrix?.detectedRegressionsCount ? `(${siliconMatrix.detectedRegressionsCount} regressed)` : ""}
-    </button>
-
-    {/* Phase 89: Adaptive Architectural Degradation Forecasting & Simulation Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("architecturalForecast");
-      loadArchitecturalForecastState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "architecturalForecast"
-       ? "bg-amber-600 text-slate-900 border-amber-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-amber-600 border-amber-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <Activity className="w-3.5 h-3.5 inline mr-1.5" />
-     Architectural Forecast {forecastMatrix?.forecastsCount ? `(${forecastMatrix.forecastsCount} forecasts)` : ""}
-    </button>
-
-    {/* Phase 90: Silicon Testbench Automation & Sandbox Simulation Control Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("testbenchControl");
-      loadTestbenchState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "testbenchControl"
-       ? "bg-emerald-600 text-slate-900 border-emerald-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-emerald-600 border-emerald-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <FlaskConical className="w-3.5 h-3.5 inline mr-1.5" />
-     Testbench Control {testbenchExperiments.length > 0 ? `(${testbenchExperiments.length} runs)` : ""}
-    </button>
-
-    {/* Phase 91: Multi-Testbench Cluster Orchestration & Silicon Differential Matrix Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("testbenchCluster");
-      loadTestbenchClusterState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "testbenchCluster"
-       ? "bg-teal-600 text-slate-900 border-teal-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-teal-700 border-teal-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <Network className="w-3.5 h-3.5 inline mr-1.5" />
-     Testbench Cluster {clusterNodes.length > 0 ? `(${clusterNodes.length} nodes)` : ""}
-    </button>
-
-    {/* Phase 92: Automated Continuous Cross-Laboratory Empirical Regression Synthesis Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("crossLabRegression");
-      loadCrossLabRegressionState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "crossLabRegression"
-       ? "bg-sky-600 text-slate-900 border-sky-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-sky-600 border-sky-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <GitMerge className="w-3.5 h-3.5 inline mr-1.5" />
-     Cross-Lab Regression {crossLabLaboratories.length > 0 ? `(${crossLabLaboratories.length} labs)` : ""}
-    </button>
-
-    {/* Phase 93: Automated Cross-Generational Microarchitectural Bottleneck Attribution Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("microarchitecture");
-      loadMicroarchitectureState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "microarchitecture"
-       ? "bg-indigo-600 text-slate-900 border-indigo-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-indigo-600 border-indigo-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <Layers className="w-3.5 h-3.5 inline mr-1.5" />
-     Microarchitecture {microTraces.length > 0 ? `(${microTraces.length} traces)` : ""}
-    </button>
-
-    {/* Phase 94: Automated Hardware-Software Co-Design Empirical Simulation & Interactive Calibration Workbench Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("coDesign");
-      loadCoDesignState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "coDesign"
-       ? "bg-fuchsia-600 text-slate-900 border-fuchsia-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-fuchsia-700 border-fuchsia-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <Cpu className="w-3.5 h-3.5 inline mr-1.5" />
-     Co-Design Workbench {coDesignScenarios.length > 0 ? `(${coDesignScenarios.length} scenarios)` : ""}
-    </button>
-
-    {/* Phase 95: Automated Competing Hypothesis, Falsification & Empirical Calibration Reconciliation Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("hypotheses");
-      loadHypothesisState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "hypotheses"
-       ? "bg-rose-600 text-slate-900 border-rose-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-rose-600 border-rose-200 hover:bg-slate-100"
-     }`}
-    >
-     <Compass className="w-3.5 h-3.5 inline mr-1.5" />
-     Hypothesis &amp; Falsification {hypothesesList.length > 0 ? `(${hypothesesList.length} hypotheses)` : ""}
-    </button>
-
-    {/* Phase 78: Execution Control Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("execution");
-      loadExecutionState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "execution"
-       ? "bg-emerald-600 text-slate-900 border-emerald-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-emerald-600 border-emerald-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <PlayCircle className="w-3.5 h-3.5 inline mr-1.5" />
-     Execution Control {executionPlan ? `(${executionPlan.executionStatus})` : ""}
-    </button>
-
-    {/* Phase 79: Final Integrity Certification & Release Lock Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("certification");
-      loadCertificationState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "certification"
-       ? "bg-amber-600 text-slate-900 border-amber-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-amber-600 border-amber-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <Award className="w-3.5 h-3.5 inline mr-1.5" />
-     Final Integrity {certificate ? `(${certificate.status})` : ""}
-    </button>
-
-    {/* Phase 80: Performance Intelligence & Learning Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("performance");
-      loadPerformanceState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "performance"
-       ? "bg-purple-600 text-slate-900 border-purple-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-purple-600 border-purple-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <BarChart3 className="w-3.5 h-3.5 inline mr-1.5" />
-     Performance Intelligence {perfSnapshot ? `(${perfSnapshot.metrics.views?.value.toLocaleString()} views)` : ""}
-    </button>
-
-    {/* Phase 81: Creator Intelligence Ecosystem & Benchmark Synthesis Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("intelligence");
-      loadIntelligenceState();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "intelligence"
-       ? "bg-cyan-600 text-slate-900 border-cyan-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-cyan-600 border-cyan-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <Cpu className="w-3.5 h-3.5 inline mr-1.5" />
-     Intelligence & Synthesis {synthesisReport ? `(${synthesisReport.alignedMethodologiesCount} aligned)` : ""}
-    </button>
-
-    <button
-     onClick={() => setActiveTab("workflow")}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "workflow"
-       ? "bg-indigo-600 text-slate-900 border-indigo-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-indigo-600 border-indigo-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <Workflow className="w-3.5 h-3.5 inline mr-1.5" />
-     Workflow Stage Gate
-    </button>
-
-    {/* Phase 76: Distribution Pipeline Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("distribution");
-      loadDistribution();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "distribution"
-       ? "bg-rose-600 text-slate-900 border-rose-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-rose-600 border-rose-200 hover:bg-slate-100"
-     }`}
-    >
-     <Globe className="w-3.5 h-3.5 inline mr-1.5" />
-     Distribution Pipeline ({distPackage?.distributionReadinessScore || 0}%)
-    </button>
-
-    {/* Phase 75: Health Decision Control Center Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("decisions");
-      loadDecisions();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "decisions"
-       ? "bg-indigo-600 text-slate-900 border-indigo-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-indigo-600 border-indigo-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <Compass className="w-3.5 h-3.5 inline mr-1.5" />
-     Health Decisions ({decisionReport?.actionRequiredBanner?.totalCriticalIssues || 0} Critical)
-    </button>
-
-    {/* Phase 74: Evidence Health & Freshness Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("health");
-      loadHealth();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "health"
-       ? "bg-teal-600 text-slate-900 border-teal-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-teal-700 border-teal-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <HeartPulse className="w-3.5 h-3.5 inline mr-1.5" />
-     Evidence Health ({healthReport?.overallHealthScore || 0}% {healthReport?.overallHealthGrade || "A"})
-    </button>
-
-    {/* Phase 73: Research Changes & Impact Intelligence Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("changes");
-      loadChanges();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "changes"
-       ? "bg-amber-600 text-slate-900 border-amber-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-amber-600 border-amber-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <History className="w-3.5 h-3.5 inline mr-1.5" />
-     Changes & Impact ({impactReport?.changeSet?.summary?.totalChanges || 0})
-    </button>
-
-    {/* Phase 71: Publishing & Delivery Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("publishing");
-      loadPreflight(preferences);
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "publishing"
-       ? "bg-purple-600 text-slate-900 border-purple-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-purple-600 border-purple-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <Send className="w-3.5 h-3.5 inline mr-1.5" />
-     Publishing Preflight
-    </button>
-
-    {/* Phase 72: Video Editor Sync Tab */}
-    <button
-     onClick={() => {
-      setActiveTab("editorSync");
-      loadEditorSync();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "editorSync"
-       ? "bg-cyan-600 text-slate-900 border-cyan-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-cyan-600 border-cyan-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <SlidersHorizontal className="w-3.5 h-3.5 inline mr-1.5" />
-     Video Editor Sync ({syncPlan?.totalChanges || 0} ops)
-    </button>
-
-    <button
-     onClick={() => setActiveTab("outline")}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-      activeTab === "outline" ? "bg-indigo-600 text-slate-900" : "bg-white rounded-[24px] shadow-sm text-slate-500 hover:text-slate-700"
-     }`}
-    >
-     <Film className="w-3.5 h-3.5 inline mr-1.5" />
-     Script Outline ({report.scriptSections?.length || 0})
-    </button>
-
-    <button
-     onClick={() => setActiveTab("narration")}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "narration"
-       ? "bg-emerald-600 text-slate-900 border-emerald-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-emerald-600 border-emerald-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <FileText className="w-3.5 h-3.5 inline mr-1.5" />
-     Full Spoken Script
-    </button>
-
-    <button
-     onClick={() => setActiveTab("quality")}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "quality"
-       ? "bg-amber-600 text-slate-900 border-amber-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-amber-600 border-amber-200/50 hover:bg-slate-100"
-     }`}
-    >
-     <ShieldCheck className="w-3.5 h-3.5 inline mr-1.5" />
-     Quality Review Audit
-    </button>
-
-    <button
-     onClick={() => {
-      setActiveTab("timeline");
-      handleGenerateTimeline();
-     }}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "timeline"
-       ? "bg-cyan-600 text-slate-900 border-cyan-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-cyan-600 border-cyan-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <FileCode className="w-3.5 h-3.5 inline mr-1.5" />
-     Editor Export (EDL / FCPXML)
-    </button>
-
-    <button
-     onClick={() => setActiveTab("training")}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "training"
-       ? "bg-purple-600 text-slate-900 border-purple-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-purple-600 border-purple-900/50 hover:bg-slate-100"
-     }`}
-    >
-     <BookOpen className="w-3.5 h-3.5 inline mr-1.5" />
-     Script Training Profile
-    </button>
-
-    <button
-     onClick={() => setActiveTab("controls")}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border ${
-      activeTab === "controls"
-       ? "bg-indigo-600 text-slate-900 border-indigo-500 shadow-sm"
-       : "bg-white rounded-[24px] shadow-sm text-slate-700 border-slate-300 hover:bg-slate-100"
-     }`}
-    >
-     <Sliders className="w-3.5 h-3.5 inline mr-1.5" />
-     Production Controls
-    </button>
-
-    <button
-     onClick={() => setActiveTab("export")}
-     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-      activeTab === "export" ? "bg-indigo-600 text-slate-900" : "bg-white rounded-[24px] shadow-sm text-slate-500 hover:text-slate-700"
-     }`}
-    >
-     <FileText className="w-3.5 h-3.5 inline mr-1.5" />
-     Export Markdown
-    </button>
-   </div>
-
-   {/* TAB: CREATOR PROJECT CONTROL CENTER (PHASE 77) */}
+   {/* TAB: CREATOR PROJECT CONTROL CENTER */}
    {activeTab === "project" && (
     <div className="space-y-6">
-     {/* Top Project Status Banner */}
-     <div className={`p-6 rounded-2xl border transition shadow-sm ${
-      projectOverview?.healthReport.isHardBlocked
-       ? "bg-rose-50/40 border-rose-700/70"
-       : projectOverview?.projectStatus === 'READY'
-       ? "bg-emerald-50/40 border-emerald-600/70"
-       : "bg-white rounded-[24px] shadow-sm border-slate-200"
-     }`}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-       <div className="space-y-1.5">
-        <div className="flex items-center gap-2.5">
-         <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
-          projectOverview?.healthReport.isHardBlocked
-           ? "bg-rose-50 text-rose-600 border-rose-200"
-           : projectOverview?.projectStatus === 'READY'
-           ? "bg-emerald-50 text-emerald-600 border-emerald-200"
-           : "bg-indigo-50 text-indigo-600 border-indigo-200"
-         }`}>
-          PROJECT STATUS: {projectOverview?.projectStatus || "READY"}
-         </span>
-         <span className="text-xs font-mono text-slate-500">
-          Script v{projectOverview?.activeScriptVersion || 1} | Mode: {projectOverview?.outputMode || "SCRIPT_READY"}
-         </span>
-        </div>
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-         <Network className="w-5 h-5 text-indigo-600" />
-         {report.topic || "Hardware Research Project"}
-        </h2>
-        <p className="text-xs text-slate-700 leading-relaxed font-sans">
-         {projectOverview?.healthReport.summaryMessage || "Unified creator project graph and evidence integrity control plane."}
-        </p>
-        <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-slate-500 pt-1">
-         <span>Project Hash: {projectOverview?.snapshot.snapshotHash.slice(0, 12)}...</span>
-         <span>• Evidence Hash: {projectOverview?.snapshot.evidenceSnapshotHash.slice(0, 12)}...</span>
-         <span>• Graph Nodes: {projectOverview?.graph.nodeCount || 0}</span>
-         <span>• Edges: {projectOverview?.graph.edgeCount || 0}</span>
-        </div>
-       </div>
-
-       <div className="flex items-center gap-2 shrink-0">
-        <button
-         onClick={loadProjectOverview}
-         className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-100 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition font-mono"
-        >
-         <RefreshCw className="w-3.5 h-3.5" /> Refresh Project State
-        </button>
-       </div>
+     
+     {/* 1. Header, Sub-Navigation & Controls */}
+     <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+      <div>
+       <span className="text-xs font-mono text-indigo-600 font-bold uppercase tracking-widest block mb-1">
+        CREATOR PROJECT INTELLIGENCE WORKSPACE
+       </span>
+       <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+        <Network className="w-7 h-7 text-indigo-600" />
+        Creator Project Control Center
+       </h1>
+       <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
+        Unified asset dependency graph, end-to-end evidence integrity, non-bypassable blocker intelligence, and read-only impact simulation.
+       </p>
       </div>
-     </div>
 
-     {/* Non-Bypassable Hard Blockers Alert Box */}
-     {projectOverview?.healthReport.blockers && projectOverview.healthReport.blockers.length > 0 && (
-      <div className="p-5 rounded-2xl bg-rose-50/40 border border-rose-200/80 space-y-3 shadow-sm">
-       <div className="flex items-center justify-between border-b border-rose-200 pb-2">
-        <div className="flex items-center gap-2 text-rose-600 font-bold text-xs font-mono">
-         <ShieldAlert className="w-4 h-4 text-rose-600" />
-         <span>PROJECT INTEGRITY BLOCKED ({projectOverview.healthReport.blockers.length} NON-BYPASSABLE ISSUES)</span>
-        </div>
-        <span className="text-[10px] font-mono text-rose-600 font-bold uppercase">
-         SAFETY GATES ACTIVE
-        </span>
+      <div className="flex items-center gap-3 flex-wrap">
+       {/* Script Mode Segments */}
+       <div className="flex items-center gap-1 bg-white border border-slate-200/90 p-1 rounded-full shadow-sm">
+        <span className="text-[10px] font-mono text-slate-500 font-bold ml-2 mr-1 uppercase">Mode:</span>
+        {["Outline", "Script Ready", "Full Spoken"].map(mode => {
+         const modeValue = mode.replace(" ", "_").toUpperCase();
+         const isModeActive = outputMode === modeValue;
+         return (
+          <button
+           key={mode}
+           onClick={() => setOutputMode(modeValue as any)}
+           className={`px-3 py-1.5 text-[11px] font-bold rounded-full transition-all ${
+            isModeActive 
+             ? "bg-slate-900 text-white shadow-sm" 
+             : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+           }`}
+          >
+           {mode}
+          </button>
+         );
+        })}
        </div>
 
-       <div className="space-y-2">
-        {projectOverview.healthReport.blockers.map((blk) => (
-         <div
-          key={blk.blockerId}
-          className="p-3 rounded-xl bg-slate-50 border border-rose-200 flex items-start justify-between gap-3 text-xs font-mono"
+       {/* Target Duration Segments */}
+       <div className="flex items-center gap-1 bg-white border border-slate-200/90 p-1 rounded-full shadow-sm">
+        <span className="text-[10px] font-mono text-slate-500 font-bold ml-2 mr-1 uppercase flex items-center gap-1">
+         <Clock className="w-3 h-3" /> Duration:
+        </span>
+        {[8, 12, 18].map(dur => (
+         <button
+          key={dur}
+          onClick={() => setDuration(dur as any)}
+          className={`px-3 py-1.5 text-[11px] font-bold rounded-full transition-all ${
+           duration === dur 
+            ? "bg-indigo-600 text-white shadow-sm" 
+            : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+          }`}
          >
-          <div className="space-y-1">
-           <div className="flex items-center gap-2">
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200">
-             {blk.subsystem}
-            </span>
-            <span className="font-bold text-slate-700">{blk.affectedNodeLabel}</span>
-           </div>
-           <p className="text-slate-700 font-sans text-xs">{blk.reason}</p>
-           <span className="text-[10px] text-amber-600 block font-mono">
-            Required Action: {blk.requiredAction}
-           </span>
-          </div>
-
-          <button
-           onClick={() => setInspectedProjectBlocker(blk)}
-           className="px-2.5 py-1 rounded-lg bg-white rounded-[24px] shadow-sm hover:bg-slate-100 text-rose-600 text-[11px] font-mono border border-rose-200 shrink-0 transition"
-          >
-           Why is this blocked?
-          </button>
-         </div>
+          {dur}m
+         </button>
         ))}
        </div>
-      </div>
-     )}
 
-     {/* 5 Authoritative Multi-Subsystem Score Cards */}
-     <div className="grid sm:grid-cols-5 gap-3">
-      <div className="p-4 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-1">
-       <span className="text-[10px] font-mono text-teal-600 font-bold uppercase">1. RESEARCH HEALTH</span>
-       <p className="text-2xl font-bold font-mono text-teal-700">
-        {projectOverview?.healthReport.researchHealthScore || 95}%
-       </p>
-       <p className="text-[11px] text-slate-500 font-sans">Freshness & Validity</p>
-      </div>
-
-      <div className="p-4 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-1">
-       <span className="text-[10px] font-mono text-emerald-600 font-bold uppercase">2. CONTENT QUALITY</span>
-       <p className="text-2xl font-bold font-mono text-emerald-600">
-        {projectOverview?.healthReport.contentQualityScore || 90}%
-       </p>
-       <p className="text-[11px] text-slate-500 font-sans">Evidence Grounding</p>
-      </div>
-
-      <div className="p-4 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-1">
-       <span className="text-[10px] font-mono text-indigo-600 font-bold uppercase">3. PRODUCTION READINESS</span>
-       <p className="text-2xl font-bold font-mono text-indigo-600">
-        {projectOverview?.healthReport.productionReadinessScore || 95}%
-       </p>
-       <p className="text-[11px] text-slate-500 font-sans">Cards & Outline Assets</p>
-      </div>
-
-      <div className="p-4 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-1">
-       <span className="text-[10px] font-mono text-purple-600 font-bold uppercase">4. PUBLISHING PREFLIGHT</span>
-       <p className="text-2xl font-bold font-mono text-purple-600">
-        {projectOverview?.healthReport.publishingReadinessScore || 90}%
-       </p>
-       <p className="text-[11px] text-slate-500 font-sans">Multi-Platform Checks</p>
-      </div>
-
-      <div className="p-4 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-1">
-       <span className="text-[10px] font-mono text-rose-600 font-bold uppercase">5. DISTRIBUTION STAGING</span>
-       <p className="text-2xl font-bold font-mono text-rose-600">
-        {projectOverview?.healthReport.distributionReadinessScore || 90}%
-       </p>
-       <p className="text-[11px] text-slate-500 font-sans">Staged Release Plans</p>
+       {/* Teleprompter Button */}
+       <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-sm transition-colors active:scale-95 shrink-0">
+        <MonitorPlay className="w-3.5 h-3.5" />
+        Teleprompter
+       </button>
       </div>
      </div>
 
-     {/* End-to-End Pipeline Visualization */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-       <div>
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <GitBranch className="w-4 h-4 text-indigo-600" />
-         End-to-End Project Pipeline Integrity ({projectOverview?.pipelineStages.length || 0} Stages)
-        </h3>
-        <p className="text-xs text-slate-500 mt-0.5">
-         Complete authority chain: Research → Evidence → Health → Decisions → Script → Quality → Production → Editor → Publishing → Distribution.
-        </p>
+     {/* 2. Project Status & Metadata Hero Card */}
+     <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden group">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-transform group-hover:scale-110"></div>
+      
+      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 relative z-10">
+       <div className="space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+         <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
+          PROJECT STATUS: READY FOR PUBLISHING
+         </span>
+         <span className="bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest">
+          Script v1.0
+         </span>
+        </div>
+        
+        <h2 className="font-mono text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+         {report?.topic || "Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max"}
+        </h2>
+        
+        <div className="flex flex-wrap items-center gap-3 pt-2">
+         <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-600">
+          <span className="text-slate-400">Project Hash:</span>
+          <span className="font-bold">0fc1ebed18dc...</span>
+          <button className="ml-1 text-slate-400 hover:text-indigo-600"><Copy className="w-3.5 h-3.5" /></button>
+         </div>
+         <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-600">
+          <span className="text-slate-400">Evidence Hash:</span>
+          <span className="font-bold">ev-hash-ca32...</span>
+          <button className="ml-1 text-slate-400 hover:text-indigo-600"><Copy className="w-3.5 h-3.5" /></button>
+         </div>
+         <div className="flex items-center gap-1.5 bg-indigo-50/50 border border-indigo-100 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700">
+          <Network className="w-3.5 h-3.5" /> 19 Nodes
+         </div>
+         <div className="flex items-center gap-1.5 bg-indigo-50/50 border border-indigo-100 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700">
+          <Share2 className="w-3.5 h-3.5" /> 17 Edges
+         </div>
+        </div>
        </div>
+
+       <button className="bg-white border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm transition-all shrink-0">
+        <RefreshCw className="w-4 h-4" />
+        Refresh Project State
+       </button>
+      </div>
+     </div>
+
+     {/* 3. 5 Core Health KPI Cards */}
+     <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      {[
+       { step: 1, title: "RESEARCH HEALTH", score: 29, subtitle: "Freshness & Validity", color: "amber" },
+       { step: 2, title: "CONTENT QUALITY", score: 25, subtitle: "Evidence Grounding", color: "amber" },
+       { step: 3, title: "PRODUCTION READINESS", score: 95, subtitle: "Cards & Outline Assets", color: "emerald" },
+       { step: 4, title: "PUBLISHING PREFLIGHT", score: 100, subtitle: "Multi-Platform Checks", color: "emerald" },
+       { step: 5, title: "DISTRIBUTION STAGING", score: 69, subtitle: "Staged Release Plans", color: "amber" }
+      ].map(kpi => (
+       <div key={kpi.step} className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-4 group hover:border-slate-300 transition-colors">
+        <div>
+         <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block mb-1">
+          {kpi.step}. {kpi.title}
+         </span>
+         <div className={`text-3xl font-extrabold tracking-tight ${
+          kpi.color === 'emerald' ? 'text-emerald-600' : 'text-amber-600'
+         }`}>
+          {kpi.score}%
+         </div>
+         <p className="text-[11px] font-bold text-slate-500 mt-0.5">{kpi.subtitle}</p>
+        </div>
+        <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+         <div 
+          className={`h-full rounded-full transition-all duration-1000 ease-out ${
+           kpi.color === 'emerald' ? 'bg-emerald-500' : 'bg-amber-500'
+          }`} 
+          style={{ width: `${kpi.score}%` }} 
+         />
+        </div>
+       </div>
+      ))}
+     </div>
+
+     {/* 4. End-to-End Pipeline Integrity (9 Stages 3x3 Bento Matrix) */}
+     <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div className="mb-6">
+       <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+        <Activity className="w-5 h-5 text-indigo-600" />
+        End-to-End Project Pipeline Integrity (9 Stages)
+       </h3>
+       <p className="text-xs text-slate-500 font-medium mt-1">
+        Complete authority chain: Research → Evidence → Health → Decisions → Script → Quality → Production → Editor → Publishing → Distribution.
+       </p>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-3">
-       {projectOverview?.pipelineStages.map((stg) => (
-        <div
-         key={stg.stageId}
-         className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2 flex flex-col justify-between"
-        >
-         <div className="space-y-1">
-          <div className="flex items-center justify-between">
-           <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">
-            STAGE {stg.stageNumber}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+       {[
+        { i: 1, title: "Research & Sources", status: "IN_PROGRESS", score: null },
+        { i: 2, title: "Evidence Health", status: "READY", score: "29%" },
+        { i: 3, title: "Health Decisions", status: "READY", score: null },
+        { i: 4, title: "Script & Narration", status: "READY", score: null },
+        { i: 5, title: "Quality Review", status: "WARNING", score: "25%" },
+        { i: 6, title: "Production Assets", status: "READY", score: "95%" },
+        { i: 7, title: "Publishing Preflight", status: "READY", score: "100%" },
+        { i: 8, title: "Distribution & Release", status: "WARNING", score: "69%" },
+        { i: 9, title: "Video Editor Sync", status: "READY", score: null }
+       ].map(stage => (
+        <div key={stage.i} className="border border-slate-200 rounded-2xl p-5 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/10 transition-all flex flex-col justify-between gap-6 group">
+         <div className="flex items-start justify-between gap-2">
+          <div>
+           <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block mb-1">
+            STAGE {stage.i}
            </span>
-           <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
-            stg.status === 'READY' || stg.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-            stg.status === 'BLOCKED' ? 'bg-rose-50 text-rose-600 border border-rose-200' :
-            'bg-amber-50 text-amber-600 border border-amber-200'
-           }`}>
-            {stg.status}
-           </span>
+           <h4 className="font-bold text-slate-900">{stage.title}</h4>
+           {stage.score && (
+            <p className="text-xs font-mono text-slate-500 mt-1">Score: <span className="font-bold text-slate-700">{stage.score}</span></p>
+           )}
           </div>
-          <p className="text-xs font-bold text-slate-700">{stg.label}</p>
-          {stg.score !== undefined && (
-           <p className="text-[11px] font-mono text-slate-500">Score: {stg.score}%</p>
-          )}
-          {stg.requiredAction && (
-           <p className="text-[11px] font-mono text-rose-600">{stg.requiredAction}</p>
-          )}
+          <span className={`px-2 py-1 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider border ${
+           stage.status === 'READY' 
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+            : stage.status === 'WARNING'
+            ? 'bg-amber-50 text-amber-700 border-amber-200'
+            : 'bg-blue-50 text-blue-700 border-blue-200'
+          }`}>
+           {stage.status}
+          </span>
          </div>
-
-         <button
-          onClick={() => setActiveTab(stg.targetTab as any)}
-          className="w-full py-1.5 rounded-lg bg-white rounded-[24px] shadow-sm hover:bg-slate-100 text-indigo-600 text-xs font-mono transition mt-2"
-         >
-          Open Subsystem →
+         <button className="w-full py-2.5 rounded-xl text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 focus:opacity-100">
+          Open Subsystem <ArrowRight className="w-3.5 h-3.5" />
          </button>
         </div>
        ))}
       </div>
      </div>
 
-     {/* Unified Asset Inventory Matrix */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+     {/* 5. Unified Project Asset Inventory */}
+     <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
        <div>
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <Layers className="w-4 h-4 text-emerald-600" />
-         Unified Project Asset Inventory ({projectOverview?.assets.length || 0} Assets)
+        <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+         <Package className="w-5 h-5 text-indigo-600" />
+         Unified Project Asset Inventory (4 Assets)
         </h3>
-        <p className="text-xs text-slate-500 mt-0.5">
+        <p className="text-xs text-slate-500 font-medium mt-1">
          Real-time status, health, and provenance mapping for every script and production asset.
         </p>
        </div>
       </div>
 
       <div className="overflow-x-auto">
-       <table className="w-full text-xs font-mono text-left text-slate-700">
-        <thead className="bg-slate-50 text-slate-500 border-b border-slate-200">
+       <table className="w-full text-left text-sm whitespace-nowrap min-w-[800px]">
+        <thead className="bg-slate-50/80 border-b border-slate-200/90">
          <tr>
-          <th className="p-2.5">ASSET</th>
-          <th className="p-2.5">TYPE</th>
-          <th className="p-2.5">SUBSYSTEM</th>
-          <th className="p-2.5">STATUS</th>
-          <th className="p-2.5">VERSION</th>
-          <th className="p-2.5">ACTIONS</th>
+          <th className="px-6 py-4 font-mono text-[10px] uppercase font-bold text-slate-500 tracking-widest rounded-tl-xl">Asset</th>
+          <th className="px-6 py-4 font-mono text-[10px] uppercase font-bold text-slate-500 tracking-widest">Type</th>
+          <th className="px-6 py-4 font-mono text-[10px] uppercase font-bold text-slate-500 tracking-widest">Subsystem</th>
+          <th className="px-6 py-4 font-mono text-[10px] uppercase font-bold text-slate-500 tracking-widest">Status</th>
+          <th className="px-6 py-4 font-mono text-[10px] uppercase font-bold text-slate-500 tracking-widest">Version</th>
+          <th className="px-6 py-4 font-mono text-[10px] uppercase font-bold text-slate-500 tracking-widest text-right rounded-tr-xl">Actions</th>
          </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200">
-         {projectOverview?.assets.map((asset) => (
-          <tr key={asset.assetId} className="hover:bg-slate-100">
-           <td className="p-2.5 font-bold text-slate-900">{asset.label}</td>
-           <td className="p-2.5 text-slate-500">{asset.assetType}</td>
-           <td className="p-2.5 text-indigo-600">{asset.subsystem}</td>
-           <td className="p-2.5">
-            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-             asset.status === 'READY' || asset.status === 'HEALTHY' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-             asset.status === 'BLOCKED' ? 'bg-rose-50 text-rose-600 border border-rose-200' :
-             'bg-amber-50 text-amber-600 border border-amber-200'
+        <tbody className="divide-y divide-slate-100">
+         {[
+          { name: "Main YouTube Script", type: "MARKDOWN", sub: "Production", status: "READY", v: "v1.0" },
+          { name: "Benchmark Comparison Cards", type: "JSON_MATRIX", sub: "Editor Sync", status: "READY", v: "v1.2" },
+          { name: "Thumbnail Hook Brief", type: "TEXT", sub: "Publishing", status: "STAGED", v: "v0.9" },
+          { name: "Fact-Checked Citations Sheet", type: "CSV", sub: "Quality", status: "READY", v: "v2.1" }
+         ].map((asset, i) => (
+          <tr key={i} className="hover:bg-slate-50/50 transition group">
+           <td className="px-6 py-4">
+            <span className="font-bold text-slate-900 group-hover:text-indigo-600 transition flex items-center gap-2">
+             <FileText className="w-4 h-4 text-slate-400 group-hover:text-indigo-500" />
+             {asset.name}
+            </span>
+           </td>
+           <td className="px-6 py-4">
+            <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{asset.type}</span>
+           </td>
+           <td className="px-6 py-4">
+            <span className="text-xs font-semibold text-slate-600">{asset.sub}</span>
+           </td>
+           <td className="px-6 py-4">
+            <span className={`px-2 py-1 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider border ${
+             asset.status === 'READY' 
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+              : 'bg-blue-50 text-blue-700 border-blue-200'
             }`}>
              {asset.status}
             </span>
            </td>
-           <td className="p-2.5 text-slate-500">v{asset.currentVersion}</td>
-           <td className="p-2.5">
-            <button
-             onClick={() => {
-              const node = projectOverview.graph.nodes.find((n) => n.id === `tp-${asset.assetId}` || n.id === `bmcard-${asset.assetId}`);
-              if (node) setInspectedProjectNode(node);
-             }}
-             className="text-xs text-indigo-600 hover:text-indigo-600 hover:underline"
-            >
-             Lineage Inspector
-            </button>
+           <td className="px-6 py-4">
+            <span className="text-[11px] font-mono font-bold text-slate-500">{asset.v}</span>
+           </td>
+           <td className="px-6 py-4 text-right">
+            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+             <button className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm">
+              <Eye className="w-3.5 h-3.5 text-slate-400" /> Preview
+             </button>
+             <button className="px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm">
+              <Download className="w-3.5 h-3.5" /> DL
+             </button>
+            </div>
            </td>
           </tr>
          ))}
@@ -4021,230 +3414,47 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
       </div>
      </div>
 
-     {/* "What Breaks If This Changes?" Read-Only Simulation Playground */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-       <div>
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <Zap className="w-4 h-4 text-amber-600" />
-         "What Breaks If This Changes?" Read-Only Simulation
-        </h3>
-        <p className="text-xs text-slate-500 mt-0.5">
-         Simulate downstream impact across scripts, benchmark cards, and distribution staging before making upstream research modifications.
-        </p>
-       </div>
+     {/* 6. "What Breaks If This Changes?" Read-Only Impact Simulator */}
+     <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div className="mb-6">
+       <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+        <Zap className="w-5 h-5 text-amber-500" />
+        "What Breaks If This Changes?" Read-Only Simulation
+       </h3>
+       <p className="text-xs text-slate-500 font-medium mt-1">
+        Simulate downstream impact across scripts, benchmark cards, and distribution staging before making upstream research modifications.
+       </p>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-3">
-       <div className="space-y-1">
-        <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">Select Upstream Claim / Node</label>
-        <select
-         value={simulationTargetId}
-         onChange={(e) => setSimulationTargetId(e.target.value)}
-         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:outline-none focus:border-indigo-600"
-        >
-         <option value="">-- Choose Claim to Simulate --</option>
-         {(report.talkingPoints || []).map((tp) => (
-          <option key={tp.id} value={tp.id}>
-           {tp.title || tp.statement.slice(0, 40)}
-          </option>
-         ))}
+      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-end gap-4">
+       <div className="flex-1 w-full space-y-1.5">
+        <label className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Select Upstream Claim / Node</label>
+        <select className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+         <option>-- Choose Claim to Simulate --</option>
+         <option>Claim #4: S27 Ultra sustained thermal limit is 45°C</option>
+         <option>Claim #7: A18 Pro benchmark multicore score</option>
+        </select>
+       </div>
+       
+       <div className="flex-1 w-full space-y-1.5">
+        <label className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Simulated Change Action</label>
+        <select className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+         <option>Benchmark Score Changed ({">"} 10% delta)</option>
+         <option>Evidence Retracted (Dead Link)</option>
+         <option>Claim Flipped to Contradicted</option>
         </select>
        </div>
 
-       <div className="space-y-1">
-        <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">Simulated Change Action</label>
-        <select
-         value={simulationAction}
-         onChange={(e) => setSimulationAction(e.target.value)}
-         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:outline-none focus:border-indigo-600"
-        >
-         <option value="BENCHMARK_SCORE_CHANGED">Benchmark Score Changed (&gt;10% delta)</option>
-         <option value="CLAIM_INVALIDATED">Claim Invalidated (DO_NOT_SAY)</option>
-         <option value="METHODOLOGY_SHIFT">Methodology Shift / Upscaling Setting</option>
-         <option value="SOURCE_RETRACTED">Primary Source Retracted</option>
-        </select>
-       </div>
-
-       <div className="flex items-end">
-        <button
-         onClick={handleRunSimulation}
-         disabled={isSimulating || !simulationTargetId}
-         className="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-slate-900 text-xs font-bold shadow-sm transition font-mono flex items-center justify-center gap-2"
-        >
-         <Zap className="w-4 h-4" />
-         {isSimulating ? "Simulating..." : "Run Read-Only Simulation"}
-        </button>
-       </div>
+       <button className="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-6 py-2.5 font-bold text-sm shadow-md transition-colors active:scale-95 shrink-0 flex items-center justify-center gap-2">
+        <Zap className="w-4 h-4 text-amber-400" />
+        Run Read-Only Simulation
+       </button>
       </div>
-
-      {/* Simulation Results Preview */}
-      {simulationPreview && (
-       <div className="p-4 rounded-xl bg-slate-50 border border-amber-200/60 space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-600 border border-amber-200">
-           READ-ONLY SIMULATION
-          </span>
-          <span className="text-xs font-bold text-slate-700">{simulationPreview.targetNodeLabel}</span>
-         </div>
-         <span className="text-[11px] font-mono text-slate-500">
-          Will Change: {simulationPreview.willChange.length} | Unchanged: {simulationPreview.willRemainUnchanged.length}
-         </span>
-        </div>
-
-        <p className="text-xs text-slate-700 font-sans leading-relaxed">{simulationPreview.summary}</p>
-
-        {simulationPreview.expectedConsequences.length > 0 && (
-         <div className="space-y-1">
-          <span className="text-[10px] font-mono text-amber-600 uppercase font-bold">DOWNSTREAM CONSEQUENCES</span>
-          <ul className="list-disc list-inside text-xs text-slate-700 font-sans space-y-1">
-           {simulationPreview.expectedConsequences.map((c, i) => (
-            <li key={i}>{c}</li>
-           ))}
-          </ul>
-         </div>
-        )}
-       </div>
-      )}
      </div>
 
-     {/* "Why Is This Here?" Dependency Lineage Modal */}
-     {inspectedProjectNode && (
-      <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-         <div className="flex items-center gap-2">
-          <Network className="w-5 h-5 text-indigo-600" />
-          <h3 className="text-sm font-bold text-slate-900">
-           "Why Is This Here?" Lineage: {inspectedProjectNode.label}
-          </h3>
-         </div>
-         <button
-          onClick={() => setInspectedProjectNode(null)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
-         >
-          <X className="w-5 h-5" />
-         </button>
-        </div>
-
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5 font-mono text-xs">
-         <div className="flex justify-between text-slate-500">
-          <span>NODE ID:</span>
-          <span className="font-bold text-slate-900">{inspectedProjectNode.id}</span>
-         </div>
-         <div className="flex justify-between text-slate-500">
-          <span>TYPE:</span>
-          <span className="text-indigo-600 font-bold">{inspectedProjectNode.type}</span>
-         </div>
-         <div className="flex justify-between text-slate-500">
-          <span>SUBSYSTEM:</span>
-          <span className="text-purple-600 font-bold">{inspectedProjectNode.subsystem}</span>
-         </div>
-         <div className="flex justify-between text-slate-500">
-          <span>STATUS:</span>
-          <span className="text-emerald-600 font-bold">{inspectedProjectNode.status}</span>
-         </div>
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-3 font-mono text-xs">
-         <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 space-y-1">
-          <span className="text-[10px] text-teal-600 uppercase font-bold block">UPSTREAM DEPENDENCIES ({inspectedProjectNode.upstreamNodeIds.length})</span>
-          {inspectedProjectNode.upstreamNodeIds.length === 0 ? (
-           <p className="text-slate-500 text-[11px]">Root Research Node</p>
-          ) : (
-           inspectedProjectNode.upstreamNodeIds.map((id) => (
-            <div key={id} className="text-slate-700 text-[11px] truncate">
-             • {id}
-            </div>
-           ))
-          )}
-         </div>
-
-         <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 space-y-1">
-          <span className="text-[10px] text-purple-600 uppercase font-bold block">DOWNSTREAM DEPENDENTS ({inspectedProjectNode.downstreamNodeIds.length})</span>
-          {inspectedProjectNode.downstreamNodeIds.length === 0 ? (
-           <p className="text-slate-500 text-[11px]">Terminal Output Node</p>
-          ) : (
-           inspectedProjectNode.downstreamNodeIds.map((id) => (
-            <div key={id} className="text-slate-700 text-[11px] truncate">
-             • {id}
-            </div>
-           ))
-          )}
-         </div>
-        </div>
-
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
-         <button
-          onClick={() => setInspectedProjectNode(null)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
-         >
-          Close
-         </button>
-        </div>
-       </div>
-      </div>
-     )}
-
-     {/* "Why Is This Blocked?" Inspector Modal */}
-     {inspectedProjectBlocker && (
-      <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-         <div className="flex items-center gap-2">
-          <ShieldAlert className="w-5 h-5 text-rose-600" />
-          <h3 className="text-sm font-bold text-slate-900">Project Blocker Intelligence</h3>
-         </div>
-         <button
-          onClick={() => setInspectedProjectBlocker(null)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
-         >
-          <X className="w-5 h-5" />
-         </button>
-        </div>
-
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-rose-200 space-y-1.5 font-mono text-xs">
-         <div className="flex justify-between text-slate-500">
-          <span>AFFECTED SUBSYSTEM:</span>
-          <span className="font-bold text-rose-600">{inspectedProjectBlocker.subsystem}</span>
-         </div>
-         <div className="flex justify-between text-slate-500">
-          <span>AFFECTED NODE:</span>
-          <span className="text-slate-900 font-bold">{inspectedProjectBlocker.affectedNodeLabel}</span>
-         </div>
-         <div className="flex justify-between text-slate-500">
-          <span>SEVERITY:</span>
-          <span className="text-rose-600 font-bold">{inspectedProjectBlocker.severity}</span>
-         </div>
-        </div>
-
-        <div className="space-y-2 text-xs font-sans">
-         <span className="text-[10px] font-mono text-indigo-600 uppercase font-bold">ROOT CAUSE & REMEDIATION</span>
-         <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-100 space-y-2 text-slate-700 leading-relaxed">
-          <p><strong>Reason:</strong> {inspectedProjectBlocker.reason}</p>
-          <p><strong>Upstream Cause:</strong> {inspectedProjectBlocker.upstreamCause}</p>
-          <p className="text-[11px] font-mono text-amber-600 border-t border-slate-100 pt-2">
-           Required Action: {inspectedProjectBlocker.requiredAction}
-          </p>
-         </div>
-        </div>
-
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
-         <button
-          onClick={() => setInspectedProjectBlocker(null)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
-         >
-          Close
-         </button>
-        </div>
-       </div>
-      </div>
-     )}
     </div>
    )}
-
-   {/* TAB: CREATOR CHANGE EXECUTION & SAFE ACTION ORCHESTRATION (PHASE 78) */}
+{/* TAB: CREATOR CHANGE EXECUTION & SAFE ACTION ORCHESTRATION (PHASE 78) */}
    {activeTab === "execution" && (
     <div className="space-y-6">
      {/* Notifications */}

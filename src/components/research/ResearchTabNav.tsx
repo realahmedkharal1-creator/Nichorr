@@ -112,7 +112,7 @@ export function ResearchTabNav({ runId }: { runId: string }) {
         onMouseLeave={handleMouseLeave}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-        className="flex overflow-x-auto gap-2 pb-3 pl-6 pr-0 w-full cursor-grab active:cursor-grabbing" 
+        className="flex overflow-x-auto gap-2 pb-3 pl-6 pr-0 w-full scrollbar-hide cursor-grab active:cursor-grabbing" 
         style={{ 
           scrollbarWidth: "none", 
           msOverflowStyle: "none",
@@ -135,7 +135,7 @@ export function ResearchTabNav({ runId }: { runId: string }) {
                 if (dragged) e.preventDefault();
               }}
               draggable={false}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all select-none ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all select-none shrink-0 ${
                 isActive
                   ? "bg-indigo-600 text-white shadow-md"
                   : "bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50"
