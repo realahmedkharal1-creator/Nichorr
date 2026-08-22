@@ -2,38 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FolderPlus, Layers, Plus, ArrowRight, ShieldCheck, Search, Sparkles, X } from "lucide-react";
+import { FolderPlus, Layers, Plus, ArrowRight, ShieldCheck, Search, Sparkles } from "lucide-react";
 import { ProjectEntity } from "@/lib/database/repositories/projects.repo";
 import { SkeletonCard } from "@/components/ui/Skeleton";
-import { Badge } from "@/components/ui/Badge";
-import { EmptyState } from "@/components/ui/EmptyState";
-
-const FALLBACK_PROJECTS = [
-  {
-    id: "proj-1",
-    name: "Samsung Galaxy S27 Ultra Deep Dive",
-    description: "Benchmark analysis across CPU, GPU, sustained thermal throttling, and camera sensor dynamic range.",
-    created_at: "2026-08-20T10:00:00Z",
-    run_count: 3,
-  },
-  {
-    id: "proj-2",
-    name: "Next-Gen GPU Benchmark Series 2026",
-    description: "RTX 5090 vs RX 8900 XTX 4K ray tracing performance, power draw, and frame time consistency.",
-    created_at: "2026-08-18T14:30:00Z",
-    run_count: 2,
-  },
-  {
-    id: "proj-3",
-    name: "MacBook Pro M5 Max vs Dell XPS 16 Review",
-    description: "Creator workstation comparison focusing on ProRes render exports, acoustic decibels, and battery endurance.",
-    created_at: "2026-08-15T09:00:00Z",
-    run_count: 1,
-  },
-];
 
 export default function ProjectsListPage() {
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -49,14 +23,11 @@ export default function ProjectsListPage() {
     try {
       const res = await fetch("/api/projects");
       const data = await res.json();
-      if (data.success && Array.isArray(data.projects) && data.projects.length > 0) {
+      if (data.success) {
         setProjects(data.projects);
-      } else {
-        setProjects(FALLBACK_PROJECTS);
       }
     } catch (e) {
       console.error(e);
-      setProjects(FALLBACK_PROJECTS);
     } finally {
       setLoading(false);
     }
@@ -76,22 +47,10 @@ export default function ProjectsListPage() {
       const data = await res.json();
       if (data.success && data.project) {
         setProjects([data.project, ...projects]);
-      } else {
-        // Optimistic addition
-        setProjects([
-          {
-            id: `proj-${Date.now()}`,
-            name: name.trim(),
-            description: description.trim(),
-            created_at: new Date().toISOString(),
-            run_count: 0,
-          },
-          ...projects,
-        ]);
+        setName("");
+        setDescription("");
+        setShowCreateModal(false);
       }
-      setName("");
-      setDescription("");
-      setShowCreateModal(false);
     } catch (e) {
       console.error(e);
     } finally {
@@ -100,109 +59,87 @@ export default function ProjectsListPage() {
   };
 
   const filteredProjects = projects.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      (p.description || "").toLowerCase().includes(search.toLowerCase())
+    (p) => p.name.toLowerCase().includes(search.toLowerCase()) || (p.description || "").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto py-2 font-sans">
+    <div className="space-y-6 max-w-6xl mx-auto py-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#e5e5ea] pb-5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
         <div>
-          <span className="text-[10px] font-mono text-[#0071e3] font-bold uppercase tracking-widest block mb-1">
-            CREATOR WORKSPACE ORGANIZER
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1d1d1f] tracking-tight flex items-center gap-2.5">
-            <FolderPlus className="w-7 h-7 text-[#0071e3]" />
+          <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider block mb-1">CREATOR WORKSPACE ORGANIZER</span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2.5">
+            <FolderPlus className="w-7 h-7 text-indigo-400" />
             Research Projects Workspace
           </h1>
-          <p className="text-xs sm:text-sm text-[#6e6e73] font-medium mt-1">
-            Organize multiple research runs, compare evolving findings, and manage technical creator briefs.
-          </p>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">Organize multiple research runs, compare evolving findings, and manage technical creator briefs.</p>
         </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 bg-[#0071e3] hover:bg-[#0077ed] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-sm shadow-[#0071e3]/20 transition-all active:scale-95 cursor-pointer"
+          className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/25 transition transform hover:-translate-y-0.5"
         >
           <Plus className="w-4 h-4" />
-          <span>Create New Project</span>
+          Create New Project
         </button>
       </div>
 
-      {/* Search & Counter */}
+      {/* Search & Filter Bar */}
       <div className="flex items-center justify-between gap-4">
         <div className="w-full sm:w-80 relative">
-          <Search className="w-4 h-4 text-[#8e8e93] absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search projects..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white border border-[#e5e5ea] rounded-full pl-10 pr-4 py-2.5 text-xs text-[#1d1d1f] placeholder:text-[#8e8e93] focus:outline-none focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition font-medium"
+            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition"
           />
         </div>
-        <span className="text-xs font-mono font-bold text-[#8e8e93] shrink-0">
-          {filteredProjects.length} Projects Active
-        </span>
+        <span className="text-xs font-mono text-slate-400 shrink-0">{filteredProjects.length} Projects Active</span>
       </div>
 
       {/* Create Project Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full space-y-4 border border-[#e5e5ea] shadow-[0_20px_40px_rgba(0,0,0,0.15)] animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#e5e5ea] pb-3">
-              <h2 className="text-base font-bold text-[#1d1d1f]">Create Research Project</h2>
-              <button
-                type="button"
-                onClick={() => setShowCreateModal(false)}
-                className="w-7 h-7 rounded-full bg-[#f5f5f7] flex items-center justify-center text-[#8e8e93] hover:text-[#1d1d1f]"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="slate-card p-6 max-w-md w-full space-y-4 bg-slate-900 border-indigo-900/60 shadow-2xl">
+            <h2 className="text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">Create Research Project</h2>
             <form onSubmit={handleCreateProject} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#1d1d1f]">
-                  Project Name <span className="text-[#ff3b30]">*</span>
-                </label>
+                <label className="block text-xs font-semibold text-slate-200">Project Name <span className="text-rose-400">*</span></label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Galaxy S27 Ultra vs iPhone 18 Pro Max"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#fbfbfd] border border-[#d1d1d6] rounded-xl px-4 py-2.5 text-[#1d1d1f] text-xs font-semibold focus:outline-none focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#1d1d1f]">
-                  Description / Goal (Optional)
-                </label>
+                <label className="block text-xs font-semibold text-slate-200">Description / Goal (Optional)</label>
                 <textarea
                   rows={3}
                   placeholder="Describe the scope of this project and key benchmark comparisons..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-[#fbfbfd] border border-[#d1d1d6] rounded-xl px-4 py-2.5 text-[#1d1d1f] text-xs font-medium focus:outline-none focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 leading-relaxed"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#e5e5ea]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-850">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 rounded-full text-xs font-semibold text-[#6e6e73] hover:bg-[#f5f5f7]"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!name.trim() || creating}
-                  className="bg-[#0071e3] hover:bg-[#0077ed] text-white px-5 py-2 rounded-full text-xs font-semibold shadow-sm transition disabled:opacity-50 active:scale-95"
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-xl text-xs font-semibold shadow-md transition disabled:opacity-50"
                 >
                   {creating ? "Creating..." : "Save Project"}
                 </button>
@@ -214,49 +151,52 @@ export default function ProjectsListPage() {
 
       {/* Projects Grid */}
       {loading ? (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
         </div>
       ) : filteredProjects.length === 0 ? (
-        <EmptyState
-          icon={<FolderPlus className="w-8 h-8 text-[#0071e3]" />}
-          title="No Projects Created Yet"
-          description="Organize multiple research runs inside a project to compare findings over time."
-          actionLabel="Create First Project"
-          onAction={() => setShowCreateModal(true)}
-        />
+        <div className="slate-card p-12 text-center space-y-4 bg-slate-900/60">
+          <FolderPlus className="w-12 h-12 text-slate-600 mx-auto" />
+          <div className="space-y-1">
+            <h3 className="text-base font-bold text-slate-200">No Projects Created Yet</h3>
+            <p className="text-xs text-slate-400">Organize multiple research runs inside a project to compare findings over time.</p>
+          </div>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition shadow-md"
+          >
+            <Plus className="w-4 h-4" />
+            Create First Project
+          </button>
+        </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProjects.map((p) => (
             <Link
               key={p.id}
               href={`/projects/${p.id}`}
-              className="bg-white border border-[#e5e5ea] rounded-3xl p-6 shadow-[0_2px_14px_rgba(0,0,0,0.03)] hover:border-[#0071e3]/40 hover:shadow-[0_12px_28px_rgba(0,113,227,0.06)] hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between space-y-4"
+              className="slate-card p-6 space-y-4 hover:border-indigo-500/60 hover:bg-slate-900/90 transition-all group flex flex-col justify-between"
             >
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-[10px] font-bold text-[#0071e3] uppercase tracking-wider">
-                    PROJECT
-                  </span>
-                  <Badge variant="default" size="sm">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono text-indigo-400">
+                  <span className="font-semibold uppercase tracking-wider">PROJECT</span>
+                  <span className="px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-850 font-bold">
                     {p.run_count || 0} Runs
-                  </Badge>
+                  </span>
                 </div>
-                <h3 className="text-base font-bold text-[#1d1d1f] group-hover:text-[#0071e3] transition-colors line-clamp-1">
+                <h3 className="text-lg font-bold text-slate-100 group-hover:text-indigo-300 transition line-clamp-1">
                   {p.name}
                 </h3>
-                <p className="text-xs text-[#6e6e73] font-medium line-clamp-2 leading-relaxed">
+                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
                   {p.description || "No description provided."}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between text-xs font-mono text-[#8e8e93] pt-3 border-t border-[#f5f5f7]">
-                <span>
-                  {p.created_at ? new Date(p.created_at).toLocaleDateString() : "Active"}
-                </span>
-                <span className="flex items-center gap-1 text-[#0071e3] font-bold group-hover:translate-x-1 transition-transform">
+              <div className="flex items-center justify-between text-xs font-mono text-slate-400 pt-3 border-t border-slate-850">
+                <span>{p.created_at ? new Date(p.created_at).toLocaleDateString() : "Active"}</span>
+                <span className="flex items-center gap-1 text-indigo-400 font-semibold group-hover:translate-x-1 transition transform">
                   Open Project <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>

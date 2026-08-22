@@ -17,17 +17,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
-      <body className={`${inter.className} min-h-full bg-[#f5f5f7] text-[#1d1d1f] flex flex-col antialiased selection:bg-[#0071e3]/20 selection:text-[#0071e3]`} suppressHydrationWarning>
+    <html lang="en">
+      <body className={`${inter.className} min-h-screen bg-[#D3D3D3] text-[var(--foreground)] flex flex-col antialiased`} suppressHydrationWarning>
         <Header />
         <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {children}
         </main>
-        <footer className="border-t border-[#e5e5ea] bg-white/70 backdrop-blur-sm py-8 text-center text-xs text-[#6e6e73]">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="font-medium">© 2026 VeritasTech AI. Never optimize for an answer that sounds convincing — optimize for an answer that can be defended.</p>
-            <div className="flex items-center gap-3 font-mono text-[11px] font-bold text-[#8e8e93]">
-              <span className="text-[#0071e3]">TRACED CLAIMS ONLY</span>
+        <footer className="border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© 2026 VeritasTech AI. Never optimize for an answer that sounds convincing — optimize for an answer that can be defended.</p>
+            <div className="flex gap-4 font-mono text-[11px] text-slate-500">
+              <span>TRACED CLAIMS ONLY</span>
               <span>•</span>
               <span>ZERO FABRICATED CITATIONS</span>
             </div>

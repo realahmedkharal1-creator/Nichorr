@@ -1,48 +1,12 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Bell, CheckCircle2, AlertTriangle, ShieldCheck, Info, ExternalLink, Check } from "lucide-react";
+import { Bell, CheckCircle2, AlertTriangle, ShieldCheck, Info, ExternalLink } from "lucide-react";
 import { NotificationEntity } from "@/lib/database/repositories/notifications.repo";
 import { SkeletonCard } from "@/components/ui/Skeleton";
-import { Badge } from "@/components/ui/Badge";
-import { EmptyState } from "@/components/ui/EmptyState";
 
-const FALLBACK_NOTIFS: NotificationEntity[] = [
-  {
-    id: "notif-1",
-    user_id: "u-1",
-    project_id: "p-1",
-    type: "INFORMATIONAL",
-    title: "Research Run Completed",
-    message: "Multi-source evidence synthesis for 'Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max' has completed with 100% audit confidence.",
-    target_url: "/research/3c7e41fb-f145-41b9-9b1e-a9935a8a5351/results",
-    is_read: false,
-    created_at: "2026-08-22T14:30:00Z"
-  },
-  {
-    id: "notif-2",
-    user_id: "u-1",
-    project_id: "p-1",
-    type: "WARNING",
-    title: "New Conflict Detected in Brief",
-    message: "A discrepancy was flagged between benchmark lab measurements and manufacturer technical specifications.",
-    target_url: "/research/3c7e41fb-f145-41b9-9b1e-a9935a8a5351/conflicts",
-    is_read: false,
-    created_at: "2026-08-22T12:15:00Z"
-  },
-  {
-    id: "notif-3",
-    user_id: "u-1",
-    project_id: "p-1",
-    type: "CRITICAL",
-    title: "Quality Gate Verification Alert",
-    message: "Production export for 'MacBook Pro M5' requires creator review of contradicted thermal wattage claims.",
-    target_url: "/research/3c7e41fb-f145-41b9-9b1e-a9935a8a5351/creator",
-    is_read: true,
-    created_at: "2026-08-21T09:00:00Z"
-  }
-];
+
 
 export default function NotificationCenterPage() {
   const [notifications, setNotifications] = useState<NotificationEntity[]>([]);
@@ -56,39 +20,33 @@ export default function NotificationCenterPage() {
     try {
       const res = await fetch("/api/notifications");
       const data = await res.json();
-      if (data.success && Array.isArray(data.notifications) && data.notifications.length > 0) {
+      if (data.success && data.notifications && data.notifications.length > 0) {
         setNotifications(data.notifications);
       } else {
-        setNotifications(FALLBACK_NOTIFS);
+        setNotifications([]);
       }
     } catch (e) {
       console.error(e);
-      setNotifications(FALLBACK_NOTIFS);
+      setNotifications([]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleMarkRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
-    );
+    setNotifications(notifications.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto py-2 font-sans">
+    <div className="space-y-6 max-w-5xl mx-auto py-4 font-sans">
       {/* Header */}
-      <div className="border-b border-[#e5e5ea] pb-5">
-        <span className="text-[10px] font-mono text-[#0071e3] font-bold uppercase tracking-widest block mb-1">
-          REAL-TIME INTELLIGENCE NOTIFICATIONS
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1d1d1f] tracking-tight flex items-center gap-2.5">
-          <Bell className="w-7 h-7 text-[#0071e3]" />
+      <div className="border-b border-slate-200 pb-6">
+        <span className="text-xs font-mono text-indigo-600 font-semibold uppercase tracking-wider block mb-1">REAL-TIME INTELLIGENCE NOTIFICATIONS</span>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+          <Bell className="w-7 h-7 text-indigo-600" />
           Notification Center
         </h1>
-        <p className="text-xs sm:text-sm text-[#6e6e73] font-medium mt-1">
-          Automated event telemetry, claim conflict alerts, and production export readiness updates.
-        </p>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1">Notifications triggered by automated research completion, knowledge changes, and content impact alerts.</p>
       </div>
 
       {/* Notifications List */}
@@ -98,67 +56,54 @@ export default function NotificationCenterPage() {
           <SkeletonCard />
         </div>
       ) : notifications.length === 0 ? (
-        <EmptyState
-          icon={<CheckCircle2 className="w-8 h-8 text-[#34c759]" />}
-          title="No Unread Notifications"
-          description="You are completely caught up on system events, claim verifications, and research updates."
-        />
+        <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-12 text-center space-y-3">
+          <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
+          <p className="text-sm font-semibold text-slate-700">No Unread Notifications</p>
+          <p className="text-xs text-slate-500">You are all caught up on system events and research intelligence updates.</p>
+        </div>
       ) : (
-        <div className="space-y-3.5">
+        <div className="space-y-3">
           {notifications.map((n) => (
             <div
               key={n.id}
-              className={`bg-white rounded-3xl p-5 sm:p-6 border transition-all duration-200 shadow-[0_2px_14px_rgba(0,0,0,0.03)] ${
-                n.is_read
-                  ? "border-[#e5e5ea] opacity-75"
-                  : "border-[#0071e3]/30 shadow-[0_8px_20px_rgba(0,113,227,0.06)]"
+              className={`bg-white rounded-[24px] shadow-sm border p-5 space-y-3 transition-all ${
+                n.is_read ? "bg-slate-50 border-slate-100 opacity-70" : "border-slate-200 hover:border-indigo-500/50"
               }`}
             >
-              <div className="flex items-center justify-between border-b border-[#f5f5f7] pb-3 mb-3">
-                <Badge
-                  variant={
-                    n.type === "CRITICAL"
-                      ? "danger"
-                      : n.type === "WARNING"
-                      ? "warning"
-                      : "default"
-                  }
-                  size="sm"
-                >
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
+                  n.type === 'CRITICAL'
+                    ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                    : n.type === 'WARNING'
+                    ? 'bg-amber-50 text-amber-600 border border-amber-200'
+                    : 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+                }`}>
                   {n.type}
-                </Badge>
+                </span>
 
-                <span className="text-[11px] font-mono font-medium text-[#8e8e93]">
-                  {n.created_at ? new Date(n.created_at).toLocaleDateString() : "Today"}
+                <span className="text-xs font-mono text-slate-500">
+                  {n.created_at ? new Date(n.created_at).toLocaleTimeString() : 'Recent'}
                 </span>
               </div>
 
-              <div className="space-y-1 mb-4">
-                <h3 className="text-sm font-bold text-[#1d1d1f] leading-snug">{n.title}</h3>
-                <p className="text-xs text-[#6e6e73] leading-relaxed font-medium">
-                  {n.message}
-                </p>
+              <div className="space-y-1">
+                <h3 className="text-base font-bold text-slate-900">{n.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans">{n.message}</p>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-[#f5f5f7]">
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                 {n.target_url ? (
-                  <Link
-                    href={n.target_url}
-                    className="text-xs font-semibold text-[#0071e3] hover:underline flex items-center gap-1.5"
-                  >
-                    <span>View Target Details</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
+                  <Link href={n.target_url} className="text-xs font-mono text-indigo-600 hover:underline flex items-center gap-1 font-semibold">
+                    View Target Details <ExternalLink className="w-3 h-3" />
                   </Link>
-                ) : (
-                  <span />
-                )}
+                ) : <span />}
 
                 {!n.is_read && (
                   <button
                     onClick={() => handleMarkRead(n.id)}
-                    className="text-xs font-semibold text-[#1d1d1f] hover:bg-[#f5f5f7] bg-white border border-[#e5e5ea] px-3 py-1.5 rounded-full flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-95"
+                    className="text-xs font-mono text-slate-500 hover:text-slate-700 bg-slate-50 px-3 py-1 rounded border border-slate-200"
                   >
-                    <Check className="w-3 h-3 text-[#34c759]" /> Mark as Read
+                    Mark as Read
                   </button>
                 )}
               </div>
@@ -169,3 +114,4 @@ export default function NotificationCenterPage() {
     </div>
   );
 }
+
