@@ -4,38 +4,38 @@
 
 @layer base {
   :root {
-    --background: #f0f2f6;
-    --foreground: #0f172a;
-    --surface: #A9A9A9;
-    --surface-elevated: #A9A9A9;
-    --border-subtle: #e2e8f0;
-    --border-medium: #cbd5e1;
-    --accent-indigo: #4f46e5;
-    --accent-emerald: #10b981;
-    --accent-amber: #f59e0b;
-    --accent-rose: #f43f5e;
-    --accent-sky: #0ea5e9;
+    --background: #f5f5f7;
+    --foreground: #1d1d1f;
+    --surface: #ffffff;
+    --surface-elevated: #ffffff;
+    --border-subtle: #e5e5ea;
+    --border-medium: #d1d1d6;
+    --accent-indigo: #0071e3;
+    --accent-emerald: #34c759;
+    --accent-amber: #ff9500;
+    --accent-rose: #ff3b30;
+    --accent-sky: #0071e3;
   }
 
   .dark {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    --surface: #1e293b;
-    --surface-elevated: #334155;
-    --border-subtle: #334155;
-    --border-medium: #475569;
-    --accent-indigo: #6366f1;
-    --accent-emerald: #34d399;
-    --accent-amber: #fbbf24;
-    --accent-rose: #fb7185;
-    --accent-sky: #38bdf8;
+    --background: #161618;
+    --foreground: #f5f5f7;
+    --surface: #242426;
+    --surface-elevated: #323236;
+    --border-subtle: #38383a;
+    --border-medium: #48484a;
+    --accent-indigo: #2997ff;
+    --accent-emerald: #30d158;
+    --accent-amber: #ff9f0a;
+    --accent-rose: #ff453a;
+    --accent-sky: #2997ff;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -44,7 +44,7 @@ body {
   background-color: var(--surface);
   border: 1px solid var(--border-subtle);
   border-radius: 1.5rem; /* rounded-3xl equivalent for sleekness */
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
 }
 
 .slate-card-hover {
