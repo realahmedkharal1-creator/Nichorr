@@ -3401,12 +3401,14 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             <span className="text-[11px] font-mono font-bold text-slate-500">{asset.v}</span>
            </td>
            <td className="px-6 py-4 text-right">
-            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-             <button className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm">
-              <Eye className="w-3.5 h-3.5 text-slate-400" /> Preview
+            <div className="flex items-center justify-end gap-2">
+             <button className="bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/90 rounded-lg px-2.5 py-1 text-xs font-medium inline-flex items-center gap-1 shadow-2xs transition-all">
+              <Eye className="w-3.5 h-3.5 text-slate-500" />
+              Preview
              </button>
-             <button className="px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm">
-              <Download className="w-3.5 h-3.5" /> DL
+             <button className="bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/90 rounded-lg px-2.5 py-1 text-xs font-medium inline-flex items-center gap-1 shadow-2xs transition-all">
+              <Download className="w-3.5 h-3.5 text-slate-500" />
+              Download
              </button>
             </div>
            </td>
