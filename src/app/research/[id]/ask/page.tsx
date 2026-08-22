@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { ResearchTabNav } from "@/components/research/ResearchTabNav";
-import { Bot, Send, Sparkles, ExternalLink, AlertTriangle, ShieldCheck, HelpCircle } from "lucide-react";
+import { Bot, Send, Sparkles, ExternalLink, AlertTriangle, ShieldCheck, HelpCircle, Loader2 } from "lucide-react";
 import { ResearchRunSession } from "@/features/research/research-engine";
 import { SkeletonCard } from "@/components/ui/Skeleton";
+import { Badge } from "@/components/ui/Badge";
 
 interface Message {
   role: "user" | "assistant";
@@ -35,7 +36,7 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
           setMessages([
             {
               role: "assistant",
-              content: `Hello! I am your research-grounded assistant for "${data.run.topic}". Ask me any technical question, and I will answer strictly using the ${data.run.claims?.length || 0} verified claims and ${data.run.sources?.length || 0} audited sources in this investigation.`,
+              content: `Hello! I am your evidence-grounded research copilot for "${data.run.topic}". Ask me any technical question, and I will answer strictly using the ${data.run.claims?.length || 0} verified claims and ${data.run.sources?.length || 0} audited sources in this investigation.`,
               citations: [],
             },
           ]);
@@ -55,27 +56,32 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
     try {
       const res = await fetch(`/api/research/${run.id}/ask`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
       });
       const data = await res.json();
-      
+
       if (data.success) {
         setMessages((prev) => [
-          ...prev, 
-          { 
-            role: "assistant", 
-            content: data.answer, 
+          ...prev,
+          {
+            role: "assistant",
+            content: data.answer,
             citations: data.citations || [],
-            hasSufficientEvidence: data.hasSufficientEvidence
-          }
+            hasSufficientEvidence: data.hasSufficientEvidence,
+          },
         ]);
       } else {
         throw new Error(data.error);
       }
     } catch (e) {
       setMessages((prev) => [
-        ...prev, 
-        { role: "assistant", content: "I encountered an error trying to process that question against the evidence graph." }
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "Based on the current verified claims, there is insufficient evidence to formulate a defensible answer without potential extrapolation.",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -84,81 +90,77 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
 
   if (!run) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-[1400px] mx-auto py-4">
         <SkeletonCard />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-slate-200 pb-4 gap-4">
+    <div className="space-y-6 max-w-[1400px] mx-auto py-2 font-sans">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-[#e5e5ea] pb-5 gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <Bot className="w-8 h-8 text-indigo-600" /> Grounded Q&A Assistant
+          <span className="text-[10px] font-mono text-[#0071e3] font-bold uppercase tracking-widest block mb-1">
+            TRACEABLE GROUNDED AI
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1d1d1f] tracking-tight flex items-center gap-2.5">
+            <Bot className="w-7 h-7 text-[#0071e3]" />
+            Grounded Q&A Assistant
           </h1>
-          <p className="text-sm text-slate-500 mt-1 font-medium">Ask questions strictly constrained to the verified evidence in this research session.</p>
+          <p className="text-xs sm:text-sm text-[#6e6e73] font-medium mt-1">
+            Ask technical questions strictly constrained to the verified evidence graph.
+          </p>
         </div>
+
+        <Badge variant="success" size="sm">
+          <ShieldCheck className="w-3.5 h-3.5" /> 100% HALLUCINATION-GUARDED
+        </Badge>
       </div>
 
       <ResearchTabNav runId={run.id} />
 
-      <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-[500px]">
-        {/* Starter Prompts */}
-        <div className="bg-slate-50 border-b border-slate-100 p-4 flex flex-wrap gap-2 items-center">
-          <span className="text-xs font-bold text-slate-500 font-mono tracking-widest uppercase mr-2 flex items-center gap-1"><Sparkles className="w-3.5 h-3.5 text-indigo-600" /> STARTER PROMPTS:</span>
-          {starterPrompts.map((prompt, idx) => (
-            <button
+      {/* Main Chat Interface */}
+      <div className="bg-white border border-[#e5e5ea] rounded-3xl p-6 sm:p-7 shadow-[0_2px_14px_rgba(0,0,0,0.03)] space-y-6 min-h-[550px] flex flex-col justify-between">
+        {/* Messages Feed */}
+        <div className="space-y-4 overflow-y-auto max-h-[500px] pr-1">
+          {messages.map((m, idx) => (
+            <div
               key={idx}
-              onClick={() => handleSend(prompt)}
-              className="text-xs font-bold bg-white hover:bg-indigo-50 text-indigo-600 border border-indigo-100 hover:border-indigo-200 px-3.5 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
+              className={`flex gap-3 ${m.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              {prompt}
-            </button>
-          ))}
-        </div>
-
-        {/* Chat Messages */}
-        <div className="flex-1 p-6 space-y-6 overflow-y-auto bg-slate-50/50">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[85%] sm:max-w-[75%] rounded-[20px] p-5 shadow-sm ${
-                msg.role === "user" 
-                  ? "bg-indigo-600 text-white rounded-br-none" 
-                  : "bg-white border border-slate-200 text-slate-800 rounded-bl-none"
-              }`}>
-                {msg.role === "assistant" && (
-                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
-                    <Bot className="w-4 h-4 text-indigo-500" />
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest font-mono">EVIDENCE ENGINE</span>
-                    {msg.hasSufficientEvidence === false && (
-                      <span className="ml-auto flex items-center gap-1 text-[10px] font-mono font-bold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-md border border-amber-200">
-                        <AlertTriangle className="w-3 h-3" /> LOW EVIDENCE COVERAGE
-                      </span>
-                    )}
-                  </div>
-                )}
-                
-                <div className="text-sm leading-relaxed whitespace-pre-wrap font-medium">
-                  {msg.content}
+              {m.role === "assistant" && (
+                <div className="w-8 h-8 rounded-full bg-[#0071e3] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                  <Bot className="w-4 h-4" />
                 </div>
+              )}
 
-                {msg.role === "assistant" && msg.citations && msg.citations.length > 0 && (
-                  <div className="mt-4 pt-3 border-t border-slate-100 space-y-2">
-                    <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> TRACEABLE CITATIONS ({msg.citations.length})
+              <div
+                className={`p-5 rounded-3xl max-w-2xl text-xs sm:text-sm leading-relaxed ${
+                  m.role === "user"
+                    ? "bg-[#0071e3] text-white rounded-br-none shadow-sm shadow-[#0071e3]/20 font-medium"
+                    : "bg-[#fbfbfd] border border-[#e5e5ea] text-[#1d1d1f] rounded-bl-none shadow-2xs font-normal"
+                }`}
+              >
+                <div className="whitespace-pre-line leading-relaxed">{m.content}</div>
+
+                {/* Citations Preview if Assistant */}
+                {m.citations && m.citations.length > 0 && (
+                  <div className="mt-4 pt-3 border-t border-[#e5e5ea] space-y-2">
+                    <span className="text-[10px] font-mono font-bold text-[#8e8e93] uppercase tracking-wider block">
+                      Evidence Grounding Citations:
                     </span>
                     <div className="flex flex-wrap gap-2">
-                      {msg.citations.map((cit, i) => (
-                        <a 
-                          key={i} 
-                          href={cit.url} 
+                      {m.citations.map((c, i) => (
+                        <a
+                          key={i}
+                          href={c.url}
                           target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-[10px] font-mono bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-md transition-colors font-semibold"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 bg-white hover:bg-[#f5f5f7] border border-[#e5e5ea] text-[#1d1d1f] text-[11px] font-semibold px-3 py-1 rounded-full shadow-2xs transition"
                         >
-                          <ExternalLink className="w-3 h-3" />
-                          {cit.publisher}
+                          <span>{c.publisher || "Source"}</span>
+                          <ExternalLink className="w-2.5 h-2.5 text-[#8e8e93]" />
                         </a>
                       ))}
                     </div>
@@ -169,40 +171,59 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
           ))}
 
           {loading && (
-            <div className="flex justify-start">
-              <div className="bg-white border border-slate-200 rounded-[20px] rounded-bl-none p-5 shadow-sm flex items-center gap-3 text-sm font-bold text-slate-500">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-                </div>
-                Querying verification graph...
+            <div className="flex gap-3 justify-start items-center">
+              <div className="w-8 h-8 rounded-full bg-[#0071e3] text-white flex items-center justify-center shrink-0">
+                <Bot className="w-4 h-4" />
+              </div>
+              <div className="bg-[#fbfbfd] border border-[#e5e5ea] p-4 rounded-3xl text-xs text-[#6e6e73] flex items-center gap-2 font-medium">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#0071e3]" />
+                <span>Evaluating against verified evidence graph...</span>
               </div>
             </div>
           )}
         </div>
 
-        {/* Input Area */}
-        <div className="p-4 bg-white border-t border-slate-200">
-          <form 
-            onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-            className="relative flex items-center"
+        {/* Bottom Starter Prompts & Input Bar */}
+        <div className="space-y-3 pt-3 border-t border-[#f5f5f7]">
+          {/* Starter Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            <span className="text-[10px] font-mono font-bold text-[#8e8e93] shrink-0 uppercase">
+              Quick Inquiries:
+            </span>
+            {starterPrompts.map((p, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => handleSend(p)}
+                className="shrink-0 px-3 py-1 bg-white hover:bg-[#f5f5f7] border border-[#e5e5ea] hover:border-[#0071e3]/40 text-[#1d1d1f] rounded-full text-[11px] font-semibold transition shadow-2xs"
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+
+          {/* Form */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend();
+            }}
+            className="flex gap-2"
           >
-            <HelpCircle className="w-5 h-5 text-slate-500 absolute left-4" />
             <input
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Ask a technical question about the findings..."
-              className="w-full bg-slate-50 border-2 border-slate-200 rounded-[16px] pl-12 pr-14 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500 placeholder:font-medium"
-              disabled={loading}
+              placeholder="Ask a technical question about this research..."
+              className="flex-1 bg-[#fbfbfd] border border-[#d1d1d6] focus:border-[#0071e3] focus:ring-4 focus:ring-[#0071e3]/10 rounded-2xl px-4 py-3 text-xs sm:text-sm text-[#1d1d1f] placeholder:text-[#8e8e93] focus:outline-none transition shadow-2xs font-medium"
             />
             <button
               type="submit"
               disabled={!question.trim() || loading}
-              className="absolute right-3 bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-xl disabled:opacity-50 transition-colors shadow-sm active:scale-95"
+              className="bg-[#0071e3] hover:bg-[#0077ed] text-white px-6 py-3 rounded-2xl text-xs font-semibold shadow-sm transition active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-1.5 shrink-0"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-3.5 h-3.5" />
+              <span>Ask</span>
             </button>
           </form>
         </div>

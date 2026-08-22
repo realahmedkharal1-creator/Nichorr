@@ -2,7 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileCheck, AlertTriangle, MessageSquare, HelpCircle, Lightbulb, FileText, Sparkles, Bot, Video, GitBranch, ChevronLeft, ChevronRight } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  FileCheck, 
+  AlertTriangle, 
+  MessageSquare, 
+  HelpCircle, 
+  Lightbulb, 
+  FileText, 
+  Sparkles, 
+  Bot, 
+  Video, 
+  GitBranch, 
+  ChevronLeft, 
+  ChevronRight 
+} from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 
 export function ResearchTabNav({ runId }: { runId: string }) {
@@ -27,24 +41,18 @@ export function ResearchTabNav({ runId }: { runId: string }) {
     { href: `/research/${runId}/brief`, label: "Final Brief", icon: FileText },
   ];
 
-  // Enable Smooth Mouse Wheel (Vertical Scroll) to translate into Horizontal Scroll
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
     const handleWheel = (e: WheelEvent) => {
       if (e.deltaY !== 0) {
-        e.preventDefault(); // Stop the whole page from scrolling vertically
-        
-        // Trackpads usually send small deltas (e.g., < 40), standard mice send 100+
+        e.preventDefault();
         const isSmoothTrackpad = Math.abs(e.deltaY) < 40;
-        
         if (isSmoothTrackpad) {
-            // Instant 1-to-1 mapping for trackpads (already smooth natively)
-            el.scrollLeft += e.deltaY;
+          el.scrollLeft += e.deltaY;
         } else {
-            // Smooth behavior for chunky physical mouse wheels
-            el.scrollBy({ left: e.deltaY * 1.5, behavior: 'smooth' });
+          el.scrollBy({ left: e.deltaY * 1.5, behavior: "smooth" });
         }
       }
     };
@@ -73,56 +81,47 @@ export function ResearchTabNav({ runId }: { runId: string }) {
     if (!isDragging || !scrollRef.current) return;
     e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 2.5; 
-    if (Math.abs(walk) > 5) {
+    const walk = (x - startX) * 2;
+    if (Math.abs(walk) > 4) {
       setDragged(true);
     }
-    // Instant scroll for dragging to prevent lag/delay
     scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const scrollLeftBtn = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: -260, behavior: "smooth" });
     }
   };
 
   const scrollRightBtn = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: 260, behavior: "smooth" });
     }
   };
 
   return (
-    <div className="relative mb-6 border-b border-slate-200 group flex items-center">
-      
+    <div className="relative mb-6 pb-2 border-b border-[#e5e5ea] group flex items-center">
       {/* Left scroll button */}
-      <button 
+      <button
+        type="button"
         onClick={scrollLeftBtn}
-        className="absolute left-1 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity h-full pb-3"
+        aria-label="Scroll sub-tabs left"
+        className="absolute -left-2 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pb-1"
       >
-        <div className="bg-white border border-slate-200 shadow-md rounded-full p-1.5 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 cursor-pointer transition-all">
+        <div className="bg-white border border-[#e5e5ea] shadow-md rounded-full p-1.5 text-[#1d1d1f] hover:text-[#0071e3] hover:border-[#0071e3]/30 hover:bg-[#f5f5f7] cursor-pointer transition-all">
           <ChevronLeft className="w-4 h-4" />
         </div>
       </button>
 
-      <div 
+      <div
         ref={scrollRef}
         onMouseDown={handleMouseDown}
         onMouseLeave={handleMouseLeave}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-        className="flex overflow-x-auto gap-2 pb-3 pl-6 pr-0 w-full scrollbar-hide cursor-grab active:cursor-grabbing" 
-        style={{ 
-          scrollbarWidth: "none", 
-          msOverflowStyle: "none",
-          WebkitMaskImage: "linear-gradient(to right, transparent, black 24px, black calc(100% - 24px), transparent)",
-          maskImage: "linear-gradient(to right, transparent, black 24px, black calc(100% - 24px), transparent)"
-        }}
+        className="flex overflow-x-auto gap-2 py-1 px-1 w-full scrollbar-hide cursor-grab active:cursor-grabbing select-none"
       >
-        <style dangerouslySetInnerHTML={{__html: `
-          ::-webkit-scrollbar { display: none; }
-        `}} />
         {tabs.map((t) => {
           const isActive = pathname === t.href;
           const Icon = t.icon;
@@ -135,27 +134,27 @@ export function ResearchTabNav({ runId }: { runId: string }) {
                 if (dragged) e.preventDefault();
               }}
               draggable={false}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all select-none shrink-0 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
                 isActive
-                  ? "bg-indigo-600 text-white shadow-md"
-                  : "bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                  ? "bg-[#0071e3] text-white shadow-sm shadow-[#0071e3]/20 border border-transparent font-bold"
+                  : "bg-white border border-[#e5e5ea] text-[#48484a] hover:text-[#1d1d1f] hover:border-[#d1d1d6] hover:bg-[#fbfbfd] shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-500"}`} />
-              {t.label}
+              <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-[#8e8e93]"}`} />
+              <span>{t.label}</span>
             </Link>
           );
         })}
-        {/* Spacer to guarantee empty space at the end so the last capsule isn't faded by the mask */}
-        <div className="w-6 shrink-0" />
       </div>
 
       {/* Right scroll button */}
-      <button 
+      <button
+        type="button"
         onClick={scrollRightBtn}
-        className="absolute right-1 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity h-full pb-3"
+        aria-label="Scroll sub-tabs right"
+        className="absolute -right-2 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pb-1"
       >
-        <div className="bg-white border border-slate-200 shadow-md rounded-full p-1.5 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 cursor-pointer transition-all">
+        <div className="bg-white border border-[#e5e5ea] shadow-md rounded-full p-1.5 text-[#1d1d1f] hover:text-[#0071e3] hover:border-[#0071e3]/30 hover:bg-[#f5f5f7] cursor-pointer transition-all">
           <ChevronRight className="w-4 h-4" />
         </div>
       </button>
