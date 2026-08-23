@@ -51,10 +51,10 @@ ${scriptOutline.hook}
 ${scriptOutline.context}
 
 3. EVIDENCE-LOCKED KEY CLAIMS:
-${(scriptOutline.keyClaimBlocks || []).map((b: any) => `${b.sectionTitle}:n${b.claimText} [Status: ${b.status}]`).join("nn")}
+${(scriptOutline.keyClaimBlocks || []).map((b: any) => `${b.sectionTitle}:\n${b.claimText} [Status: ${b.status}]`).join("\n\n")}
 
 4. COUNTERARGUMENTS & SCRIPT WARNINGS:
-${(scriptOutline.counterarguments || []).map((c: any) => `• [${c.type}] ${c.advice}`).join("n")}
+${(scriptOutline.counterarguments || []).map((c: any) => `• [${c.type}] ${c.advice}`).join("\n")}
 
 5. CONCLUSION:
 ${scriptOutline.conclusion}

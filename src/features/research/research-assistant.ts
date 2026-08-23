@@ -28,7 +28,7 @@ export class ResearchAssistantService {
 
     // Matching relevant claims deterministically first
     const relevantClaims = claims.filter((c) =>
-      qLower.split(/s+/).some((word) => word.length > 3 && c.claim_text.toLowerCase().includes(word))
+      qLower.split(/\s+/).some((word) => word.length > 3 && c.claim_text.toLowerCase().includes(word))
     );
 
     // Conflict queries
@@ -44,10 +44,10 @@ export class ResearchAssistantService {
 
       const conflictSummary = conflicts
         .map((c) => `• [${c.conflict_type}] ${c.explanation}`)
-        .join("n");
+        .join("\n");
 
       return {
-        answer: `The research uncovered ${conflicts.length} technical disagreement(s) across tested sources:nn${conflictSummary}nnCreator Recommendation: Acknowledge testing variations explicitly in your script rather than stating a single absolute result.`,
+        answer: `The research uncovered ${conflicts.length} technical disagreement(s) across tested sources:\n\n${conflictSummary}\n\nCreator Recommendation: Acknowledge testing variations explicitly in your script rather than stating a single absolute result.`,
         hasSufficientEvidence: true,
         citations: sources.slice(0, 3).map((s) => ({ id: s.id, title: s.title, publisher: s.publisher, url: s.url })),
         suggestedFollowups: ["What are the strongest verified claims?", "What content angles are recommended?"],
@@ -56,9 +56,9 @@ export class ResearchAssistantService {
 
     // If query matches claims, format evidence-grounded response
     if (relevantClaims.length > 0) {
-      const claimsList = relevantClaims.slice(0, 4).map((c) => `• ${c.claim_text} (Confidence: ${c.confidence})`).join("n");
+      const claimsList = relevantClaims.slice(0, 4).map((c) => `• ${c.claim_text} (Confidence: ${c.confidence})`).join("\n");
       return {
-        answer: `Based on audited evidence for "${session.topic}", here are the verified findings:nn${claimsList}`,
+        answer: `Based on audited evidence for "${session.topic}", here are the verified findings:\n\n${claimsList}`,
         hasSufficientEvidence: true,
         citations: sources.slice(0, 3).map((s) => ({ id: s.id, title: s.title, publisher: s.publisher, url: s.url })),
         suggestedFollowups: ["What conflicting evidence was found?", "What are the biggest audience question gaps?"],
@@ -68,7 +68,7 @@ export class ResearchAssistantService {
     // Default overview answer using executive summary if general query
     if (brief?.executive_summary && brief.executive_summary.length > 0) {
       return {
-        answer: `Based on audited research for "${session.topic}":nn${brief.executive_summary.join("nn")}`,
+        answer: `Based on audited research for "${session.topic}":\n\n${brief.executive_summary.join("\n\n")}`,
         hasSufficientEvidence: true,
         citations: sources.slice(0, 3).map((s) => ({ id: s.id, title: s.title, publisher: s.publisher, url: s.url })),
         suggestedFollowups: ["What are the strongest verified claims?", "What conflicting evidence was found?"],

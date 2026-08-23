@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 const STAGES = [
   { id: "PLANNING", label: "Deconstructing Objective & Queries", desc: "Formulating search vectors and target parameters." },
@@ -17,31 +17,46 @@ const STAGES = [
   { id: "GENERATING_BRIEF", label: "Synthesizing Final Structured Research Brief", desc: "Assembling executive summary, key findings, and markdown export document." },
 ];
 import { ResearchRunSession } from "@/features/research/research-engine";
-import { Loader2, CheckCircle2, ShieldCheck, XCircle, ArrowRight, Layers, Activity, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle2, ShieldCheck, XCircle, ArrowRight, Layers, Activity, AlertCircle, RefreshCw, Sparkles, FileText } from "lucide-react";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 
 export default function LiveExecutionPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [run, setRun] = useState<ResearchRunSession | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  const executionTriggeredRef = useRef(false);
 
   useEffect(() => {
     const fetchStatus = async () => {
       try {
         const res = await fetch(`/api/research/${params.id}/status`);
         const data = await res.json();
-        if (data.success) {
+        if (data.success && data.run) {
           setRun(data.run);
+
+          // Self-Healing Auto-Execution: If run was created but execution hasn't started yet, kick it off!
+          if (data.run.status === "CREATED" && !executionTriggeredRef.current) {
+            executionTriggeredRef.current = true;
+            fetch(`/api/research/${params.id}/execute`, { method: "POST" })
+              .then((r) => r.json())
+              .then((execData) => {
+                if (execData.success && execData.run) {
+                  setRun(execData.run);
+                }
+              })
+              .catch((err) => console.error("Auto-execution trigger error:", err));
+          }
         }
       } catch (e) {
-        console.error(e);
+        console.error("Status polling error:", e);
       }
     };
 
     fetchStatus();
     const interval = setInterval(() => {
       fetchStatus();
-    }, 2000);
+    }, 1500);
 
     return () => clearInterval(interval);
   }, [params.id]);
@@ -54,7 +69,6 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
     );
   }
 
-  
   const isCompleted = run.status === "COMPLETED";
   const isCancelled = run.status === "CANCELLED";
   const isFailed = run.status === "FAILED";
@@ -71,7 +85,6 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
   const progressPercent = isCompleted ? 100 : (currentStageIndex === -1 ? 0 : Math.round((currentStageIndex / STAGES.length) * 100));
   const currentStageDetail = STAGES[currentStageIndex];
 
-
   const handleCancel = async () => {
     if (cancelling) return;
     setCancelling(true);
@@ -87,6 +100,22 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
     }
   };
 
+  const handleRetry = async () => {
+    if (retrying) return;
+    setRetrying(true);
+    try {
+      const res = await fetch(`/api/research/${params.id}/execute`, { method: "POST" });
+      const data = await res.json();
+      if (data.success && data.run) {
+        setRun(data.run);
+      }
+    } catch (e) {
+      console.error("Retry error:", e);
+    } finally {
+      setRetrying(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6 py-4">
       {/* Header */}
@@ -98,7 +127,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Research Execution Pipeline</h1>
         </div>
 
-        <div>
+        <div className="flex items-center gap-3">
           {!isCompleted && !isCancelled && !isFailed && (
             <button
               onClick={handleCancel}
@@ -119,14 +148,50 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
             </button>
           )}
 
-          {isCompleted && (
+          {isFailed && (
             <button
-              onClick={() => router.push(`/research/${params.id}/results`)}
-              className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-6 py-3 rounded-full text-sm font-extrabold transition-all shadow-xl shadow-emerald-600/20 transform hover:-translate-y-0.5 active:scale-95"
+              onClick={handleRetry}
+              disabled={retrying}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-md active:scale-95"
             >
-              View Research Results
-              <ArrowRight className="w-4 h-4" />
+              {retrying ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Retrying Pipeline...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="w-4 h-4" />
+                  Retry Execution
+                </>
+              )}
             </button>
+          )}
+
+          {isCompleted && (
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => router.push(`/research/${params.id}/creator`)}
+                className="flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 px-4 py-2.5 rounded-full text-xs font-bold transition shadow-sm"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                Creator Studio
+              </button>
+              <button
+                onClick={() => router.push(`/research/${params.id}/brief`)}
+                className="flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 px-4 py-2.5 rounded-full text-xs font-bold transition shadow-sm"
+              >
+                <FileText className="w-3.5 h-3.5 text-slate-600" />
+                Brief (.md)
+              </button>
+              <button
+                onClick={() => router.push(`/research/${params.id}/results`)}
+                className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-6 py-2.5 rounded-full text-xs font-extrabold transition-all shadow-xl shadow-emerald-600/20 transform hover:-translate-y-0.5 active:scale-95"
+              >
+                View Results
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           )}
         </div>
       </div>

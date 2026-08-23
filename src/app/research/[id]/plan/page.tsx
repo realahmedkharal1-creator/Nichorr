@@ -57,7 +57,10 @@ export default function ResearchPlanPage({ params }: { params: { id: string } })
     if (starting) return;
     setStarting(true);
     try {
-      fetch(`/api/research/${params.id}/execute`, { method: "POST" });
+      // Fire execution with keepalive: true so browser navigation does not cancel the request
+      fetch(`/api/research/${params.id}/execute`, { method: "POST", keepalive: true }).catch((err) => {
+        console.warn("Execute post trigger:", err);
+      });
       router.push(`/research/${params.id}/live`);
     } catch (e) {
       console.error(e);

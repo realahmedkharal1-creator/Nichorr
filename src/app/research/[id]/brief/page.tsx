@@ -35,25 +35,25 @@ Date: ${new Date(run.createdAt).toLocaleDateString()}
 Quality Gate: ${run.qualityGateStatus}
 
 ## 1. EXECUTIVE SUMMARY
-${(brief.executive_summary || []).join("nn")}
+${(brief.executive_summary || []).join("\n\n")}
 
 ## 2. KEY FINDINGS & VERIFIED FACTS
-${(brief.key_findings || []).map((f, i) => `${i + 1}. ${f.finding} (Confidence: ${f.confidence})`).join("n")}
+${(brief.key_findings || []).map((f, i) => `${i + 1}. ${f.finding} (Confidence: ${f.confidence})`).join("\n")}
 
 ## 3. CONFLICTING EVIDENCE
-${(brief.conflicts || []).map((c) => `- [${c.conflict_type}] ${c.explanation}`).join("n")}
+${(brief.conflicts || []).map((c) => `- [${c.conflict_type}] ${c.explanation}`).join("\n")}
 
 ## 4. COMMUNITY SIGNALS
-${(brief.community_signals || []).map((s) => `- [${s.signal_type}] ${s.signal}`).join("n")}
+${(brief.community_signals || []).map((s) => `- [${s.signal_type}] ${s.signal}`).join("\n")}
 
 ## 5. AUDIENCE QUESTIONS
-${(brief.audience_questions || []).map((q) => `- ${q.question} (Gap: ${q.coverage_gap})`).join("n")}
+${(brief.audience_questions || []).map((q) => `- ${q.question} (Gap: ${q.coverage_gap})`).join("\n")}
 
 ## 6. CONTENT OPPORTUNITIES
-${(brief.content_opportunities || []).map((o) => `### ${o.title}n${o.description}`).join("nn")}
+${(brief.content_opportunities || []).map((o) => `### ${o.title}\n${o.description}`).join("\n\n")}
 
 ## 7. SOURCES
-${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).join("n")}
+${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).join("\n")}
 `;
   };
 

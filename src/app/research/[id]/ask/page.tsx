@@ -55,6 +55,7 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
     try {
       const res = await fetch(`/api/research/${run.id}/ask`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
       });
       const data = await res.json();
