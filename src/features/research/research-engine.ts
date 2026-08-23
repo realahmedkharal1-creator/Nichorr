@@ -280,11 +280,7 @@ export class ResearchEngine {
       try {
         rawResults = await this.searchProvider.search(session.topic, "PRIMARY", isBenchmarkMode);
       } catch (searchErr: any) {
-        console.warn("Live search warning, using grounded technical search fallback:", searchErr?.message);
-        const { MockSearchProvider } = await import("@/lib/search/mock.search.provider");
-        const fallbackProvider = new MockSearchProvider();
-        rawResults = await fallbackProvider.search(session.topic, "PRIMARY");
-        session.failureReason = `Live search notice: ${searchErr?.message?.slice(0, 120) || "Rate-limited"}; completed via grounded technical knowledge base.`;
+        throw new Error(`We couldn't reach live search sources for this topic — please try again in a moment. (Provider error: ${searchErr?.message?.slice(0, 120) || "Rate-limited"})`);
       }
       
       session.sources = rawResults.map((r, idx) => ({
@@ -371,7 +367,7 @@ export class ResearchEngine {
           success: true,
         });
       } catch (err: any) {
-        console.warn("Gemini claim extraction warning, using grounded evidence fallback:", err.message);
+        throw new Error(`LLM claim extraction failed: ${err.message}`);
       }
     }
 
@@ -385,14 +381,10 @@ export class ResearchEngine {
         evidence_ids: [`ev-${idx + 1}`],
       }));
     } else {
-      session.claims = session.evidence.map((ev, idx) => ({
-        id: `cl-${idx + 1}`,
-        claim_text: `Verified finding: ${ev.excerpt.slice(0, 120)}...`,
-        claim_type: "FACT",
-        status: "SUPPORTED",
-        confidence: "HIGH",
-        evidence_ids: [ev.id],
-      }));
+      if (!isGeminiAvailable) {
+        throw new Error("Claim extraction failed: GEMINI_API_KEY is not configured.");
+      }
+      session.claims = [];
     }
 
     // Save claims and evidence to Supabase DB
@@ -441,15 +433,7 @@ export class ResearchEngine {
     } else if (variantConflicts.length > 0) {
       session.conflicts = variantConflicts;
     } else {
-      session.conflicts = session.sources.length > 1 ? [
-        {
-          id: "conf-1",
-          claim_a_id: "cl-1",
-          claim_b_id: "cl-2",
-          conflict_type: "METHODOLOGICAL",
-          explanation: "Lab tests report slight variations in peak battery endurance due to ambient room temperature differences during sustained load testing (21°C vs 25°C).",
-        },
-      ] : [];
+      session.conflicts = [];
     }
 
     // Step 5: COMMUNITY, YOUTUBE & AUDIENCE ANALYSIS
@@ -461,7 +445,7 @@ export class ResearchEngine {
       ytReport = await this.youtubeEngine.analyzeTopic(session.topic, entityInfo);
       session.youtubeIntelligence = ytReport;
     } catch (e: any) {
-      console.warn("YouTube intelligence engine warning:", e.message);
+      throw new Error(`YouTube intelligence extraction failed: ${e.message}`);
     }
 
     if (ytReport && ytReport.recurringProblems && ytReport.recurringProblems.length > 0) {
@@ -481,15 +465,7 @@ export class ResearchEngine {
         firsthand_likelihood: "HIGH",
       }));
     } else {
-      session.communitySignals = [
-        {
-          id: "sig-1",
-          signal: `Multiple users report thermal limits when rendering sustained workloads on ${entityInfo.modelName}.`,
-          signal_type: "PROBLEM",
-          frequency_level: "MEDIUM",
-          firsthand_likelihood: "HIGH",
-        },
-      ];
+      session.communitySignals = [];
     }
 
     // Merge YouTube reviewer disagreements into conflicts
@@ -552,15 +528,7 @@ export class ResearchEngine {
         score: Number((9.4 - idx * 0.4).toFixed(1)),
       }));
     } else {
-      session.opportunities = [
-        {
-          id: "opp-1",
-          title: `Real-World Thermal Limits of ${entityInfo.modelName}`,
-          description: "Creators are currently missing the critical distinction between short peak benchmarks and 45-minute sustained render stability.",
-          opportunity_type: "UNDER_COVERED",
-          score: 9.2,
-        },
-      ];
+      session.opportunities = [];
     }
 
     // Step 7: QUALITY GATE AUDIT & BLOCKING RULES
@@ -613,11 +581,14 @@ export class ResearchEngine {
           session.brief = llmBrief;
         }
       } catch (err: any) {
-        console.warn("Gemini structured brief generation error, falling back to structured synthesis:", err);
+        throw new Error(`Brief generation failed: ${err.message}`);
       }
     }
 
     if (!session.brief || Object.keys(session.brief).length === 0) {
+      if (!isBenchmarkMode) {
+        throw new Error("Brief generation failed: no content was produced by the provider.");
+      }
       session.brief = {
         executive_summary: [
           `Verified research analysis for topic: "${session.topic}".`,
