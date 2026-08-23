@@ -6494,7 +6494,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
          <HelpCircle className="w-4 h-4 text-rose-600" />
-         "Why Did VeritasTech AI Support, Weaken, or Falsify This Hypothesis?" 6-Stage Deterministic Lineage
+         "Why Did Nichorr Support, Weaken, or Falsify This Hypothesis?" 6-Stage Deterministic Lineage
         </h3>
        </div>
 

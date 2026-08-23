@@ -42,8 +42,8 @@ const invitesStore = globalWS.invitesStore ?? new Map<string, WorkspaceInvitatio
 // Default Primary Workspace
 const DEFAULT_WS: WorkspaceEntity = {
   id: "ws-primary-default",
-  name: "VeritasTech Primary Workspace",
-  slug: "veritastech-primary",
+  name: "Nichorr Primary Workspace",
+  slug: "nichorr-primary",
   owner_id: "usr-default-owner",
   created_at: new Date().toISOString(),
 };

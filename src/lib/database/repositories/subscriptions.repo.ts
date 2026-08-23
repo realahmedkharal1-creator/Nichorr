@@ -57,7 +57,7 @@ export class SubscriptionsRepository {
       {
         id: "sub-1",
         product_id: productId,
-        subscriber_email: "executive@veritastech.ai",
+        subscriber_email: "executive@nichorr.com",
         channel: "EMAIL",
         status: "ACTIVE",
         created_at: new Date().toISOString(),

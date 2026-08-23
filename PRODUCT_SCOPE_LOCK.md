@@ -1,4 +1,4 @@
-# VeritasTech AI — Product Scope Lock
+# Nichorr — Product Scope Lock
 
 **Read this file FIRST before making any changes.** This is the single source of truth for what this product is and is not. Do not deviate from this scope under any circumstances, even if asked to add "the next phase" of something unrelated.
 
@@ -6,7 +6,7 @@
 
 ## 1. What this product actually is
 
-VeritasTech AI is a **research tool for technology content creators** (YouTube reviewers, tech bloggers, comparison-video makers). It turns a topic (e.g. "iPhone 18 Pro Max vs Galaxy S27 Ultra") into an **evidence-backed research brief**: verified claims, sources, conflicting evidence, audience questions, and content gaps — so a creator can script a video without doing hours of manual research.
+Nichorr is a **research tool for technology content creators** (YouTube reviewers, tech bloggers, comparison-video makers). It turns a topic (e.g. "iPhone 18 Pro Max vs Galaxy S27 Ultra") into an **evidence-backed research brief**: verified claims, sources, conflicting evidence, audience questions, and content gaps — so a creator can script a video without doing hours of manual research.
 
 That is the entire product. Nothing else.
 

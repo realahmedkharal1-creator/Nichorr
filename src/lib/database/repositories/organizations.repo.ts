@@ -27,8 +27,8 @@ export class OrganizationsRepository {
 
     return orgsStore.get(id) || {
       id,
-      name: "VeritasTech Global Enterprise",
-      slug: "veritastech-global",
+      name: "Nichorr Creator Studio",
+      slug: "nichorr-studio",
       plan: "ENTERPRISE",
       created_at: new Date().toISOString(),
     };

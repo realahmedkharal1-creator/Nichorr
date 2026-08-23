@@ -1,6 +1,6 @@
-# VeritasTech AI — Evidence-First Technology Research Intelligence Platform
+# Nichorr — Evidence-First Technology Research Intelligence Platform
 
-VeritasTech AI is an evidence-first technology research intelligence platform built for technology content creators (YouTube reviewers, PC hardware builders, gadget reviewers, tech journalists) and independent technology researchers.
+Nichorr is an evidence-first technology research intelligence platform built for technology content creators (YouTube reviewers, PC hardware builders, gadget reviewers, tech journalists) and independent technology researchers.
 
 The central philosophy of the platform is:
 > **"Never optimize for an answer that sounds convincing. Optimize for an answer that can be defended."**

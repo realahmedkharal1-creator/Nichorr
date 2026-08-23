@@ -33,7 +33,7 @@ export default function ConflictsPage({ params }: { params: { id: string } }) {
           <AlertTriangle className="w-6 h-6 text-amber-600" />
           Disagreements & Conflict Matrix
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">Veritas surfaces legitimate conflicting reports from independent labs without forcing artificial consensus.</p>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1">Nichorr surfaces legitimate conflicting reports from independent labs without forcing artificial consensus.</p>
       </div>
 
       <ResearchTabNav runId={run.id} />

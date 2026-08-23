@@ -3,7 +3,7 @@ import { TimelineDiffItem } from "./editor-integration.types";
 
 export class TimelineDiffEngine {
   /**
-   * Compares the current VeritasTech timeline markers against a reference/imported timeline.
+   * Compares the current Nichorr timeline markers against a reference/imported timeline.
    */
   static computeDiff(
     currentMarkers: CreatorTimelineMarker[],

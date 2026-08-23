@@ -88,7 +88,7 @@ function CreateResearchForm() {
           <ShieldCheck className="w-3 h-3" /> GUIDED SETUP
         </span>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 ">Create Research Run</h1>
-        <p className="text-sm text-slate-500 max-w-xl mx-auto">Define your research topic. Veritas will deconstruct entities, formulate multi-vector search plans, and extract verified evidence.</p>
+        <p className="text-sm text-slate-500 max-w-xl mx-auto">Define your research topic. Nichorr will deconstruct entities, formulate multi-vector search plans, and extract verified evidence.</p>
       </div>
 
       {/* Preset Examples */}

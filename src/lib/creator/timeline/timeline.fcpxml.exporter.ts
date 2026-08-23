@@ -29,7 +29,7 @@ export class TimelineFcpxmlExporter {
     lines.push(`    <format id="r1" name="FFVideoFormat1080p${fps}" frameDuration="${frameDurationStr}" width="1920" height="1080"/>`);
     lines.push(`  </resources>`);
     lines.push(`  <library>`);
-    lines.push(`    <event name="VeritasTech_AI_Research">`);
+    lines.push(`    <event name="Nichorr_Research">`);
     lines.push(`      <project name="${this.escapeXml(sanitizedTitle)}_Timeline">`);
     lines.push(`        <sequence duration="${durationSeconds}s" format="r1">`);
     lines.push(`          <spine>`);

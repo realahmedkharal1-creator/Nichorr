@@ -440,7 +440,7 @@ export default function ResearchProvenancePage({ params }: { params: { id: strin
               <ShieldCheck className="w-4 h-4 text-emerald-600" /> Script On-Camera Safety & Overstatement Audit
             </h2>
             <p className="text-xs text-slate-700 leading-relaxed font-sans">
-              VeritasTech AI enforces real-time guardrails to ensure content creators never make definitive statements without corroborating primary laboratory data.
+              Nichorr enforces real-time guardrails to ensure content creators never make definitive statements without corroborating primary laboratory data.
             </p>
 
             <div className="space-y-3 pt-2">

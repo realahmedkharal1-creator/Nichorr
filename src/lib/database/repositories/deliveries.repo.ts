@@ -24,7 +24,7 @@ export class DeliveriesRepository {
         product_id: productId,
         version_id: "ver-3",
         channel: "EMAIL",
-        recipient: "executive@veritastech.ai",
+        recipient: "executive@nichorr.com",
         status: "DELIVERED",
         created_at: new Date().toISOString(),
       },

@@ -113,7 +113,7 @@ export class PublishingPlanEngine {
           title: platform === "YOUTUBE_SHORTS" ? `${baseTitle} #Shorts` : baseTitle,
           description: baseDesc,
           chapters: platform === "YOUTUBE_LONG_FORM" ? ["0:00 Intro", "1:30 Benchmarks", "8:45 Conclusion"] : undefined,
-          tags: ["hardware", "benchmarks", "tech-review", "veritastech"],
+          tags: ["hardware", "benchmarks", "tech-review", "nichorr"],
           hashtags: ["#tech", "#benchmarks", "#hardware"],
           thumbnailRef: `thumb-${platform.toLowerCase()}.png`,
           mediaAssetRef: `${researchRunId}_${platform.toLowerCase()}_master`,

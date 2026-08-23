@@ -22,7 +22,7 @@ export class ApiClientsRepository {
       {
         id: "client-1",
         workspace_id: workspaceId,
-        client_name: "Veritas Enterprise Connector (Slack / Teams)",
+        client_name: "Nichorr Enterprise Connector (Slack / Teams)",
         client_type: "ENTERPRISE_CONNECTOR",
         trust_level: "ENTERPRISE_TRUSTED",
         status: "ACTIVE",

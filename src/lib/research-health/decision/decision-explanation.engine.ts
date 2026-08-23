@@ -51,7 +51,7 @@ export class DecisionExplanationEngine {
           whichCreatorAssetsAffected: assetLabels,
           publishingConsequence: "Workflow readiness is blocked. Recording cannot proceed safely without evidence backing.",
           recommendedAction: "Recheck primary sources or replace with verified laboratory findings.",
-          whatWillHappenIfApproved: "VeritasTech AI will isolate this unbacked claim and prevent it from advancing into teleprompter text.",
+          whatWillHappenIfApproved: "Nichorr will isolate this unbacked claim and prevent it from advancing into teleprompter text.",
         };
       }
 
@@ -65,7 +65,7 @@ export class DecisionExplanationEngine {
           whichCreatorAssetsAffected: assetLabels,
           publishingConsequence: "Your script or benchmark cards may present one side of a contested hardware result as uncontested fact.",
           recommendedAction: "Review conflicting findings and disclose test condition differences (e.g. ambient thermals, fan profiles).",
-          whatWillHappenIfApproved: "VeritasTech AI provides explicit context notes to balance both perspectives in your script outline.",
+          whatWillHappenIfApproved: "Nichorr provides explicit context notes to balance both perspectives in your script outline.",
         };
       }
 
@@ -80,7 +80,7 @@ export class DecisionExplanationEngine {
           whichCreatorAssetsAffected: assetLabels,
           publishingConsequence: "Your video may cite outdated benchmark scores that have since been superseded by newer official revisions.",
           recommendedAction: "Revalidate benchmark measurements against current laboratory test standards.",
-          whatWillHappenIfApproved: "VeritasTech AI will recheck the primary benchmark database, update the evidence snapshot, and flag affected assets for one-click regeneration review.",
+          whatWillHappenIfApproved: "Nichorr will recheck the primary benchmark database, update the evidence snapshot, and flag affected assets for one-click regeneration review.",
         };
       }
 
@@ -95,7 +95,7 @@ export class DecisionExplanationEngine {
           whichCreatorAssetsAffected: assetLabels,
           publishingConsequence: "Creator script sections and spec cards may display outdated SKU or hardware specs.",
           recommendedAction: "Recheck the official OEM datasheet or primary spec sheet.",
-          whatWillHappenIfApproved: "VeritasTech AI updates the hardware intelligence record with the latest verified datasheet.",
+          whatWillHappenIfApproved: "Nichorr updates the hardware intelligence record with the latest verified datasheet.",
         };
       }
 
@@ -109,7 +109,7 @@ export class DecisionExplanationEngine {
           whichCreatorAssetsAffected: assetLabels,
           publishingConsequence: "Video hooks and talking points may reflect day-one sentiment that is no longer representative.",
           recommendedAction: "Recheck reviewer consensus across updated long-term reviews.",
-          whatWillHappenIfApproved: "VeritasTech AI refreshes the YouTube intelligence graph with the latest consensus findings.",
+          whatWillHappenIfApproved: "Nichorr refreshes the YouTube intelligence graph with the latest consensus findings.",
         };
       }
 

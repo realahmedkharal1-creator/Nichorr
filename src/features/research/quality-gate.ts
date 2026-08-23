@@ -25,7 +25,7 @@ export class QualityGateValidator {
     }
 
     if (!session.evidence || session.evidence.length === 0) {
-      blockers.push("Zero evidence excerpts stored. Unbacked research briefs violate Veritas ethos.");
+      blockers.push("Zero evidence excerpts stored. Unbacked research briefs violate Nichorr ethos.");
     }
 
     // A brief is only evaluated when provided (post-generation re-check). An empty brief must never

@@ -211,7 +211,7 @@ export class ProvenanceEngine {
         benchmarkOrTranscriptRef,
         sourceId: matchedSource?.id || "src-unknown",
         sourceTitle: matchedSource?.title || "Technical Source",
-        sourceUrl: matchedSource?.url || "https://veritastech.ai/sources",
+        sourceUrl: matchedSource?.url || "https://nichorr.com/sources",
         publisher: matchedSource?.publisher || "Independent Laboratory",
         authorityTier: srcAuth?.tier || "TIER_2_INDEPENDENT_LAB",
         independenceScore: srcAuth?.independenceScore || 8.5,
@@ -340,7 +340,7 @@ export class ProvenanceEngine {
   ): string {
     const md: string[] = [];
 
-    md.push(`# VeritasTech AI — Creator Citation Proof Sheet & Evidence Audit`);
+    md.push(`# Nichorr — Creator Citation Proof Sheet & Evidence Audit`);
     md.push(`**Topic:** ${topic}`);
     md.push(`**Overall Grounding Score:** ${groundingScore}% Verified Lineage`);
     md.push(`**Audit Timestamp:** ${new Date().toISOString()}`);

@@ -101,7 +101,7 @@ function SignUpContent() {
             Create an Account
           </h1>
           <p className="text-sm text-slate-500 font-medium">
-            Join VeritasTech to start building your intelligence engine.
+            Join Nichorr to start building your intelligence engine.
           </p>
         </div>
 

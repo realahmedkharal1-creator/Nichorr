@@ -29,7 +29,7 @@ export default function BriefPage({ params }: { params: { id: string } }) {
   const brief = run.brief;
 
   const generateMarkdownExport = () => {
-    return `# VERITASTECH AI RESEARCH BRIEF
+    return `# NICHORR RESEARCH BRIEF
 Topic: ${run.topic}
 Date: ${new Date(run.createdAt).toLocaleDateString()}
 Quality Gate: ${run.qualityGateStatus}
@@ -68,7 +68,7 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `veritas-brief-${run.id}.md`;
+    a.download = `nichorr-brief-${run.id}.md`;
     a.click();
   };
 

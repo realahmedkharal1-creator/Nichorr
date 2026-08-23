@@ -82,7 +82,7 @@ export function Header() {
       {/* Left: Logo + Badge */}
       <div className="flex-1 flex items-center gap-3">
          <Link href={user ? "/dashboard" : "/"} className="font-mono font-extrabold text-lg tracking-tight text-slate-900 hidden sm:block">
-           VeritasTech
+           Nichorr
          </Link>
          <span className="hidden lg:flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-[9px] font-bold text-emerald-700 tracking-wider shadow-sm">
             <ShieldCheck className="w-3 h-3" /> EVIDENCE-FIRST

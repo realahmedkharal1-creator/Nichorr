@@ -209,7 +209,7 @@ export class ScriptQualityEngine {
       overallQualityScore >= 78 ? "B" :
       overallQualityScore >= 65 ? "C" : "D";
 
-    const summaryText = `Script passed VeritasTech AI Evidence Quality Review with grade ${grade} (${overallQualityScore}%). ${supportedWithEvidence}/${totalTP} talking points verified with multi-hop primary evidence. Zero ungrounded overstatements permitted.`;
+    const summaryText = `Script passed Nichorr Evidence Quality Review with grade ${grade} (${overallQualityScore}%). ${supportedWithEvidence}/${totalTP} talking points verified with multi-hop primary evidence. Zero ungrounded overstatements permitted.`;
 
     return {
       researchRunId: session.id,

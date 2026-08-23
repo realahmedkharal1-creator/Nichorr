@@ -24,7 +24,7 @@ export default function ProductOnboardingPage() {
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 text-xs font-mono font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> WELCOME TO VERITASTECH AI
+            <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> WELCOME TO NICHORR
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Set Up Your Research Workspace</h1>
           <p className="text-xs text-slate-500">Step {step} of 3 — Configure your evidence-first creator intelligence environment.</p>

@@ -73,7 +73,7 @@ export class DistributionPlatformEngine {
       `Evidence-grounded benchmark and technical breakdown for ${session.topic || "hardware"}.\n\n` +
       `TIMESTAMPS:\n${chapterLines || "00:00 Introduction\n01:00 Benchmarks\n05:00 Conclusion"}\n\n` +
       `LABORATORY EVIDENCE & SOURCES:\n${sourcesSummary || "Verified OEM datasheets and independent laboratory results."}\n\n` +
-      `Produced with VeritasTech AI — Evidence-First Technology Research Platform.`;
+      `Produced with Nichorr — Evidence-First Technology Research Platform.`;
 
     const tags = [
       session.topic,

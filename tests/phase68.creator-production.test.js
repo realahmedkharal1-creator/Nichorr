@@ -80,7 +80,7 @@ function generateFcpxml(topic, markers, targetDurationMinutes, fps = 24) {
   lines.push(`    <format id="r1" name="FFVideoFormat1080p${fps}" frameDuration="100/2400s" width="1920" height="1080"/>`);
   lines.push(`  </resources>`);
   lines.push(`  <library>`);
-  lines.push(`    <event name="VeritasTech_AI_Research">`);
+  lines.push(`    <event name="Nichorr_Research">`);
   lines.push(`      <project name="${escapeXml(topic)}_Timeline">`);
   lines.push(`        <sequence duration="${durationSeconds}s" format="r1">`);
   lines.push(`          <spine>`);
@@ -237,10 +237,10 @@ test("Phase 68 - Test 2997: Forbidden Phrases Cliché Sanitization", () => {
 
 test("Phase 68 - Test 2998: Missing Training Profile Safe Default Mode", () => {
   const resolveProfile = (userProfile) => {
-    return userProfile || { tone: "Default VeritasTech Creator Style", isDefault: true };
+    return userProfile || { tone: "Default Nichorr Creator Style", isDefault: true };
   };
   const profile = resolveProfile(undefined);
-  assert.strictEqual(profile.tone, "Default VeritasTech Creator Style");
+  assert.strictEqual(profile.tone, "Default Nichorr Creator Style");
   assert.strictEqual(profile.isDefault, true);
 });
 
