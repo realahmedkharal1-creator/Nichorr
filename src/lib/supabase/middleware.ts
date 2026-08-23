@@ -44,8 +44,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   const protectedPrefixes = ["/dashboard", "/projects", "/research", "/content", "/sources", "/settings"];
-  const isRoot = pathname === "/";
-  const isProtected = protectedPrefixes.some(prefix => pathname.startsWith(prefix)) || isRoot;
+  const isProtected = protectedPrefixes.some(prefix => pathname.startsWith(prefix));
   
   const isAuthPage = pathname === "/login" || pathname === "/signup";
   // Enforce auth strictly

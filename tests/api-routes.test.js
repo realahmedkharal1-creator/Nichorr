@@ -191,3 +191,88 @@ test('POST /api/webhooks - Invalid Payload (Missing url)', async () => {
   assert.strictEqual(res.status, 400);
   assert.strictEqual(data.success, false);
 });
+
+// Route 6: /api/waitlist (POST)
+test('POST /api/waitlist - Valid Signup', async () => {
+  const testEmail = `creator-${Date.now()}@example.com`;
+  const res = await fetch(`${BASE_URL}/api/waitlist`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: "Alex Creator",
+      email: testEmail,
+    }),
+  });
+
+  const data = await res.json();
+  assert.strictEqual(res.status, 200);
+  assert.strictEqual(data.success, true);
+});
+
+test('POST /api/waitlist - Duplicate Email returns success shape', async () => {
+  const testEmail = `dup-${Date.now()}@example.com`;
+  // First insert
+  await fetch(`${BASE_URL}/api/waitlist`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: "Alex Creator",
+      email: testEmail,
+    }),
+  });
+
+  // Second insert with same email
+  const res = await fetch(`${BASE_URL}/api/waitlist`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: "Alex Creator Duplicate",
+      email: testEmail,
+    }),
+  });
+
+  const data = await res.json();
+  assert.strictEqual(res.status, 200);
+  assert.strictEqual(data.success, true);
+  assert.strictEqual(data.alreadyJoined, true);
+});
+
+test('POST /api/waitlist - Invalid Payload (Missing Name)', async () => {
+  const res = await fetch(`${BASE_URL}/api/waitlist`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: "valid@example.com",
+    }),
+  });
+
+  const data = await res.json();
+  assert.strictEqual(res.status, 400);
+  assert.strictEqual(data.success, false);
+});
+
+test('POST /api/waitlist - Invalid Payload (Invalid Email)', async () => {
+  const res = await fetch(`${BASE_URL}/api/waitlist`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: "Alex Creator",
+      email: "invalid-email-string",
+    }),
+  });
+
+  const data = await res.json();
+  assert.strictEqual(res.status, 400);
+  assert.strictEqual(data.success, false);
+});
+
