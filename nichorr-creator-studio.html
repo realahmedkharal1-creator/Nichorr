@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nichorr — Creator Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161C; --paper:#F3F5F4; --card:#FFFFFF;
+    --citation:#2C4A73; --citation-bg:#E9EEF4;
+    --verified:#1E7A5F; --verified-bg:#E7F3EE;
+    --conflict:#9C3B2E; --conflict-bg:#F7E9E5;
+    --amber:#96650E; --amber-bg:#FBF0DD;
+    --muted:#5C6167; --muted-2:#8A8F96;
+    --line:#DADDD8; --line-soft:#E8EAE7;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); font-family:'IBM Plex Sans',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  .app-header{background:var(--ink); color:var(--paper); position:sticky; top:0; z-index:50;}
+  .app-header .inner{max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:58px;}
+  .app-logo{font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#fff;}
+  .app-logo span{color:#7FA6D6;}
+  .desk-nav{display:flex; gap:2px;}
+  .desk-nav a{color:#B9C0C9; text-decoration:none; font-size:13.5px; font-weight:600; padding:8px 14px; border-radius:8px;}
+  .desk-nav a.active{background:rgba(255,255,255,.09); color:#fff;}
+  .avatar{width:30px; height:30px; border-radius:50%; background:var(--citation); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+  .hamburger{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;}
+  .nav-right{display:flex; align-items:center; gap:14px;}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:24px 20px 80px;}
+
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--citation); letter-spacing:.5px; display:block; margin-bottom:6px;}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:25px; margin:0 0 6px;}
+  .sub{font-size:13.5px; color:var(--muted); margin:0 0 20px; max-width:680px; line-height:1.6;}
+
+  .studio-tabbar{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:22px; scrollbar-width:none;}
+  .studio-tabbar::-webkit-scrollbar{display:none;}
+  .stab{flex-shrink:0; font-size:13px; font-weight:600; padding:9px 15px; border-radius:20px; border:1px solid var(--line); background:var(--card); color:var(--muted); cursor:pointer; white-space:nowrap;}
+  .stab.active{background:var(--citation); color:#fff; border-color:var(--citation);}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .controls-row{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:18px;}
+  .seg{display:flex; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden;}
+  .seg button{background:none; border:none; padding:8px 14px; font-size:12.5px; font-weight:600; color:var(--muted); cursor:pointer;}
+  .seg button.active{background:var(--ink); color:var(--paper);}
+  .btn-tele{background:var(--citation); color:#fff; border:none; padding:9px 16px; border-radius:9px; font-size:12.5px; font-weight:600; cursor:pointer;}
+
+  .status-card{background:var(--ink); color:var(--paper); border-radius:16px; padding:20px 22px; margin-bottom:20px;}
+  .status-badges{display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;}
+  .sbadge{font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; padding:4px 10px; border-radius:6px;}
+  .sb-ready{background:var(--verified-bg); color:var(--verified);}
+  .sb-v{background:rgba(255,255,255,.1); color:#C9CDD3;}
+  .status-card .name{font-family:'Fraunces',serif; font-weight:600; font-size:19px; margin-bottom:10px;}
+  .hash-row{display:flex; gap:16px; flex-wrap:wrap; font-family:'IBM Plex Mono',monospace; font-size:11px; color:#8A93A0;}
+
+  .metrics{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:22px;}
+  .metric{background:var(--card); border:1px solid var(--line-soft); border-radius:14px; padding:14px;}
+  .metric .lbl{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--muted-2); letter-spacing:.3px; margin-bottom:8px;}
+  .metric .val{font-family:'Fraunces',serif; font-weight:600; font-size:22px; margin-bottom:8px;}
+  .metric .track{height:5px; background:var(--line-soft); border-radius:4px; overflow:hidden;}
+  .metric .fill{height:100%; border-radius:4px;}
+
+  .section-title{font-size:15px; font-weight:700; margin:0 0 4px;}
+  .section-sub{font-size:12.5px; color:var(--muted); margin:0 0 16px;}
+
+  .stagegrid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:26px;}
+  .stage{background:var(--card); border:1px solid var(--line-soft); border-radius:14px; padding:16px;}
+  .stage .top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;}
+  .stage .snum{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted-2);}
+  .stage .sname{font-weight:700; font-size:13.5px; margin:4px 0 4px;}
+  .stage .sstat{font-size:11.5px; color:var(--muted);}
+  .stage button{width:100%; margin-top:10px; background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:8px; font-size:12px; font-weight:600; cursor:pointer; color:var(--ink);}
+  .badge{font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; padding:3px 8px; border-radius:12px;}
+  .b-ready{background:var(--verified-bg); color:var(--verified);}
+  .b-warn{background:var(--amber-bg); color:var(--amber);}
+  .b-prog{background:var(--citation-bg); color:var(--citation);}
+
+  table.data{width:100%; border-collapse:collapse; font-size:13px;}
+  table.data th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.4px; text-transform:uppercase; color:var(--muted-2); padding:0 10px 10px;}
+  table.data td{padding:12px 10px; border-top:1px solid var(--line-soft);}
+  .asset-name{display:flex; align-items:center; gap:8px; font-weight:600;}
+
+  .sim-card{background:var(--card); border:1px solid var(--line-soft); border-radius:14px; padding:20px; margin-top:22px;}
+  .sim-row{display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:end;}
+  .sim-row .field label{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted-2); display:block; margin-bottom:6px;}
+  .sim-row select{width:100%; font-family:'IBM Plex Sans',sans-serif; font-size:13px; padding:10px 12px; border:1px solid var(--line); border-radius:9px; background:var(--paper);}
+  .sim-row button{background:var(--citation); color:#fff; border:none; border-radius:9px; padding:11px 18px; font-size:12.5px; font-weight:600; cursor:pointer; white-space:nowrap;}
+
+  .placeholder-card{background:var(--card); border:1px solid var(--line-soft); border-radius:14px; padding:40px 24px; text-align:center; color:var(--muted); font-size:13.5px;}
+
+  @media (max-width: 780px){
+    .desk-nav{display:none;}
+    .hamburger{display:block;}
+  }
+  @media (max-width: 900px){
+    .metrics{grid-template-columns:1fr 1fr;}
+    .stagegrid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width: 640px){
+    .stagegrid{grid-template-columns:1fr;}
+    .controls-row{flex-direction:column; align-items:stretch;}
+    .sim-row{grid-template-columns:1fr;}
+    table.data{display:block; overflow-x:auto; white-space:nowrap;}
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="inner">
+    <div class="app-logo">Nichorr<span>.</span></div>
+    <nav class="desk-nav"><a href="#">Dashboard</a><a href="#">Projects</a><a href="#" class="active">Research</a><a href="#">Sources</a><a href="#">Content</a><a href="#">Quality</a></nav>
+    <div class="nav-right"><div class="avatar">AH</div><button class="hamburger">☰</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <span class="eyebrow">CREATOR PROJECT INTELLIGENCE WORKSPACE</span>
+  <h1>Creator Project Control Center</h1>
+  <p class="sub">Unified asset dependency graph, end-to-end evidence integrity, non-bypassable blocker intelligence, and read-only impact simulation.</p>
+
+  <div class="studio-tabbar">
+    <div class="stab active" data-stab="control">Project Control Center</div>
+    <div class="stab" data-stab="matrix">Production Matrix</div>
+    <div class="stab" data-stab="export">Production Export</div>
+    <div class="stab" data-stab="publishing">Publishing Orchestrator</div>
+    <div class="stab" data-stab="integrity">Publication Integrity</div>
+    <div class="stab" data-stab="calibration">Research Calibration</div>
+  </div>
+
+  <!-- PROJECT CONTROL CENTER -->
+  <div class="panel active" id="control">
+    <div class="controls-row">
+      <div class="seg">
+        <button>Outline</button><button class="active">Script Ready</button><button>Full Spoken</button>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <span class="mono" style="font-size:12px; color:var(--muted);">Duration: 8m · <b style="color:var(--ink);">12m</b> · 18m</span>
+        <button class="btn-tele">🎙 Teleprompter</button>
+      </div>
+    </div>
+
+    <div class="status-card">
+      <div class="status-badges">
+        <span class="sbadge sb-ready">READY FOR PUBLISHING</span>
+        <span class="sbadge sb-v">SCRIPT V1.0</span>
+      </div>
+      <div class="name">Samsung Galaxy S26 Ultra vs iPhone 18 Pro Max</div>
+      <div class="hash-row">
+        <span>Project Hash: 0fc1ebed18dc…</span>
+        <span>Evidence Hash: ev-hash-ca32…</span>
+        <span>◈ 19 Nodes</span>
+        <span>⇄ 17 Edges</span>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><div class="lbl">RESEARCH HEALTH</div><div class="val" style="color:var(--amber);">29%</div><div class="track"><div class="fill" style="width:29%; background:var(--amber);"></div></div></div>
+      <div class="metric"><div class="lbl">CONTENT QUALITY</div><div class="val" style="color:var(--amber);">25%</div><div class="track"><div class="fill" style="width:25%; background:var(--amber);"></div></div></div>
+      <div class="metric"><div class="lbl">PRODUCTION READY</div><div class="val" style="color:var(--verified);">95%</div><div class="track"><div class="fill" style="width:95%; background:var(--verified);"></div></div></div>
+      <div class="metric"><div class="lbl">PUBLISHING PREFLIGHT</div><div class="val" style="color:var(--verified);">100%</div><div class="track"><div class="fill" style="width:100%; background:var(--verified);"></div></div></div>
+      <div class="metric"><div class="lbl">DISTRIBUTION STAGING</div><div class="val" style="color:var(--amber);">69%</div><div class="track"><div class="fill" style="width:69%; background:var(--amber);"></div></div></div>
+    </div>
+
+    <div class="section-title">End-to-End Project Pipeline Integrity (9 Stages)</div>
+    <p class="section-sub">Complete authority chain: Research → Evidence → Health → Decisions → Script → Quality → Production → Editor → Publishing → Distribution.</p>
+    <div class="stagegrid">
+      <div class="stage"><div class="top"><span class="snum">STAGE 1</span><span class="badge b-prog">IN PROGRESS</span></div><div class="sname">Research & Sources</div><div class="sstat">Status: Active Collection</div><button>Open Subsystem →</button></div>
+      <div class="stage"><div class="top"><span class="snum">STAGE 2</span><span class="badge b-ready">READY</span></div><div class="sname">Evidence Health</div><div class="sstat">Score: 29%</div><button>Open Subsystem →</button></div>
+      <div class="stage"><div class="top"><span class="snum">STAGE 3</span><span class="badge b-ready">READY</span></div><div class="sname">Health Decisions</div><div class="sstat">Status: Verified</div><button>Open Subsystem →</button></div>
+      <div class="stage"><div class="top"><span class="snum">STAGE 4</span><span class="badge b-ready">READY</span></div><div class="sname">Script & Narration</div><div class="sstat">Status: Ready for Inspection</div><button>Open Subsystem →</button></div>
+      <div class="stage"><div class="top"><span class="snum">STAGE 5</span><span class="badge b-warn">WARNING</span></div><div class="sname">Quality Review</div><div class="sstat">Score: 25%</div><button>Open Subsystem →</button></div>
+      <div class="stage"><div class="top"><span class="snum">STAGE 6</span><span class="badge b-ready">READY</span></div><div class="sname">Production Assets</div><div class="sstat">Score: 95%</div><button>Open Subsystem →</button></div>
+      <div class="stage"><div class="top"><span class="snum">STAGE 7</span><span class="badge b-ready">READY</span></div><div class="sname">Publishing Preflight</div><div class="sstat">Score: 100%</div><button>Open Subsystem →</button></div>
+      <div class="stage"><div class="top"><span class="snum">STAGE 8</span><span class="badge b-warn">WARNING</span></div><div class="sname">Distribution & Release</div><div class="sstat">Score: 69%</div><button>Open Subsystem →</button></div>
+      <div class="stage"><div class="top"><span class="snum">STAGE 9</span><span class="badge b-ready">READY</span></div><div class="sname">Video Editor Sync</div><div class="sstat">Status: Ready for Inspection</div><button>Open Subsystem →</button></div>
+    </div>
+
+    <div class="section-title">Unified Project Asset Inventory (4 Assets)</div>
+    <p class="section-sub">Real-time status, health, and provenance mapping for every script and production asset.</p>
+    <div class="card" style="background:var(--card); border:1px solid var(--line-soft); border-radius:14px; padding:6px 16px;">
+      <table class="data">
+        <thead><tr><th>Asset</th><th>Type</th><th>Subsystem</th><th>Status</th><th>Version</th></tr></thead>
+        <tbody>
+          <tr><td><div class="asset-name">📄 Main YouTube Script</div></td><td class="mono">markdown</td><td>Production</td><td><span class="badge b-ready">READY</span></td><td class="mono">v1.0</td></tr>
+          <tr><td><div class="asset-name">📊 Benchmark Comparison Cards</div></td><td class="mono">json_matrix</td><td>Editor Sync</td><td><span class="badge b-ready">READY</span></td><td class="mono">v1.2</td></tr>
+          <tr><td><div class="asset-name">🖼 Thumbnail Hook Brief</div></td><td class="mono">text</td><td>Publishing</td><td><span class="badge b-warn">STAGED</span></td><td class="mono">v0.9</td></tr>
+          <tr><td><div class="asset-name">📑 Fact-Checked Citations Sheet</div></td><td class="mono">csv</td><td>Quality</td><td><span class="badge b-ready">READY</span></td><td class="mono">v2.1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sim-card">
+      <div class="section-title" style="display:flex; align-items:center; gap:8px;">⚡ "What Breaks If This Changes?" Read-Only Simulation</div>
+      <p class="section-sub">Simulate downstream impact across scripts, benchmark cards, and distribution staging before making upstream research modifications.</p>
+      <div class="sim-row">
+        <div class="field"><label>SELECT UPSTREAM CLAIM / NODE</label><select><option>— Choose Claim to Simulate —</option></select></div>
+        <div class="field"><label>SIMULATED CHANGE ACTION</label><select><option>Benchmark Score Changed (&gt; 10% delta)</option></select></div>
+        <button>⚡ Run Simulation</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="matrix"><div class="placeholder-card">Production Matrix — cross-references every script beat against its backing evidence node. Same table/badge components as Project Control Center.</div></div>
+  <div class="panel" id="export"><div class="placeholder-card">Production Export — download script, citation sheet, and benchmark cards in your preferred format.</div></div>
+  <div class="panel" id="publishing"><div class="placeholder-card">Publishing Orchestrator — schedule, multi-platform staging, and preflight checklist before release.</div></div>
+  <div class="panel" id="integrity"><div class="placeholder-card">Publication Integrity — tracks whether cited specs change after this video goes live, and flags needed corrections.</div></div>
+  <div class="panel" id="calibration"><div class="placeholder-card">Research Calibration — queue of claims needing a second look, prioritized by confidence and recency.</div></div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.stab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.stab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById(t.dataset.stab).classList.add('active');
+    });
+  });
+  document.querySelectorAll('.seg button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

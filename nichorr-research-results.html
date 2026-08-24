@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nichorr — Research Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161C; --paper:#F3F5F4; --card:#FFFFFF;
+    --citation:#2C4A73; --citation-bg:#E9EEF4;
+    --verified:#1E7A5F; --verified-bg:#E7F3EE;
+    --conflict:#9C3B2E; --conflict-bg:#F7E9E5;
+    --amber:#96650E; --amber-bg:#FBF0DD;
+    --muted:#5C6167; --muted-2:#8A8F96;
+    --line:#DADDD8; --line-soft:#E8EAE7;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); font-family:'IBM Plex Sans',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  .app-header{background:var(--ink); color:var(--paper); position:sticky; top:0; z-index:50;}
+  .app-header .inner{max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:58px;}
+  .app-logo{font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#fff;}
+  .app-logo span{color:#7FA6D6;}
+  .desk-nav{display:flex; gap:2px;}
+  .desk-nav a{color:#B9C0C9; text-decoration:none; font-size:13.5px; font-weight:600; padding:8px 14px; border-radius:8px;}
+  .desk-nav a.active{background:rgba(255,255,255,.09); color:#fff;}
+  .avatar{width:30px; height:30px; border-radius:50%; background:var(--citation); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+  .hamburger{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;}
+  .nav-right{display:flex; align-items:center; gap:14px;}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:24px 20px 80px;}
+
+  .page-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;}
+  .badge-ready{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--verified); background:var(--verified-bg); padding:5px 12px; border-radius:20px; margin-bottom:10px;}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:26px; margin:0;}
+  .btn-primary{background:var(--citation); color:#fff; font-weight:600; font-size:13.5px; padding:11px 20px; border-radius:9px; border:none; cursor:pointer; white-space:nowrap;}
+
+  .tabbar{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:22px; scrollbar-width:none;}
+  .tabbar::-webkit-scrollbar{display:none;}
+  .tab{flex-shrink:0; font-family:'IBM Plex Sans',sans-serif; font-size:13px; font-weight:600; padding:9px 15px; border-radius:20px; border:1px solid var(--line); background:var(--card); color:var(--muted); cursor:pointer; white-space:nowrap;}
+  .tab.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+  .tabpanel{display:none;}
+  .tabpanel.active{display:block;}
+
+  .card{background:var(--card); border:1px solid var(--line-soft); border-radius:16px; padding:20px; box-shadow:0 1px 2px rgba(18,22,28,.03);}
+  .card-label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.5px; text-transform:uppercase; color:var(--muted-2); margin-bottom:10px;}
+
+  .statrow{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px;}
+  .stat-value{font-family:'Fraunces',serif; font-weight:600; font-size:28px; line-height:1;}
+  .stat-sub{font-size:11.5px; color:var(--muted); margin-top:6px;}
+
+  .cite{display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:var(--citation-bg); color:var(--citation); font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; cursor:pointer; border:none; vertical-align:super; margin-left:2px;}
+  .cite:hover{background:var(--citation); color:#fff;}
+
+  .badge{font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:20px; display:inline-flex; align-items:center; gap:5px;}
+  .badge .dot{width:5px; height:5px; border-radius:50%;}
+  .b-verified{background:var(--verified-bg); color:var(--verified);}
+  .b-verified .dot{background:var(--verified);}
+  .b-conflict{background:var(--conflict-bg); color:var(--conflict);}
+  .b-conflict .dot{background:var(--conflict);}
+  .b-neutral{background:#EEF0EE; color:var(--muted);}
+  .b-neutral .dot{background:var(--muted-2);}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+
+  /* Overview: findings list */
+  .finding{padding:12px 0; border-bottom:1px solid var(--line-soft); font-size:13.5px; line-height:1.6;}
+  .finding:last-child{border-bottom:none;}
+
+  /* YouTube tab */
+  .subnav{display:flex; gap:6px; overflow-x:auto; margin-bottom:18px; scrollbar-width:none;}
+  .subnav::-webkit-scrollbar{display:none;}
+  .subnav .stab{flex-shrink:0; font-size:12.5px; font-weight:600; padding:8px 13px; border-radius:9px; color:var(--muted); cursor:pointer; white-space:nowrap;}
+  .subnav .stab.active{background:var(--card); color:var(--ink); box-shadow:0 1px 2px rgba(18,22,28,.06);}
+  .consensus-item{display:flex; gap:10px; padding:10px 0; font-size:13.5px; line-height:1.5;}
+  .consensus-item .ic{color:var(--verified); flex-shrink:0;}
+  .gapgrid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0;}
+  .gap-card{background:var(--paper); border-radius:12px; padding:14px;}
+  .gap-card .tag{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--amber); background:var(--amber-bg); padding:3px 8px; border-radius:5px; margin-bottom:8px; display:inline-block;}
+  .gap-card p{font-size:12.5px; margin:0; line-height:1.5;}
+  .angle-card{background:var(--paper); border-radius:14px; padding:16px; margin-bottom:12px;}
+  .angle-card .aud{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted-2); text-transform:uppercase; margin-bottom:6px;}
+  .angle-card h4{font-size:14.5px; margin:0 0 8px;}
+  .angle-card .hook{background:var(--card); border-left:3px solid var(--citation); padding:10px 12px; font-size:12.5px; font-style:italic; color:var(--muted); border-radius:0 8px 8px 0; margin-bottom:10px;}
+  .angle-card button{background:var(--ink); color:var(--paper); border:none; border-radius:8px; padding:9px 14px; font-size:12.5px; font-weight:600; cursor:pointer;}
+
+  /* Evidence */
+  .searchbar{display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;}
+  .searchbar input{flex:1; min-width:200px; font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; padding:10px 14px; border:1px solid var(--line); border-radius:9px; background:var(--card);}
+  .filterpills{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .fpill{font-size:12px; font-weight:600; padding:7px 13px; border-radius:20px; background:var(--card); border:1px solid var(--line); color:var(--muted); cursor:pointer;}
+  .fpill.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+  .ev-card{border-bottom:1px solid var(--line-soft); padding:14px 0;}
+  .ev-card:last-child{border-bottom:none;}
+  .ev-card .txt{font-size:14px; line-height:1.6; margin-bottom:8px;}
+  .ev-card .meta{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+
+  /* Conflicts */
+  .conflict-card{border:1px solid var(--conflict); background:var(--conflict-bg); border-radius:14px; padding:16px 18px; margin-bottom:14px;}
+  .conflict-card h4{margin:0 0 10px; font-size:14px; color:var(--conflict);}
+  .side{background:#fff; border-radius:10px; padding:10px 12px; margin-bottom:8px; font-size:12.5px;}
+  .side b{color:var(--ink);}
+  .resolution{font-size:12px; color:var(--muted); font-style:italic; margin-top:8px;}
+
+  /* Provenance */
+  .lineage-hop{background:var(--paper); border-radius:10px; padding:12px 14px; margin-bottom:10px; font-size:13px; position:relative;}
+  .lineage-hop .hoplabel{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--citation); margin-bottom:6px; display:block;}
+  .hop-arrow{text-align:center; color:var(--line); margin:2px 0;}
+
+  /* Ask AI */
+  .starter{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;}
+  .starter button{font-size:12.5px; font-weight:600; color:var(--citation); background:var(--citation-bg); border:none; padding:8px 14px; border-radius:20px; cursor:pointer;}
+  .chatbubble{background:var(--card); border:1px solid var(--line-soft); border-radius:14px; padding:16px; font-size:13.5px; line-height:1.6; max-width:600px;}
+  .chatinput{display:flex; gap:10px; margin-top:20px;}
+  .chatinput input{flex:1; font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card);}
+  .chatinput button{background:var(--citation); color:#fff; border:none; border-radius:10px; padding:0 18px; cursor:pointer;}
+
+  /* Empty state */
+  .empty{text-align:center; padding:52px 20px;}
+  .empty .icn{width:40px; height:40px; border-radius:50%; background:var(--paper); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; color:var(--muted-2); font-size:19px;}
+  .empty h4{margin:0 0 6px; font-size:15px; font-weight:700;}
+  .empty p{margin:0; font-size:13px; color:var(--muted);}
+  .ethos{font-size:12.5px; color:var(--citation); background:var(--citation-bg); border-radius:10px; padding:12px 16px; margin-bottom:18px;}
+
+  /* Final Brief document */
+  .brief-doc{background:var(--card); border:1px solid var(--line-soft); border-radius:18px; padding:36px; max-width:760px; margin:0 auto;}
+  .brief-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:22px; flex-wrap:wrap;}
+  .brief-actions{display:flex; gap:8px;}
+  .brief-btn{font-size:12px; font-weight:600; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink); cursor:pointer;}
+  .brief-btn.primary{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+  .brief-title{font-family:'Fraunces',serif; font-weight:600; font-size:28px; margin:0 0 10px;}
+  .brief-sub{font-size:13.5px; color:var(--muted); line-height:1.6; margin:0 0 30px; padding-bottom:26px; border-bottom:1px solid var(--line-soft);}
+  .brief-section{margin-bottom:28px;}
+  .brief-h{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:var(--citation); margin-bottom:12px;}
+  .brief-quote{font-family:'Fraunces',serif; font-style:italic; font-size:18px; line-height:1.6; color:var(--ink); margin:0; padding-left:16px; border-left:3px solid var(--citation);}
+  .brief-list{margin:0; padding-left:22px; font-size:14.5px; line-height:1.9;}
+  .caution-box{background:var(--amber-bg); color:var(--amber); border-radius:10px; padding:14px 16px; font-size:13px; line-height:1.6;}
+  .src-list{display:flex; flex-direction:column; gap:10px;}
+  .src-item{font-size:13px; display:flex; align-items:center; gap:10px;}
+
+  @media (max-width: 780px){
+    .desk-nav{display:none;}
+    .hamburger{display:block;}
+  }
+  @media (max-width: 700px){
+    .statrow{grid-template-columns:1fr 1fr;}
+    .grid2{grid-template-columns:1fr;}
+    .gapgrid{grid-template-columns:1fr;}
+    .page-head{flex-direction:column;}
+    .btn-primary{width:100%;}
+    .brief-doc{padding:22px;}
+    .brief-title{font-size:22px;}
+    .brief-quote{font-size:16px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="inner">
+    <div class="app-logo">Nichorr<span>.</span></div>
+    <nav class="desk-nav"><a href="#">Dashboard</a><a href="#">Projects</a><a href="#" class="active">Research</a><a href="#">Sources</a><a href="#">Content</a><a href="#">Quality</a></nav>
+    <div class="nav-right"><div class="avatar">AH</div><button class="hamburger">☰</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <div>
+      <span class="badge-ready">✓ AUDITED BRIEF READY</span>
+      <h1>Samsung Galaxy S26 Ultra vs iPhone 18 Pro Max</h1>
+    </div>
+    <button class="btn-primary">View Full Brief →</button>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <div class="tab active" data-tab="overview">Overview</div>
+    <div class="tab" data-tab="youtube">YouTube Intel</div>
+    <div class="tab" data-tab="evidence">Evidence</div>
+    <div class="tab" data-tab="conflicts">Conflicts</div>
+    <div class="tab" data-tab="provenance">Provenance</div>
+    <div class="tab" data-tab="ask">Ask AI</div>
+    <div class="tab" data-tab="community">Community</div>
+    <div class="tab" data-tab="audience">Audience Qs</div>
+    <div class="tab" data-tab="opportunities">Opportunities</div>
+    <div class="tab" data-tab="brief">Final Brief</div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="tabpanel active" id="overview">
+    <div class="statrow">
+      <div class="card"><div class="card-label">Verified Sources</div><div class="stat-value">14</div><div class="stat-sub">100% traceable</div></div>
+      <div class="card"><div class="card-label">Supported Claims</div><div class="stat-value">21</div><div class="stat-sub">excerpt backed</div></div>
+      <div class="card"><div class="card-label">Conflicts Surfaced</div><div class="stat-value">2</div><div class="stat-sub" style="color:var(--conflict);">methodological</div></div>
+      <div class="card"><div class="card-label">Community Signals</div><div class="stat-value">6</div><div class="stat-sub">user reported</div></div>
+    </div>
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-label">Executive Summary</div>
+      <p style="font-size:14px; line-height:1.7; margin:0;">Compare camera dynamic range, sustained thermal throttling under 4K video, battery endurance, and real-world value for a YouTube comparison video<span class="cite">1</span>. The S26 Ultra leads in sustained recording endurance, while the iPhone 18 Pro Max shows more consistent thermal behavior under load<span class="cite">2</span>.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-label">Key Verified Findings</div>
+        <div class="finding">S26 Ultra records 22% longer before thermal-triggered shutdown in 4K60<span class="cite">1</span>.</div>
+        <div class="finding">iPhone 18 Pro Max maintains more consistent frame pacing during extended gaming sessions<span class="cite">2</span>.</div>
+        <div class="finding">Both devices show comparable low-light shutter lag, within margin of error<span class="cite">3</span>.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Disagreements & Conflicts</div>
+        <p style="font-size:13px; color:var(--muted); margin:0 0 10px;">Independent labs disagree on ambient-temperature methodology for thermal tests.</p>
+        <span class="badge b-conflict"><span class="dot"></span>2 OPEN — see Conflicts tab</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- YOUTUBE -->
+  <div class="tabpanel" id="youtube">
+    <div class="statrow">
+      <div class="card"><div class="card-label">Videos Analyzed</div><div class="stat-value">4</div><div class="stat-sub">independent channels</div></div>
+      <div class="card"><div class="card-label">Reviewer Claims</div><div class="stat-value">5</div><div class="stat-sub">timestamped citations</div></div>
+      <div class="card"><div class="card-label">Disagreements</div><div class="stat-value">2</div><div class="stat-sub" style="color:var(--conflict);">methodology / variant</div></div>
+      <div class="card"><div class="card-label">Recurring Issues</div><div class="stat-value">2</div><div class="stat-sub" style="color:var(--amber);">real user complaints</div></div>
+    </div>
+    <div class="subnav">
+      <div class="stab active">Reviewer Consensus & Gaps</div>
+      <div class="stab">Disagreements</div>
+      <div class="stab">Transcript Evidence</div>
+      <div class="stab">Community & Complaints</div>
+      <div class="stab">Audience Questions</div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-label">Reviewer Consensus (Multi-Channel Agreement)</div>
+      <div class="consensus-item"><span class="ic">✓</span> Reviewers universally agree peak single-threaded performance and display peak HDR brightness show notable improvements over previous generation hardware.</div>
+      <div class="consensus-item"><span class="ic">✓</span> Consensus across tested channels confirms solid primary camera optical stabilization and clean 4K 60fps audio capture.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Under-Covered Research Gaps</div>
+      <div class="gapgrid">
+        <div class="gap-card"><span class="tag">GAP #01</span><p>Sustained 4K 60fps recording battery drain in direct sunlight (most channels only test indoors).</p></div>
+        <div class="gap-card"><span class="tag">GAP #02</span><p>Long-term PWM display flicker eye fatigue at low brightness (below 30%).</p></div>
+      </div>
+      <div class="card-label" style="margin-top:6px;">High-Impact Content Angles</div>
+      <div class="angle-card">
+        <div class="aud">Tech review viewers & gadget buyers</div>
+        <h4>2 Weeks Later: Addressing the 3 Real Problems Reviewers Missed</h4>
+        <div class="hook">"Every review praised the screen, but after 2 weeks, here is what nobody talked about."</div>
+        <button>+ Add to Video Script</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVIDENCE -->
+  <div class="tabpanel" id="evidence">
+    <div class="statrow" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="card"><div class="card-label">Total Claims</div><div class="stat-value">21</div><div class="stat-sub">100% traced to sources</div></div>
+      <div class="card"><div class="card-label">Source Distribution</div><div class="stat-value">14</div><div class="stat-sub">YouTube & Web Specs</div></div>
+      <div class="card"><div class="card-label">Confidence Rating</div><div class="stat-value" style="font-size:22px; color:var(--verified);">High (92%)</div><div class="stat-sub">claims w/ matched evidence</div></div>
+    </div>
+    <div class="card">
+      <div class="searchbar"><input type="text" placeholder="Search claims, excerpts, or sources…"></div>
+      <div class="filterpills">
+        <div class="fpill active">All Claims</div><div class="fpill">Performance & SoC</div><div class="fpill">Camera & Optics</div><div class="fpill">Battery & Charging</div>
+      </div>
+      <div class="ev-card">
+        <div class="txt">"S26 Ultra sustains 4K60 recording for 22% longer before thermal shutdown compared to the iPhone 18 Pro Max under identical ambient conditions."<span class="cite">1</span></div>
+        <div class="meta"><span class="badge b-verified"><span class="dot"></span>VERIFIED</span><span class="mono" style="font-size:11px; color:var(--muted-2);">AnandTech · Tier 1</span></div>
+      </div>
+      <div class="ev-card">
+        <div class="txt">"Frame pacing on the iPhone 18 Pro Max remains within 2ms variance across a 40-minute gaming session."<span class="cite">2</span></div>
+        <div class="meta"><span class="badge b-verified"><span class="dot"></span>VERIFIED</span><span class="mono" style="font-size:11px; color:var(--muted-2);">TechPowerUp · Tier 2</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFLICTS -->
+  <div class="tabpanel" id="conflicts">
+    <div class="conflict-card">
+      <h4>⚠ Ambient Temperature Methodology Disagreement</h4>
+      <div class="side"><b>AnandTech</b> — Tests conducted at 22°C room temperature, direct airflow.</div>
+      <div class="side"><b>Tom's Hardware</b> — Tests conducted at 28°C, sealed chamber, no airflow.</div>
+      <div class="resolution">Nichorr's read: both are methodologically valid but not directly comparable — flagged rather than averaged.</div>
+    </div>
+    <div class="card" style="text-align:center; padding:36px 20px;">
+      <div style="width:36px; height:36px; border-radius:50%; background:var(--verified-bg); color:var(--verified); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-size:17px;">✓</div>
+      <h4 style="margin:0 0 6px; font-size:15px;">No further critical conflicts detected</h4>
+      <p style="margin:0; font-size:13px; color:var(--muted);">All other independent lab publications and official spec sheets concur on primary findings.</p>
+    </div>
+  </div>
+
+  <!-- PROVENANCE -->
+  <div class="tabpanel" id="provenance">
+    <div class="statrow">
+      <div class="card"><div class="card-label">Grounding Score</div><div class="stat-value" style="color:var(--verified);">96%</div><div class="stat-sub">20/21 verified chains</div></div>
+      <div class="card"><div class="card-label">Primary OEM Sources</div><div class="stat-value">3</div><div class="stat-sub">Tier 1 authoritative specs</div></div>
+      <div class="card"><div class="card-label">Independent Labs</div><div class="stat-value">6</div><div class="stat-sub">lab benchmarks & FLIR data</div></div>
+      <div class="card"><div class="card-label">Independence Score</div><div class="stat-value">8/10</div><div class="stat-sub">zero copied syndication</div></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Full Evidence Lineage Chain</div>
+      <div class="lineage-hop"><span class="hoplabel">HOP 1 · CREATOR STUDIO SCRIPT STATEMENT</span>"S26 Ultra sustains 4K60 recording noticeably longer than the iPhone 18 Pro Max."</div>
+      <div class="hop-arrow">↓</div>
+      <div class="lineage-hop"><span class="hoplabel">HOP 2 · STRUCTURED VERIFIED CLAIM</span>Sustained 4K60 recording duration before thermal-triggered shutdown, delta 22%.</div>
+      <div class="hop-arrow">↓</div>
+      <div class="lineage-hop" style="border-left:3px solid var(--verified);"><span class="hoplabel" style="color:var(--verified);">HOP 3 · PRIMARY SOURCE PROVENANCE</span>AnandTech Hardware Reviews — Tier 1 Independent Lab <a href="#" style="color:var(--citation); font-size:12px;">↗ Original Source</a></div>
+    </div>
+  </div>
+
+  <!-- ASK AI -->
+  <div class="tabpanel" id="ask">
+    <div class="starter">
+      <button>What are the strongest verified claims?</button>
+      <button>What conflicting evidence was found?</button>
+      <button>What should I be careful about saying in a video?</button>
+    </div>
+    <div class="chatbubble">👋 I'm your research-grounded assistant for "Samsung Galaxy S26 Ultra vs iPhone 18 Pro Max." Ask me any technical question, and I'll answer strictly using the 21 verified claims and 14 audited sources in this investigation.</div>
+    <div class="chatinput"><input type="text" placeholder="Ask a technical question about the findings…"><button>➤</button></div>
+  </div>
+
+  <!-- COMMUNITY -->
+  <div class="tabpanel" id="community">
+    <div class="ethos">🛡 Ethos Rule: Community signals represent user-reported sentiment. They are logged as user reports, not universal hardware facts.</div>
+    <div class="card empty">
+      <div class="icn">💬</div>
+      <h4>No community signals found yet for this research run</h4>
+      <p>Reddit and forum threads for this topic haven't surfaced reportable patterns yet.</p>
+    </div>
+  </div>
+
+  <!-- AUDIENCE -->
+  <div class="tabpanel" id="audience">
+    <div class="card empty">
+      <div class="icn">❓</div>
+      <h4>No audience question gaps identified yet</h4>
+      <p>Run again with Deep research depth to mine viewer comment questions.</p>
+    </div>
+  </div>
+
+  <!-- OPPORTUNITIES -->
+  <div class="tabpanel" id="opportunities">
+    <div class="card empty">
+      <div class="icn">💡</div>
+      <h4>No content opportunities identified yet</h4>
+      <p>Opportunities are generated once audience question gaps are available.</p>
+    </div>
+  </div>
+
+  <!-- FINAL BRIEF -->
+  <div class="tabpanel" id="brief">
+    <div class="brief-doc">
+      <div class="brief-head">
+        <span class="mono" style="font-size:11px; color:var(--muted-2); letter-spacing:.5px;">RESEARCH BRIEF · GENERATED FROM 21 VERIFIED CLAIMS</span>
+        <div class="brief-actions">
+          <button class="brief-btn">⧉ Copy</button>
+          <button class="brief-btn primary">↓ Export .md</button>
+        </div>
+      </div>
+      <h2 class="brief-title">Samsung Galaxy S26 Ultra vs iPhone 18 Pro Max</h2>
+      <p class="brief-sub">A defensible comparison brief for a YouTube review — every claim below is traced to a source. Click any marker to see the evidence.</p>
+
+      <div class="brief-section">
+        <div class="brief-h">Suggested Opening Hook</div>
+        <p class="brief-quote">"Every review this week told you the S26 Ultra wins on battery. What they didn't tell you is <em>why</em> — and it's not the reason you'd think."</p>
+      </div>
+
+      <div class="brief-section">
+        <div class="brief-h">Verified Talking Points</div>
+        <ol class="brief-list">
+          <li>The S26 Ultra sustains 4K60 recording <b>22% longer</b> before thermal-triggered shutdown compared to the iPhone 18 Pro Max<span class="cite">1</span>.</li>
+          <li>The iPhone 18 Pro Max holds tighter frame-pacing consistency during extended gaming sessions — within 2ms variance over 40 minutes<span class="cite">2</span>.</li>
+          <li>Low-light shutter lag is statistically comparable between both devices, within margin of error<span class="cite">3</span>.</li>
+        </ol>
+      </div>
+
+      <div class="brief-section">
+        <div class="brief-h">Say This Carefully</div>
+        <div class="caution-box">⚠ Independent labs disagree on ambient-temperature test methodology for thermal claims. Present both S26 Ultra and iPhone 18 Pro Max thermal figures with their test conditions stated on screen — don't present one as universally "faster."</div>
+      </div>
+
+      <div class="brief-section">
+        <div class="brief-h">Sources Cited (14)</div>
+        <div class="src-list">
+          <div class="src-item"><span class="cite">1</span> AnandTech Hardware Reviews — Tier 1 Independent Lab</div>
+          <div class="src-item"><span class="cite">2</span> TechPowerUp Tech Specs — Tier 2 Independent</div>
+          <div class="src-item"><span class="cite">3</span> Tom's Hardware Lab Tests — Tier 1 Independent Lab</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

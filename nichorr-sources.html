@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nichorr — Sources</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161C; --paper:#F3F5F4; --card:#FFFFFF;
+    --citation:#2C4A73; --citation-bg:#E9EEF4;
+    --verified:#1E7A5F; --verified-bg:#E7F3EE;
+    --conflict:#9C3B2E; --conflict-bg:#F7E9E5;
+    --amber:#96650E; --amber-bg:#FBF0DD;
+    --muted:#5C6167; --muted-2:#8A8F96;
+    --line:#DADDD8; --line-soft:#E8EAE7;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); font-family:'IBM Plex Sans',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .app-header{background:var(--ink); color:var(--paper); position:sticky; top:0; z-index:50;}
+  .app-header .inner{max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:58px;}
+  .app-logo{font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#fff;}
+  .app-logo span{color:#7FA6D6;}
+  .desk-nav{display:flex; gap:2px;}
+  .desk-nav a{color:#B9C0C9; text-decoration:none; font-size:13.5px; font-weight:600; padding:8px 14px; border-radius:8px;}
+  .desk-nav a.active{background:rgba(255,255,255,.09); color:#fff;}
+  .avatar{width:30px; height:30px; border-radius:50%; background:var(--citation); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+  .hamburger{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;}
+  .nav-right{display:flex; align-items:center; gap:14px;}
+
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 20px 80px;}
+  .backlink{font-size:13px; color:var(--muted); text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:20px;}
+  .page-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px;}
+  .titlerow{display:flex; align-items:center; gap:12px;}
+  .titlerow .ic{width:38px; height:38px; border-radius:10px; background:var(--citation); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px;}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:24px; margin:0 0 4px;}
+  .sub{font-size:13.5px; color:var(--muted); max-width:520px; line-height:1.6; margin:0;}
+  .btn-primary{background:var(--citation); color:#fff; font-weight:600; font-size:13.5px; padding:11px 18px; border-radius:9px; border:none; cursor:pointer; white-space:nowrap;}
+
+  .card{background:var(--card); border:1px solid var(--line-soft); border-radius:16px; overflow:hidden;}
+  table.data{width:100%; border-collapse:collapse; font-size:13.5px;}
+  table.data th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.4px; text-transform:uppercase; color:var(--muted-2); padding:16px 16px 12px;}
+  table.data td{padding:14px 16px; border-top:1px solid var(--line-soft); vertical-align:middle;}
+  .src-name{display:flex; align-items:center; gap:12px;}
+  .src-name .av{width:34px; height:34px; border-radius:9px; background:var(--paper); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;}
+  .src-name .txt b{display:block; font-size:13.5px;}
+  .src-name .txt span{font-size:11.5px; color:var(--muted-2);}
+  .tier{font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; padding:4px 10px; border-radius:6px;}
+  .t-primary{background:var(--citation-bg); color:var(--citation);}
+  .t-secondary{background:#EEF0EE; color:var(--muted);}
+  .t-tertiary{background:var(--amber-bg); color:var(--amber);}
+  .trust{display:flex; align-items:center; gap:8px;}
+  .trust .n{font-family:'IBM Plex Mono',monospace; font-weight:600;}
+  .trust .hi{color:var(--verified);}
+  .trust .lo{color:var(--amber);}
+  .rowaction{color:var(--muted-2); background:none; border:1px solid var(--line); border-radius:8px; width:30px; height:30px; cursor:pointer;}
+
+  @media (max-width: 780px){ .desk-nav{display:none;} .hamburger{display:block;} }
+  @media (max-width: 700px){
+    .page-head{flex-direction:column; align-items:stretch;}
+    .btn-primary{width:100%;}
+    table.data{display:block; overflow-x:auto; white-space:nowrap;}
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="inner">
+    <div class="app-logo">Nichorr<span>.</span></div>
+    <nav class="desk-nav"><a href="#">Dashboard</a><a href="#">Projects</a><a href="#">Research</a><a href="#" class="active">Sources</a><a href="#">Content</a><a href="#">Quality</a></nav>
+    <div class="nav-right"><div class="avatar">AH</div><button class="hamburger">☰</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <a href="#" class="backlink">← Back to Research History</a>
+  <div class="page-head">
+    <div class="titlerow">
+      <div class="ic">🌐</div>
+      <div>
+        <h1>Source Trust Intelligence Center</h1>
+        <p class="sub">Audit primary source authority scores, historical reliability, and citation frequency across all active research projects.</p>
+      </div>
+    </div>
+    <button class="btn-primary">+ Add Custom Source</button>
+  </div>
+
+  <div class="card">
+    <table class="data">
+      <thead><tr><th>Source Domain / Name</th><th>Primary Proximity</th><th>Trust Score</th><th>Citations</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="src-name"><div class="av">A</div><div class="txt"><b>AnandTech Hardware Reviews</b><span>anandtech.com</span></div></div></td>
+          <td><span class="tier t-primary">PRIMARY</span></td>
+          <td><div class="trust"><span class="mono">🛡</span><span class="n hi">98/100</span></div></td>
+          <td class="mono">42 citations</td>
+          <td><button class="rowaction">↗</button></td>
+        </tr>
+        <tr>
+          <td><div class="src-name"><div class="av">G</div><div class="txt"><b>Geekbench Benchmark Database</b><span>browser.geekbench.com</span></div></div></td>
+          <td><span class="tier t-primary">PRIMARY</span></td>
+          <td><div class="trust"><span class="mono">🛡</span><span class="n hi">95/100</span></div></td>
+          <td class="mono">88 citations</td>
+          <td><button class="rowaction">↗</button></td>
+        </tr>
+        <tr>
+          <td><div class="src-name"><div class="av">Q</div><div class="txt"><b>Qualcomm Official Press Room</b><span>qualcomm.com/news</span></div></div></td>
+          <td><span class="tier t-primary">PRIMARY</span></td>
+          <td><div class="trust"><span class="mono">🛡</span><span class="n hi">99/100</span></div></td>
+          <td class="mono">104 citations</td>
+          <td><button class="rowaction">↗</button></td>
+        </tr>
+        <tr>
+          <td><div class="src-name"><div class="av">T</div><div class="txt"><b>TechPowerUp Tech Specs</b><span>techpowerup.com</span></div></div></td>
+          <td><span class="tier t-secondary">SECONDARY</span></td>
+          <td><div class="trust"><span class="mono">🛡</span><span class="n hi">92/100</span></div></td>
+          <td class="mono">19 citations</td>
+          <td><button class="rowaction">↗</button></td>
+        </tr>
+        <tr>
+          <td><div class="src-name"><div class="av">T</div><div class="txt"><b>Tom's Hardware Lab Tests</b><span>tomshardware.com</span></div></div></td>
+          <td><span class="tier t-primary">PRIMARY</span></td>
+          <td><div class="trust"><span class="mono">🛡</span><span class="n hi">94/100</span></div></td>
+          <td class="mono">67 citations</td>
+          <td><button class="rowaction">↗</button></td>
+        </tr>
+        <tr>
+          <td><div class="src-name"><div class="av">R</div><div class="txt"><b>Reddit (r/hardware)</b><span>reddit.com/r/hardware</span></div></div></td>
+          <td><span class="tier t-tertiary">TERTIARY</span></td>
+          <td><div class="trust"><span class="mono">⚠</span><span class="n lo">45/100</span></div></td>
+          <td class="mono">12 citations</td>
+          <td><button class="rowaction">↗</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,4 +1,6 @@
-"use client";
+const fs = require('fs');
+
+const code = `"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -38,15 +40,15 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     Promise.all([
-      fetch(`/api/research/${params.id}/status`).then(res => res.json()),
-      fetch(`/api/research/${params.id}/youtube`).then(res => res.json()).catch(() => ({ success: false }))
+      fetch(\`/api/research/\${params.id}/status\`).then(res => res.json()),
+      fetch(\`/api/research/\${params.id}/youtube\`).then(res => res.json()).catch(() => ({ success: false }))
     ]).then(([statusData, ytData]) => {
       if (statusData.success) {
         setRun(statusData.run);
         setAskMessages([
           {
             role: "assistant",
-            content: `👋 I'm your research-grounded assistant for "${statusData.run.topic}". Ask me any technical question, and I'll answer strictly using the ${statusData.run.claims?.length || 0} verified claims and ${statusData.run.sources?.length || 0} audited sources in this investigation.`,
+            content: \`👋 I'm your research-grounded assistant for "\${statusData.run.topic}". Ask me any technical question, and I'll answer strictly using the \${statusData.run.claims?.length || 0} verified claims and \${statusData.run.sources?.length || 0} audited sources in this investigation.\`,
             citations: []
           }
         ]);
@@ -70,7 +72,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
     setAskQuestion("");
     setAskLoading(true);
     try {
-      const res = await fetch(`/api/research/${run.id}/ask`, {
+      const res = await fetch(\`/api/research/\${run.id}/ask\`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q })
@@ -137,11 +139,11 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
-            className={`shrink-0 font-sans text-[13px] font-semibold px-4 py-2 rounded-full border cursor-pointer whitespace-nowrap ${
+            className={\`shrink-0 font-sans text-[13px] font-semibold px-4 py-2 rounded-full border cursor-pointer whitespace-nowrap \${
               activeTab === t.id 
                 ? "bg-ink text-paper border-ink" 
                 : "bg-card text-muted border-line"
-            }`}
+            }\`}
           >
             {t.label}
           </button>
@@ -187,7 +189,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Key Verified Findings</div>
               {(run.claims || []).slice(0, 3).map((c, idx) => (
                 <div key={idx} className="py-3 border-b border-line-soft last:border-b-0 text-[13.5px] leading-[1.6] text-ink">
-                  {c.claim_text.replace(/^Verified finding:s*/i, "")}
+                  {c.claim_text.replace(/^Verified finding:\s*/i, "")}
                   <button onClick={() => setActiveTab("evidence")} className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none align-super ml-1 cursor-pointer hover:bg-citation hover:text-white transition-colors">{(idx % 3) + 1}</button>
                 </div>
               ))}
@@ -242,11 +244,11 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               </div>
 
               <div className="flex gap-1.5 overflow-x-auto mb-[18px]" style={{ scrollbarWidth: "none" }}>
-                <div onClick={() => setYtActiveTab("consensus")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "consensus" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Reviewer Consensus & Gaps</div>
-                <div onClick={() => setYtActiveTab("disagreements")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "disagreements" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Disagreements</div>
-                <div onClick={() => setYtActiveTab("transcripts")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "transcripts" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Transcript Evidence</div>
-                <div onClick={() => setYtActiveTab("community")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "community" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Community & Complaints</div>
-                <div onClick={() => setYtActiveTab("audience")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "audience" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Audience Questions</div>
+                <div onClick={() => setYtActiveTab("consensus")} className={\`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap \${ytActiveTab === "consensus" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}\`}>Reviewer Consensus & Gaps</div>
+                <div onClick={() => setYtActiveTab("disagreements")} className={\`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap \${ytActiveTab === "disagreements" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}\`}>Disagreements</div>
+                <div onClick={() => setYtActiveTab("transcripts")} className={\`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap \${ytActiveTab === "transcripts" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}\`}>Transcript Evidence</div>
+                <div onClick={() => setYtActiveTab("community")} className={\`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap \${ytActiveTab === "community" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}\`}>Community & Complaints</div>
+                <div onClick={() => setYtActiveTab("audience")} className={\`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap \${ytActiveTab === "audience" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}\`}>Audience Questions</div>
               </div>
 
               {ytActiveTab === "consensus" && (
@@ -304,7 +306,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                 <div className="flex flex-col md:flex-row h-[500px] border border-line-soft rounded-2xl overflow-hidden shadow-sm">
                    <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-line-soft bg-paper overflow-y-auto">
                      {youtubeReport.videos.map(vid => (
-                       <div key={vid.videoId} onClick={() => setSelectedVideo(vid)} className={`p-3.5 border-b border-line-soft cursor-pointer transition-colors ${selectedVideo?.videoId === vid.videoId ? "bg-white" : "hover:bg-card/50"}`}>
+                       <div key={vid.videoId} onClick={() => setSelectedVideo(vid)} className={\`p-3.5 border-b border-line-soft cursor-pointer transition-colors \${selectedVideo?.videoId === vid.videoId ? "bg-white" : "hover:bg-card/50"}\`}>
                          <div className="text-[13px] font-semibold text-ink line-clamp-2">{vid.title}</div>
                        </div>
                      ))}
@@ -387,7 +389,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                 <div 
                   key={cat} 
                   onClick={() => setEvidenceFilter(cat)}
-                  className={`text-[12px] font-semibold px-[13px] py-[7px] rounded-full border cursor-pointer ${evidenceFilter === cat ? "bg-ink text-paper border-ink" : "bg-card border-line text-muted"}`}
+                  className={\`text-[12px] font-semibold px-[13px] py-[7px] rounded-full border cursor-pointer \${evidenceFilter === cat ? "bg-ink text-paper border-ink" : "bg-card border-line text-muted"}\`}
                 >
                   {cat}
                 </div>
@@ -426,21 +428,11 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               </div>
             ))
           ) : (
-            (run.claims || []).length === 0 && (run.sources || []).length === 0 ? (
-              <div className="bg-card border border-line-soft rounded-[16px] p-5 shadow-sm text-center py-[36px]">
-                <div className="w-[36px] h-[36px] rounded-full bg-paper text-muted-2 flex items-center justify-center mx-auto mb-3">
-                  <Info className="w-5 h-5" />
-                </div>
-                <h4 className="m-0 mb-1.5 text-[15px] text-ink">No data yet</h4>
-                <p className="m-0 text-[13px] text-muted">Nothing to check for conflicts.</p>
-              </div>
-            ) : (
-              <div className="bg-card border border-line-soft rounded-[16px] p-5 shadow-sm text-center py-[36px]">
-                <div className="w-[36px] h-[36px] rounded-full bg-verified-bg text-verified flex items-center justify-center mx-auto mb-3 text-[17px]">✓</div>
-                <h4 className="m-0 mb-1.5 text-[15px] text-ink">No critical conflicts detected</h4>
-                <p className="m-0 text-[13px] text-muted">All other independent lab publications and official spec sheets concur on primary findings.</p>
-              </div>
-            )
+            <div className="bg-card border border-line-soft rounded-[16px] p-5 shadow-sm text-center py-[36px]">
+              <div className="w-[36px] h-[36px] rounded-full bg-verified-bg text-verified flex items-center justify-center mx-auto mb-3 text-[17px]">✓</div>
+              <h4 className="m-0 mb-1.5 text-[15px] text-ink">No critical conflicts detected</h4>
+              <p className="m-0 text-[13px] text-muted">All other independent lab publications and official spec sheets concur on primary findings.</p>
+            </div>
           )}
         </div>
       )}
@@ -502,7 +494,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           
           <div className="bg-card border border-line-soft rounded-[14px] p-4 text-[13.5px] leading-[1.6] max-w-[600px] mb-5 text-ink">
             {askMessages.map((msg, i) => (
-              <div key={i} className={`mb-4 ${msg.role === 'user' ? 'text-citation font-semibold' : ''}`}>
+              <div key={i} className={\`mb-4 \${msg.role === 'user' ? 'text-citation font-semibold' : ''}\`}>
                 {msg.role === 'user' ? "Q: " : "👋 "}{msg.content}
               </div>
             ))}
@@ -654,3 +646,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/app/research/[id]/results/page.tsx', code);
+console.log('Done writing results page.');

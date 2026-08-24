@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nichorr — Configuration & Scope</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161C; --paper:#F3F5F4; --card:#FFFFFF;
+    --citation:#2C4A73; --citation-bg:#E9EEF4;
+    --verified:#1E7A5F; --verified-bg:#E7F3EE;
+    --conflict:#9C3B2E; --conflict-bg:#F7E9E5;
+    --amber:#96650E; --amber-bg:#FBF0DD;
+    --muted:#5C6167; --muted-2:#8A8F96;
+    --line:#DADDD8; --line-soft:#E8EAE7;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); font-family:'IBM Plex Sans',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  .app-header{background:var(--ink); color:var(--paper); position:sticky; top:0; z-index:50;}
+  .app-header .inner{max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:58px;}
+  .app-logo{font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#fff;}
+  .app-logo span{color:#7FA6D6;}
+  .desk-nav{display:flex; gap:2px;}
+  .desk-nav a{color:#B9C0C9; text-decoration:none; font-size:13.5px; font-weight:600; padding:8px 14px; border-radius:8px;}
+  .desk-nav a.active{background:rgba(255,255,255,.09); color:#fff;}
+  .avatar{width:30px; height:30px; border-radius:50%; background:var(--citation); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+  .hamburger{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;}
+  .nav-right{display:flex; align-items:center; gap:14px;}
+
+  .wrap{max-width:880px; margin:0 auto; padding:32px 20px 80px;}
+
+  .stepper{display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:32px; flex-wrap:wrap;}
+  .step{display:flex; align-items:center; gap:8px;}
+  .step .num{width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700;}
+  .step.done .num{background:var(--verified); color:#fff;}
+  .step.active .num{background:var(--citation); color:#fff;}
+  .step.pending .num{background:var(--card); border:1.5px solid var(--line); color:var(--muted-2);}
+  .step .lbl{font-size:13px; font-weight:600;}
+  .step.active .lbl{color:var(--ink);}
+  .step.done .lbl{color:var(--verified);}
+  .step.pending .lbl{color:var(--muted-2);}
+  .step-sep{color:var(--line); font-size:13px; margin:0 4px;}
+
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--citation); letter-spacing:.5px; margin-bottom:8px; display:block;}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:28px; margin:0 0 20px;}
+
+  .topic-card{background:var(--ink); color:var(--paper); border-radius:16px; padding:20px 22px; margin-bottom:24px;}
+  .topic-card .eyebrow2{font-family:'IBM Plex Mono',monospace; font-size:11px; color:#8FA5C4; letter-spacing:.5px; margin-bottom:6px;}
+  .topic-card .name{font-family:'Fraunces',serif; font-weight:600; font-size:21px;}
+
+  .grid2{display:grid; grid-template-columns:1.3fr 1fr; gap:22px; align-items:start;}
+
+  .depth-card{background:var(--card); border:1.5px solid var(--line-soft); border-radius:14px; padding:16px 18px; margin-bottom:12px; cursor:pointer; display:flex; gap:12px; align-items:flex-start;}
+  .depth-card.selected{border-color:var(--citation); background:var(--citation-bg);}
+  .depth-card input{margin-top:3px;}
+  .depth-card .t{font-weight:700; font-size:14.5px; margin-bottom:3px;}
+  .depth-card .d{font-size:12.5px; color:var(--muted); line-height:1.5;}
+
+  .side-card{background:var(--card); border:1px solid var(--line-soft); border-radius:14px; padding:18px;}
+  .side-card h3{font-size:13.5px; font-weight:700; margin:0 0 12px;}
+  .side-card select{width:100%; font-family:'IBM Plex Sans',sans-serif; font-size:14px; padding:11px 12px; border:1px solid var(--line); border-radius:9px; background:var(--paper); margin-bottom:18px;}
+  .inclusions{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px;}
+  .inclusions li{display:flex; gap:8px; font-size:12.5px; color:var(--ink); line-height:1.4;}
+  .inclusions li .check{color:var(--verified); flex-shrink:0;}
+
+  .footer-row{display:flex; align-items:center; justify-content:space-between; margin-top:26px; gap:16px; flex-wrap:wrap;}
+  .btn-primary{background:var(--ink); color:var(--paper); font-weight:600; font-size:14.5px; padding:13px 26px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap;}
+  .protocol-badge{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--verified); background:var(--verified-bg); padding:6px 12px; border-radius:20px;}
+
+  @media (max-width: 780px){
+    .desk-nav{display:none;}
+    .hamburger{display:block;}
+  }
+  @media (max-width: 700px){
+    .grid2{grid-template-columns:1fr;}
+    h1{font-size:23px;}
+    .stepper .lbl{display:none;}
+    .footer-row{flex-direction:column-reverse; align-items:stretch;}
+    .btn-primary{width:100%; text-align:center;}
+    .protocol-badge{justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="inner">
+    <div class="app-logo">Nichorr<span>.</span></div>
+    <nav class="desk-nav"><a href="#">Dashboard</a><a href="#">Projects</a><a href="#" class="active">Research</a><a href="#">Sources</a><a href="#">Content</a><a href="#">Quality</a></nav>
+    <div class="nav-right"><div class="avatar">AH</div><button class="hamburger">☰</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stepper">
+    <div class="step done"><div class="num">✓</div><div class="lbl">Topic & Goal</div></div>
+    <span class="step-sep">—</span>
+    <div class="step active"><div class="num">2</div><div class="lbl">Configuration</div></div>
+    <span class="step-sep">—</span>
+    <div class="step pending"><div class="num">3</div><div class="lbl">Question Plan</div></div>
+    <span class="step-sep">—</span>
+    <div class="step pending"><div class="num">4</div><div class="lbl">Execute</div></div>
+  </div>
+
+  <span class="eyebrow">STAGE 1 · SCOPE & PARAMETERS</span>
+  <h1>Research Scope & Protocol Settings</h1>
+
+  <div class="topic-card">
+    <div class="eyebrow2">ACTIVE TARGET TOPIC</div>
+    <div class="name">Samsung Galaxy S26 Ultra vs iPhone 18 Pro Max</div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <h3 style="font-size:13.5px; font-weight:700; margin:0 0 12px;">Research Depth Tier</h3>
+      <label class="depth-card">
+        <input type="radio" name="depth">
+        <div><div class="t">Quick</div><div class="d">3–5 key queries, 10 primary sources. (~10s)</div></div>
+      </label>
+      <label class="depth-card selected">
+        <input type="radio" name="depth" checked>
+        <div><div class="t">Standard</div><div class="d">8–12 queries, multi-vector search & synthesis. (~25s)</div></div>
+      </label>
+      <label class="depth-card">
+        <input type="radio" name="depth">
+        <div><div class="t">Deep</div><div class="d">Full audit, contrarian queries, community forum signals. (~45s)</div></div>
+      </label>
+    </div>
+
+    <div class="side-card">
+      <h3>Target Market</h3>
+      <select><option>United States (Tier-1 Labs)</option><option>United Kingdom</option><option>Global</option></select>
+      <h3>Grounded Source Inclusions</h3>
+      <ul class="inclusions">
+        <li><span class="check">✓</span> Official manufacturer specs & whitepapers</li>
+        <li><span class="check">✓</span> Independent lab benchmarks & thermal tests</li>
+        <li><span class="check">✓</span> Reputable tech publications (AnandTech, GSMArena)</li>
+        <li><span class="check">✓</span> Reddit & forum technical complaints</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-row">
+    <span class="protocol-badge">✓ REPRODUCIBLE RESEARCH PROTOCOL</span>
+    <button class="btn-primary">Review Question Plan →</button>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nichorr — Content Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161C; --paper:#F3F5F4; --card:#FFFFFF;
+    --citation:#2C4A73; --citation-bg:#E9EEF4;
+    --verified:#1E7A5F; --verified-bg:#E7F3EE;
+    --conflict:#9C3B2E; --conflict-bg:#F7E9E5;
+    --amber:#96650E; --amber-bg:#FBF0DD;
+    --muted:#5C6167; --muted-2:#8A8F96;
+    --line:#DADDD8; --line-soft:#E8EAE7;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); font-family:'IBM Plex Sans',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .app-header{background:var(--ink); color:var(--paper); position:sticky; top:0; z-index:50;}
+  .app-header .inner{max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:58px;}
+  .app-logo{font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#fff;}
+  .app-logo span{color:#7FA6D6;}
+  .desk-nav{display:flex; gap:2px;}
+  .desk-nav a{color:#B9C0C9; text-decoration:none; font-size:13.5px; font-weight:600; padding:8px 14px; border-radius:8px;}
+  .desk-nav a.active{background:rgba(255,255,255,.09); color:#fff;}
+  .avatar{width:30px; height:30px; border-radius:50%; background:var(--citation); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+  .hamburger{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;}
+  .nav-right{display:flex; align-items:center; gap:14px;}
+
+  .wrap{max-width:1400px; margin:0 auto; padding:24px 20px 40px;}
+  .page-head{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:22px;}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:22px; margin:0; display:flex; align-items:center; gap:10px;}
+  .btn-primary{background:var(--citation); color:#fff; font-weight:600; font-size:13px; padding:10px 16px; border-radius:9px; border:none; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px;}
+
+  .board{display:flex; gap:14px; overflow-x:auto; padding-bottom:16px;}
+  .col{background:rgba(0,0,0,.02); border:1px solid var(--line-soft); border-radius:14px; padding:12px; width:230px; flex-shrink:0;}
+  .col-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 4px;}
+  .col-head .t{font-size:12.5px; font-weight:700;}
+  .col-head .n{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted-2); background:var(--card); padding:2px 7px; border-radius:10px;}
+  .col-body{min-height:70px; margin-bottom:10px;}
+  .kcard{background:var(--card); border:1px solid var(--line-soft); border-radius:10px; padding:12px; margin-bottom:8px; font-size:12.5px; box-shadow:0 1px 2px rgba(18,22,28,.04);}
+  .kcard .title{font-weight:600; margin-bottom:6px; line-height:1.4;}
+  .kcard .badge{font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:600; padding:2px 7px; border-radius:5px; display:inline-block;}
+  .b-blue{background:var(--citation-bg); color:var(--citation);}
+  .b-green{background:var(--verified-bg); color:var(--verified);}
+  .b-amber{background:var(--amber-bg); color:var(--amber);}
+  .empty-col{display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 8px; color:var(--muted-2); font-size:11.5px; text-align:center; border:1.5px dashed var(--line); border-radius:10px;}
+  .add-card{width:100%; background:none; border:none; color:var(--muted); font-size:12px; font-weight:600; padding:8px; cursor:pointer; text-align:left;}
+
+  @media (max-width: 780px){ .desk-nav{display:none;} .hamburger{display:block;} }
+  @media (max-width: 600px){ .page-head{flex-direction:column; align-items:stretch;} .btn-primary{width:100%; justify-content:center;} }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="inner">
+    <div class="app-logo">Nichorr<span>.</span></div>
+    <nav class="desk-nav"><a href="#">Dashboard</a><a href="#">Projects</a><a href="#">Research</a><a href="#">Sources</a><a href="#" class="active">Content</a><a href="#">Quality</a></nav>
+    <div class="nav-right"><div class="avatar">AH</div><button class="hamburger">☰</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1>▦ Content Production Board</h1>
+    <button class="btn-primary">✨ Content Ideas Generator</button>
+  </div>
+
+  <div class="board">
+    <div class="col">
+      <div class="col-head"><span class="t">Draft (Ideas)</span><span class="n">1</span></div>
+      <div class="col-body">
+        <div class="kcard"><div class="title">2 Weeks Later: The 3 Problems Reviewers Missed</div><span class="badge b-blue">FROM RESEARCH</span></div>
+      </div>
+      <button class="add-card">+ Add Card</button>
+    </div>
+    <div class="col">
+      <div class="col-head"><span class="t">Research Ready</span><span class="n">1</span></div>
+      <div class="col-body">
+        <div class="kcard"><div class="title">Galaxy S26 Ultra vs iPhone 18 Pro Max</div><span class="badge b-green">21 CLAIMS</span></div>
+      </div>
+      <button class="add-card">+ Add Card</button>
+    </div>
+    <div class="col">
+      <div class="col-head"><span class="t">Outline Ready</span><span class="n">0</span></div>
+      <div class="col-body"><div class="empty-col">No items yet</div></div>
+      <button class="add-card">+ Add Card</button>
+    </div>
+    <div class="col">
+      <div class="col-head"><span class="t">Scripting</span><span class="n">1</span></div>
+      <div class="col-body">
+        <div class="kcard"><div class="title">RTX 5090 Thermal Deep Dive</div><span class="badge b-amber">IN PROGRESS</span></div>
+      </div>
+      <button class="add-card">+ Add Card</button>
+    </div>
+    <div class="col">
+      <div class="col-head"><span class="t">In Review (Fact-Check)</span><span class="n">0</span></div>
+      <div class="col-body"><div class="empty-col">No items yet</div></div>
+      <button class="add-card">+ Add Card</button>
+    </div>
+    <div class="col">
+      <div class="col-head"><span class="t">Ready to Record</span><span class="n">0</span></div>
+      <div class="col-body"><div class="empty-col">No items yet</div></div>
+      <button class="add-card">+ Add Card</button>
+    </div>
+    <div class="col">
+      <div class="col-head"><span class="t">Ready to Publish</span><span class="n">0</span></div>
+      <div class="col-body"><div class="empty-col">No items yet</div></div>
+      <button class="add-card">+ Add Card</button>
+    </div>
+    <div class="col">
+      <div class="col-head"><span class="t">Published</span><span class="n">0</span></div>
+      <div class="col-body"><div class="empty-col">No items yet</div></div>
+      <button class="add-card">+ Add Card</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

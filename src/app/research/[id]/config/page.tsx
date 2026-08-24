@@ -2,17 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Settings, ShieldCheck, ArrowRight, Layers, Globe, Filter, Loader2, Check } from "lucide-react";
 import { ResearchRunSession } from "@/features/research/research-engine";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { getLanguageByCode } from "@/lib/constants/languages";
+import { Stepper, Step } from "@/components/ui/Stepper";
+import { Button } from "@/components/ui/Button";
 
 export default function ConfigPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [run, setRun] = useState<ResearchRunSession | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [depth, setDepth] = useState("Standard");
-  const [region, setRegion] = useState("US");
+  const [region, setRegion] = useState("United States (Tier-1 Labs)");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,30 +34,28 @@ export default function ConfigPage({ params }: { params: { id: string } }) {
 
   if (error) {
     return (
-      <div className="max-w-xl mx-auto my-12 p-6 bg-white border border-slate-200/90 shadow-sm rounded-3xl text-center space-y-4">
-        <h2 className="text-lg font-bold text-rose-600">Configuration Load Error</h2>
-        <p className="text-xs font-mono text-slate-500">{error}</p>
-        <button
-          onClick={() => router.push("/research/create")}
-          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold">
+      <div className="max-w-[880px] mx-auto my-12 p-6 bg-card border border-line-soft shadow-sm rounded-3xl text-center space-y-4">
+        <h2 className="text-lg font-bold text-conflict">Configuration Load Error</h2>
+        <p className="text-xs font-mono text-muted">{error}</p>
+        <Button onClick={() => router.push("/research/create")}>
           Create New Research Run
-        </button>
+        </Button>
       </div>
     );
   }
 
   if (notFound) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-6 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-slate-800">Run Not Found</h2>
-        <p className="text-slate-600">This research run could not be recovered. Please start a new one.</p>
+      <div className="max-w-[880px] mx-auto py-12 px-6 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-ink">Run Not Found</h2>
+        <p className="text-muted">This research run could not be recovered. Please start a new one.</p>
       </div>
     );
   }
 
   if (!run) {
     return (
-      <div className="max-w-3xl mx-auto py-8">
+      <div className="max-w-[880px] mx-auto py-8">
         <SkeletonCard />
       </div>
     );
@@ -66,126 +65,96 @@ export default function ConfigPage({ params }: { params: { id: string } }) {
     router.push(`/research/${params.id}/plan`);
   };
 
-  const steps = [
-    { num: 1, label: "Topic & Goal", done: true },
-    { num: 2, label: "Configuration & Scope", active: true },
-    { num: 3, label: "Question Plan" },
-    { num: 4, label: "Execute" },
+  const steps: Step[] = [
+    { num: "✓", label: "Topic & Goal", status: "done" },
+    { num: 2, label: "Configuration", status: "active" },
+    { num: 3, label: "Question Plan", status: "pending" },
+    { num: 4, label: "Execute", status: "pending" },
   ];
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 py-4">
-      <div className="bg-white rounded-[24px] border border-slate-200/90 shadow-sm p-4 flex items-center justify-between">
-        {steps.map((s, idx) => (
-          <div key={s.num} className="flex items-center gap-3">
-            <div className={"w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-bold transition-all " + 
-              (s.active ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30" : s.done ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-100 text-slate-500 border border-slate-200")
-            }>
-              {s.done ? <Check className="w-4 h-4" /> : s.num }
-            </div>
-            <span className={"text-sm font-bold hidden sm:inline " + (s.active || s.done ? "text-slate-900" : "text-slate-500")}>{s.label}</span>
-            {idx < steps.length - 1 && <ArrowRight className="w-4 h-4 text-slate-700 hidden sm:inline ml-1" />}
-          </div>
-        ))}
+    <div className="max-w-[880px] mx-auto px-5 py-8 pb-20">
+      <Stepper steps={steps} />
+
+      <span className="block font-mono text-[11px] font-semibold text-citation tracking-[0.5px] mb-2 uppercase">
+        STAGE 1 · SCOPE & PARAMETERS
+      </span>
+      <h1 className="font-serif font-semibold text-[23px] sm:text-[28px] m-0 mb-5">Research Scope & Protocol Settings</h1>
+
+      <div className="bg-ink text-paper rounded-2xl p-5 sm:px-[22px] sm:py-[20px] mb-6">
+        <div className="font-mono text-[11px] text-[#8FA5C4] tracking-[0.5px] mb-1.5 uppercase">
+          ACTIVE TARGET TOPIC (Language: {getLanguageByCode(run.outputLanguage).englishName})
+        </div>
+        <div className="font-serif font-semibold text-[21px]">{run.topic}</div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-[1.3fr_1fr] gap-[22px] items-start">
         <div>
-          <span className="text-[10px] font-mono text-indigo-600 font-bold uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200 mb-2 inline-block">STAGE 1 / SCOPE & PARAMETERS</span>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Research Scope & Protocol Settings</h1>
+          <h3 className="text-[13.5px] font-bold m-0 mb-3">Research Depth Tier</h3>
+          
+          {[ 
+            { name: "Quick", desc: "3–5 key queries, 10 primary sources. (~10s)" },
+            { name: "Standard", desc: "8–12 queries, multi-vector search & synthesis. (~25s)" },
+            { name: "Deep", desc: "Full audit, contrarian queries, community forum signals. (~45s)" }
+          ].map((d) => (
+            <label
+              key={d.name}
+              className={`block bg-card border-[1.5px] rounded-[14px] px-[18px] py-[16px] mb-3 cursor-pointer flex gap-3 items-start transition-colors duration-150 ${
+                depth === d.name ? "border-citation bg-citation-bg" : "border-line-soft hover:border-citation"
+              }`}
+            >
+              <input
+                type="radio"
+                name="depth"
+                value={d.name}
+                checked={depth === d.name}
+                onChange={(e) => setDepth(e.target.value)}
+                className="mt-[3px]"
+              />
+              <div>
+                <div className="font-bold text-[14.5px] mb-[3px]">{d.name}</div>
+                <div className="text-[12.5px] text-muted leading-[1.5]">{d.desc}</div>
+              </div>
+            </label>
+          ))}
         </div>
-        <span className="text-xs font-mono font-bold px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-600 shadow-inner">
-          ID: <span className="text-slate-900">{run.id.slice(0, 14)}</span>
-        </span>
+
+        <div className="bg-card border border-line-soft rounded-[14px] p-[18px]">
+          <h3 className="text-[13.5px] font-bold m-0 mb-3">Target Market</h3>
+          <select
+            value={region}
+            onChange={(e) => setRegion(e.target.value)}
+            className="w-full font-sans text-[14px] px-3 py-[11px] border border-line rounded-[9px] bg-paper text-ink mb-[18px] focus:outline-none focus:border-citation focus:ring-[3px] focus:ring-citation-bg"
+          >
+            <option>United States (Tier-1 Labs)</option>
+            <option>United Kingdom</option>
+            <option>Global</option>
+          </select>
+
+          <h3 className="text-[13.5px] font-bold m-0 mb-3">Grounded Source Inclusions</h3>
+          <ul className="list-none p-0 m-0 flex flex-col gap-2.5">
+            {[
+              "Official manufacturer specs & whitepapers",
+              "Independent lab benchmarks & thermal tests",
+              "Reputable tech publications (AnandTech, GSMArena)",
+              "Reddit & forum technical complaints"
+            ].map((item, idx) => (
+              <li key={idx} className="flex gap-2 text-[12.5px] text-ink leading-[1.4]">
+                <span className="text-verified flex-shrink-0">✓</span> {item}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
-      <div className="bg-white rounded-[24px] border border-slate-200/90 shadow-lg shadow-slate-200/50 p-6 sm:p-8 space-y-8">
-        <div className="space-y-2 bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-inner">
-          <div className="flex items-center justify-between gap-4">
-            <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold flex items-center gap-2"><Globe className="w-3.5 h-3.5" /> ACTIVE TARGET TOPIC</label>
-            <span className="text-[10px] font-mono font-bold px-2.5 py-1 bg-white border border-slate-200 rounded-full text-slate-600 shadow-sm whitespace-nowrap">
-              OUTPUT: {getLanguageByCode(run.outputLanguage).englishName}
-            </span>
-          </div>
-          <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">{run.topic}</p>
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-8 border-t border-slate-100 pt-8">
-          <div className="space-y-4">
-            <label className="block text-sm font-extrabold text-slate-900 tracking-tight">Research Depth Tier</label>
-            <div className="space-y-3">
-              {
-                [ { name: "Quick", desc: "3-5 key queries, 10 primary sources. (~10s)" },
-                  { name: "Standard", desc: "8-12 queries, multi-vector search & synthesis. (~25s)" },
-                  { name: "Deep", desc: "Full audit, contrarian queries, community forum signals. (~45s)" } ]
-                .map((d) => (
-                <label
-                  key={d.name}
-                  className={"flex items-start gap-4 p-4 rounded-[16px] border-2 cursor-pointer transition-all " + 
-                    (depth === d.name ? "border-indigo-600 bg-indigo-50 shadow-md shadow-indigo-100" : "border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50")
-                  }
-                >
-                  <input
-                    type="radio"
-                    name="depth"
-                    value={d.name}
-                    checked={depth === d.name}
-                    onChange={(e) => setDepth(e.target.value)}
-                    className="mt-1 accent-indigo-600 w-4 h-4 cursor-pointer"
-                  />
-                  <div>
-                    <span className={"font-extrabold text-sm block " + (depth === d.name ? "text-indigo-950" : "text-slate-900")}>{d.name}</span>
-                    <span className={"text-xs mt-1 block leading-relaxed font-medium " + (depth === d.name ? "text-indigo-700/80" : "text-slate-500")}>{d.desc}</span>
-                  </div>
-                </label>
-              ))
-            }
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <label className="block text-sm font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                <Globe className="w-4 h-4 text-sky-500" /> Target Market / Regional Spec Aware
-              </label>
-              <select
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
-                className="w-full bg-white border-2 border-slate-200 rounded-[16px] px-4 py-3 text-sm text-slate-900 font-bold focus:outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm cursor-pointer"
-              >
-                <option value="US">United States (Tier-1 Labs)</option>
-                <option value="UK">United Kingdom / EU</option>
-                <option value="Global">Global / Regional Variant Aware (Exynos vs Snapdragon)</option>
-              </select>
-            </div>
-
-            <div className="bg-slate-50 border border-slate-200 rounded-[16px] p-5 space-y-3 shadow-inner">
-              <div className="font-extrabold text-slate-700 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest">
-                <Filter className="w-4 h-4 text-indigo-500" /> Grounded Source Inclusions
-              </div>
-              <ul className="space-y-2 list-disc list-outside ml-4 text-slate-600 font-medium text-xs leading-relaxed">
-                <li>Official manufacturer specs & whitepapers</li>
-                <li>Independent lab benchmarks & thermal tests</li>
-                <li>Reputable tech publications (AnandTech, GSMArena)</li>
-                <li>Reddit & forum technical complaints</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <span className="text-[10px] font-mono text-emerald-600 flex items-center gap-2 font-extrabold bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200 tracking-widest uppercase shadow-sm">
-            <ShieldCheck className="w-4 h-4" /> REPRODUCIBLE RESEARCH PROTOCOL
-          </span>
-          <button
-            onClick={handleProceed}
-            className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-full font-extrabold text-sm shadow-xl shadow-slate-200/70 transition-all transform hover:-translate-y-0.5 active:scale-95">
-            Review Question Plan
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+      <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between mt-6 gap-4">
+        <span className="inline-flex items-center justify-center sm:justify-start gap-1.5 font-mono text-[11px] font-semibold text-verified bg-verified-bg px-3 py-1.5 rounded-full uppercase">
+          ✓ REPRODUCIBLE RESEARCH PROTOCOL
+        </span>
+        <Button onClick={handleProceed} variant="primary" className="w-full sm:w-auto">
+          Review Question Plan →
+        </Button>
       </div>
     </div>
   );
 }
-

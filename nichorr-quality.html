@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nichorr — Quality Governance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161C; --paper:#F3F5F4; --card:#FFFFFF;
+    --citation:#2C4A73; --citation-bg:#E9EEF4;
+    --verified:#1E7A5F; --verified-bg:#E7F3EE;
+    --conflict:#9C3B2E; --conflict-bg:#F7E9E5;
+    --amber:#96650E; --amber-bg:#FBF0DD;
+    --muted:#5C6167; --muted-2:#8A8F96;
+    --line:#DADDD8; --line-soft:#E8EAE7;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); font-family:'IBM Plex Sans',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .app-header{background:var(--ink); color:var(--paper); position:sticky; top:0; z-index:50;}
+  .app-header .inner{max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:58px;}
+  .app-logo{font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#fff;}
+  .app-logo span{color:#7FA6D6;}
+  .desk-nav{display:flex; gap:2px;}
+  .desk-nav a{color:#B9C0C9; text-decoration:none; font-size:13.5px; font-weight:600; padding:8px 14px; border-radius:8px;}
+  .desk-nav a.active{background:rgba(255,255,255,.09); color:#fff;}
+  .avatar{width:30px; height:30px; border-radius:50%; background:var(--citation); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+  .hamburger{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;}
+  .nav-right{display:flex; align-items:center; gap:14px;}
+
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 20px 80px;}
+  .page-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:26px;}
+  .titlerow{display:flex; align-items:center; gap:12px;}
+  .titlerow .ic{width:38px; height:38px; border-radius:10px; background:var(--verified); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px;}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:24px; margin:0 0 4px;}
+  .sub{font-size:13.5px; color:var(--muted); max-width:520px; line-height:1.6; margin:0;}
+  .btn-ghost{background:var(--card); color:var(--ink); font-weight:600; font-size:13px; padding:10px 16px; border-radius:9px; border:1px solid var(--line); cursor:pointer; white-space:nowrap;}
+
+  .metrics{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  .metric{background:var(--card); border:1px solid var(--line-soft); border-radius:16px; padding:20px;}
+  .metric .top{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .metric .lbl{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.4px; color:var(--muted-2); text-transform:uppercase;}
+  .metric .ic{font-size:15px;}
+  .metric .val{font-family:'Fraunces',serif; font-weight:600; font-size:32px; margin-bottom:6px;}
+  .metric .cap{font-size:12px; color:var(--muted);}
+  .metric.good .val{color:var(--verified);}
+  .metric.warn .cap{color:var(--amber);}
+
+  @media (max-width: 780px){ .desk-nav{display:none;} .hamburger{display:block;} }
+  @media (max-width: 800px){ .metrics{grid-template-columns:1fr 1fr;} }
+  @media (max-width: 600px){
+    .page-head{flex-direction:column; align-items:stretch;}
+    .btn-ghost{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="inner">
+    <div class="app-logo">Nichorr<span>.</span></div>
+    <nav class="desk-nav"><a href="#">Dashboard</a><a href="#">Projects</a><a href="#">Research</a><a href="#">Sources</a><a href="#">Content</a><a href="#" class="active">Quality</a></nav>
+    <div class="nav-right"><div class="avatar">AH</div><button class="hamburger">☰</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <div class="titlerow">
+      <div class="ic">🛡</div>
+      <div>
+        <h1>Evidence-First Research Quality Governance</h1>
+        <p class="sub">Monitor source diversity, independent source ratios, and evidence grounding scores across research runs.</p>
+      </div>
+    </div>
+    <button class="btn-ghost">↻ Refresh Quality Metrics</button>
+  </div>
+
+  <div class="metrics">
+    <div class="metric good">
+      <div class="top"><span class="lbl">Independent Sources</span><span class="ic">🗄</span></div>
+      <div class="val">85%</div>
+      <div class="cap">Ratio of non-vendor sources</div>
+    </div>
+    <div class="metric good">
+      <div class="top"><span class="lbl">Evidence Grounding</span><span class="ic">🛡</span></div>
+      <div class="val">100%</div>
+      <div class="cap">Claims mapped to raw citations</div>
+    </div>
+    <div class="metric warn">
+      <div class="top"><span class="lbl">Unsupported Claims</span><span class="ic">📈</span></div>
+      <div class="val">0.0%</div>
+      <div class="cap">Unsupported claim ratio</div>
+    </div>
+    <div class="metric">
+      <div class="top"><span class="lbl">Research Runs</span><span class="ic">📄</span></div>
+      <div class="val">142</div>
+      <div class="cap">Completed in last 30 days</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

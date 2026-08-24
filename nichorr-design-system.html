@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nichorr — App Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161C; --paper:#F3F5F4; --card:#FFFFFF;
+    --citation:#2C4A73; --citation-bg:#E9EEF4;
+    --verified:#1E7A5F; --verified-bg:#E7F3EE;
+    --conflict:#9C3B2E; --conflict-bg:#F7E9E5;
+    --amber:#96650E; --amber-bg:#FBF0DD;
+    --muted:#5C6167; --muted-2:#8A8F96;
+    --line:#DADDD8; --line-soft:#E8EAE7;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); font-family:'IBM Plex Sans',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .serif{font-family:'Fraunces',serif;}
+  section{padding:48px 24px; border-bottom:1px solid var(--line-soft);}
+  section h2{font-family:'Fraunces',serif; font-weight:600; font-size:22px; margin:0 0 6px;}
+  section p.desc{color:var(--muted); font-size:14px; margin:0 0 24px; max-width:640px;}
+  .row{display:flex; gap:14px; flex-wrap:wrap; align-items:center;}
+  .swatch{width:110px;}
+  .swatch .sq{width:110px; height:64px; border-radius:10px; border:1px solid var(--line-soft);}
+  .swatch .lbl{font-family:'IBM Plex Mono',monospace; font-size:11px; margin-top:6px; color:var(--muted);}
+
+  /* Buttons */
+  .btn{font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:14px; padding:10px 18px; border-radius:9px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px; transition:transform .12s ease, opacity .12s ease;}
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--ink); color:var(--paper);}
+  .btn-primary:hover{opacity:.88;}
+  .btn-accent{background:var(--citation); color:#fff;}
+  .btn-accent:hover{opacity:.9;}
+  .btn-ghost{background:transparent; color:var(--ink); border:1px solid var(--line);}
+  .btn-ghost:hover{background:var(--card); border-color:var(--muted-2);}
+  .btn:focus-visible{outline:2.5px solid var(--citation); outline-offset:2px;}
+
+  /* Badges */
+  .badge{font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:20px; display:inline-flex; align-items:center; gap:6px; letter-spacing:.2px;}
+  .badge .dot{width:6px; height:6px; border-radius:50%;}
+  .badge-verified{background:var(--verified-bg); color:var(--verified);}
+  .badge-verified .dot{background:var(--verified);}
+  .badge-warning{background:var(--amber-bg); color:var(--amber);}
+  .badge-warning .dot{background:var(--amber);}
+  .badge-conflict{background:var(--conflict-bg); color:var(--conflict);}
+  .badge-conflict .dot{background:var(--conflict);}
+  .badge-neutral{background:#EEF0EE; color:var(--muted);}
+  .badge-neutral .dot{background:var(--muted-2);}
+
+  /* Citation marker — signature element */
+  .cite{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:19px; height:19px; border-radius:50%;
+    background:var(--citation-bg); color:var(--citation);
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
+    cursor:pointer; border:none; vertical-align:super; margin-left:2px;
+    transition:background .15s ease, color .15s ease;
+  }
+  .cite:hover, .cite:focus-visible{background:var(--citation); color:#fff;}
+
+  /* Cards */
+  .card{background:var(--card); border:1px solid var(--line-soft); border-radius:16px; padding:20px; box-shadow:0 1px 2px rgba(18,22,28,.03);}
+  .stat-card .stat-label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.5px; text-transform:uppercase; color:var(--muted-2); margin-bottom:8px;}
+  .stat-card .stat-value{font-family:'Fraunces',serif; font-weight:600; font-size:32px; line-height:1;}
+  .stat-card .stat-sub{font-size:12.5px; color:var(--muted); margin-top:6px;}
+
+  /* Tabs (horizontally scrollable pill nav — mobile pattern) */
+  .tabbar{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none;}
+  .tabbar::-webkit-scrollbar{display:none;}
+  .tab{flex-shrink:0; font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; font-weight:600; padding:9px 16px; border-radius:20px; border:1px solid var(--line); background:var(--card); color:var(--muted); cursor:pointer; white-space:nowrap;}
+  .tab.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+  /* Table */
+  table.data{width:100%; border-collapse:collapse; font-size:13.5px;}
+  table.data th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.4px; text-transform:uppercase; color:var(--muted-2); padding:0 12px 10px; border-bottom:1px solid var(--line);}
+  table.data td{padding:12px; border-bottom:1px solid var(--line-soft);}
+  table.data tr:last-child td{border-bottom:none;}
+
+  /* Inputs */
+  .field{display:flex; flex-direction:column; gap:6px; max-width:360px;}
+  .field label{font-size:12.5px; font-weight:600; color:var(--ink);}
+  .field input{font-family:'IBM Plex Sans',sans-serif; font-size:14px; padding:10px 14px; border:1px solid var(--line); border-radius:9px; background:var(--card); color:var(--ink);}
+  .field input:focus{outline:none; border-color:var(--citation); box-shadow:0 0 0 3px var(--citation-bg);}
+  .field input::placeholder{color:var(--muted-2);}
+
+  /* Empty state */
+  .empty{text-align:center; padding:48px 20px; background:var(--card); border:1px solid var(--line-soft); border-radius:16px;}
+  .empty .icn{width:38px; height:38px; border-radius:50%; background:var(--paper); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; color:var(--muted-2); font-size:18px;}
+  .empty h4{margin:0 0 6px; font-size:15px; font-weight:700;}
+  .empty p{margin:0; font-size:13px; color:var(--muted);}
+
+  /* ===== NAV (desktop + mobile) ===== */
+  .app-header{background:var(--ink); color:var(--paper); position:sticky; top:0; z-index:50;}
+  .app-header .inner{max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:60px;}
+  .app-logo{font-family:'Fraunces',serif; font-weight:600; font-size:19px;}
+  .app-logo span{color:#7FA6D6;}
+  .desk-nav{display:flex; gap:4px;}
+  .desk-nav a{color:#B9C0C9; text-decoration:none; font-size:13.5px; font-weight:600; padding:8px 14px; border-radius:8px;}
+  .desk-nav a.active{background:rgba(255,255,255,.08); color:#fff;}
+  .hamburger{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer; padding:4px;}
+  .mobile-drawer{display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.4);}
+  .mobile-drawer .panel{background:var(--ink); width:78%; max-width:300px; height:100%; padding:20px; display:flex; flex-direction:column; gap:2px;}
+  .mobile-drawer a{color:#DDE1E5; text-decoration:none; font-size:15px; font-weight:600; padding:13px 10px; border-radius:8px;}
+  .mobile-drawer a.active{background:rgba(255,255,255,.08); color:#fff;}
+  .mobile-drawer.open{display:block;}
+
+  @media (max-width: 780px){
+    .desk-nav{display:none;}
+    .hamburger{display:block;}
+  }
+
+  .note{font-size:12.5px; color:var(--muted); background:var(--citation-bg); border:1px dashed var(--citation); border-radius:10px; padding:10px 14px; margin-bottom:20px;}
+</style>
+</head>
+<body>
+
+<section style="padding-top:32px;">
+  <span class="mono" style="font-size:12px; color:var(--muted-2); letter-spacing:1px;">NICHORR APP · DESIGN SYSTEM v1</span>
+  <h1 class="serif" style="font-size:32px; font-weight:600; margin:8px 0 6px;">Foundations & Components</h1>
+  <p class="desc" style="max-width:680px;">Reference implementation for every screen in the app. Same brand as nichorr.com, adapted for dense working-tool use: light content canvas (readability for long sessions), dark ink nav, and the citation-marker as a literal functional element throughout — not just marketing decoration.</p>
+</section>
+
+<section>
+  <h2>Color</h2>
+  <p class="desc">Ink for navigation and primary text. Paper for the working canvas. Citation blue is the one accent — used for actions, links, and the citation marker. Verified green and conflict rust are reserved strictly for evidence status, never decoration.</p>
+  <div class="row">
+    <div class="swatch"><div class="sq" style="background:#12161C;"></div><div class="lbl">Ink #12161C</div></div>
+    <div class="swatch"><div class="sq" style="background:#F3F5F4;"></div><div class="lbl">Paper #F3F5F4</div></div>
+    <div class="swatch"><div class="sq" style="background:#FFFFFF;"></div><div class="lbl">Card #FFFFFF</div></div>
+    <div class="swatch"><div class="sq" style="background:#2C4A73;"></div><div class="lbl">Citation #2C4A73</div></div>
+    <div class="swatch"><div class="sq" style="background:#1E7A5F;"></div><div class="lbl">Verified #1E7A5F</div></div>
+    <div class="swatch"><div class="sq" style="background:#9C3B2E;"></div><div class="lbl">Conflict #9C3B2E</div></div>
+    <div class="swatch"><div class="sq" style="background:#96650E;"></div><div class="lbl">Warning #96650E</div></div>
+    <div class="swatch"><div class="sq" style="background:#5C6167;"></div><div class="lbl">Muted #5C6167</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Type</h2>
+  <p class="desc">Fraunces for page titles and section heads only — restrained, not on every label. IBM Plex Sans for all UI text. IBM Plex Mono for anything numeric, tagged, or evidentiary (badges, stats, timestamps, citation markers).</p>
+  <div style="display:flex; flex-direction:column; gap:14px;">
+    <div><span class="serif" style="font-size:30px; font-weight:600;">Fraunces 600 — Page titles</span></div>
+    <div><span style="font-size:16px; font-weight:600;">IBM Plex Sans 600 — UI labels, buttons</span></div>
+    <div><span style="font-size:15px;">IBM Plex Sans 400 — Body text, descriptions</span></div>
+    <div><span class="mono" style="font-size:14px;">IBM Plex Mono — Stats, badges, timestamps, citations</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Buttons</h2>
+  <div class="row">
+    <button class="btn btn-primary">Start Research</button>
+    <button class="btn btn-accent">Continue to Plan →</button>
+    <button class="btn btn-ghost">Cancel</button>
+  </div>
+</section>
+
+<section>
+  <h2>Status badges</h2>
+  <p class="desc">One consistent vocabulary across the whole app — Sources, Quality Gate, Conflicts all reuse these same four states.</p>
+  <div class="row">
+    <span class="badge badge-verified"><span class="dot"></span>VERIFIED</span>
+    <span class="badge badge-warning"><span class="dot"></span>NEEDS REVIEW</span>
+    <span class="badge badge-conflict"><span class="dot"></span>CONFLICTING</span>
+    <span class="badge badge-neutral"><span class="dot"></span>NO DATA</span>
+  </div>
+</section>
+
+<section>
+  <h2>Citation marker — the signature element</h2>
+  <p class="desc">The same numbered marker from nichorr.com's hero demo, now literally functional: every claim, stat, or figure traceable to a source carries one. Click reveals the source. This is the one place the app is allowed to feel "designed" — everywhere else stays quiet.</p>
+  <p style="font-size:16px; max-width:560px; line-height:1.7;">The A19 Pro leads the Snapdragon 8 Gen 5 in sustained thermal tests<button class="cite">1</button>, though early units show inconsistent throttling curves<button class="cite">2</button>.</p>
+</section>
+
+<section>
+  <h2>Stat cards</h2>
+  <div class="row">
+    <div class="card stat-card" style="width:200px;">
+      <div class="stat-label">Verified Claims</div>
+      <div class="stat-value">24</div>
+      <div class="stat-sub" style="color:var(--verified);">100% source-traced</div>
+    </div>
+    <div class="card stat-card" style="width:200px;">
+      <div class="stat-label">Conflicts Surfaced</div>
+      <div class="stat-value">2</div>
+      <div class="stat-sub">methodological</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Tab navigation (mobile-scrollable)</h2>
+  <p class="desc">Used for research sub-sections (Overview / YouTube Intel / Evidence / Conflicts / etc). Scrolls horizontally with touch on mobile instead of wrapping or overflowing — no hamburger needed at this level.</p>
+  <div class="tabbar" style="max-width:600px;">
+    <div class="tab active">Overview</div>
+    <div class="tab">YouTube Intel</div>
+    <div class="tab">Evidence</div>
+    <div class="tab">Conflicts</div>
+    <div class="tab">Creator Studio</div>
+    <div class="tab">Ask AI</div>
+  </div>
+</section>
+
+<section>
+  <h2>Data table</h2>
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table class="data" style="padding:16px;">
+      <thead><tr><th style="padding-left:20px;">Source</th><th>Tier</th><th>Trust</th><th style="padding-right:20px;">Citations</th></tr></thead>
+      <tbody>
+        <tr><td style="padding-left:20px; font-weight:600;">AnandTech Hardware Reviews</td><td><span class="badge badge-neutral">PRIMARY</span></td><td class="mono">98/100</td><td class="mono" style="padding-right:20px;">42</td></tr>
+        <tr><td style="padding-left:20px; font-weight:600;">Reddit r/hardware</td><td><span class="badge badge-warning">TERTIARY</span></td><td class="mono">45/100</td><td class="mono" style="padding-right:20px;">12</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Form field</h2>
+  <div class="field">
+    <label>Primary Tech Topic</label>
+    <input type="text" placeholder="e.g., Apple M4 iPad Pro OLED Display Calibration…">
+  </div>
+</section>
+
+<section>
+  <h2>Empty state</h2>
+  <div class="empty" style="max-width:420px;">
+    <div class="icn">i</div>
+    <h4>No data yet</h4>
+    <p>Nothing to check for conflicts.</p>
+  </div>
+</section>
+
+<section style="border-bottom:none;">
+  <h2>Navigation — resize this window to test mobile</h2>
+  <div class="note">Below ~780px width, the horizontal nav is replaced by a hamburger drawer. This is the pattern every page must use — it's the single biggest fix for the mobile complaints.</div>
+
+  <div class="app-header" style="position:relative; border-radius:12px; overflow:visible;">
+    <div class="inner">
+      <div class="app-logo">Nichorr<span>.</span></div>
+      <nav class="desk-nav">
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Projects</a>
+        <a href="#">Research</a>
+        <a href="#">Sources</a>
+        <a href="#">Content</a>
+        <a href="#">Quality</a>
+      </nav>
+      <button class="hamburger" onclick="document.getElementById('drawer').classList.toggle('open')">☰</button>
+    </div>
+  </div>
+  <div class="mobile-drawer" id="drawer" style="position:absolute;">
+    <div class="panel">
+      <div class="app-logo" style="margin-bottom:20px;">Nichorr<span>.</span></div>
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Projects</a>
+      <a href="#">Research</a>
+      <a href="#">Sources</a>
+      <a href="#">Content</a>
+      <a href="#">Quality</a>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

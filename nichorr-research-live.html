@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nichorr — Research Execution Pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161C; --paper:#F3F5F4; --card:#FFFFFF;
+    --citation:#2C4A73; --citation-bg:#E9EEF4;
+    --verified:#1E7A5F; --verified-bg:#E7F3EE;
+    --conflict:#9C3B2E; --conflict-bg:#F7E9E5;
+    --amber:#96650E; --amber-bg:#FBF0DD;
+    --muted:#5C6167; --muted-2:#8A8F96;
+    --line:#DADDD8; --line-soft:#E8EAE7;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); font-family:'IBM Plex Sans',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .app-header{background:var(--ink); color:var(--paper); position:sticky; top:0; z-index:50;}
+  .app-header .inner{max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:58px;}
+  .app-logo{font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:#fff;}
+  .app-logo span{color:#7FA6D6;}
+  .desk-nav{display:flex; gap:2px;}
+  .desk-nav a{color:#B9C0C9; text-decoration:none; font-size:13.5px; font-weight:600; padding:8px 14px; border-radius:8px;}
+  .desk-nav a.active{background:rgba(255,255,255,.09); color:#fff;}
+  .avatar{width:30px; height:30px; border-radius:50%; background:var(--citation); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+  .hamburger{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;}
+  .nav-right{display:flex; align-items:center; gap:14px;}
+
+  .wrap{max-width:760px; margin:0 auto; padding:28px 20px 80px;}
+  .top-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; flex-wrap:wrap; gap:10px;}
+  .live-tag{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--citation);}
+  .live-tag .dot{width:6px; height:6px; border-radius:50%; background:var(--citation); animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .cancel{font-size:12.5px; font-weight:600; color:var(--conflict); background:var(--conflict-bg); border:none; padding:8px 14px; border-radius:8px; cursor:pointer;}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:24px; margin:6px 0 22px;}
+
+  .topic-card{background:linear-gradient(135deg, var(--citation-bg), var(--card)); border:1px solid var(--line-soft); border-radius:16px; padding:18px 22px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;}
+  .topic-card .lbl{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted-2); letter-spacing:.5px; margin-bottom:6px;}
+  .topic-card .name{font-family:'Fraunces',serif; font-weight:600; font-size:19px;}
+  .topic-card .tag{font-size:11px; font-weight:600; background:var(--card); padding:5px 12px; border-radius:20px; color:var(--muted); border:1px solid var(--line);}
+
+  .prog-card{background:var(--card); border:1px solid var(--line-soft); border-radius:16px; padding:18px 22px; margin-bottom:18px;}
+  .prog-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
+  .prog-top .lbl{font-weight:700; font-size:13.5px; display:flex; align-items:center; gap:8px;}
+  .prog-top .pct{font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--citation);}
+  .prog-track{height:8px; background:var(--line-soft); border-radius:6px; overflow:hidden;}
+  .prog-fill{height:100%; background:linear-gradient(90deg, var(--citation), #4A7CB5); border-radius:6px; width:38%;}
+  .prog-meta{display:flex; justify-content:space-between; margin-top:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted-2);}
+
+  .active-card{background:var(--citation-bg); border:1px solid var(--citation); border-radius:14px; padding:16px 18px; margin-bottom:22px;}
+  .active-card .lbl{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--citation); letter-spacing:.5px; margin-bottom:6px;}
+  .active-card .name{font-weight:700; font-size:15px; display:flex; align-items:center; gap:8px; margin-bottom:4px;}
+  .spin{display:inline-block; width:13px; height:13px; border:2px solid var(--citation); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .active-card .desc{font-size:12.5px; color:var(--muted);}
+
+  .timeline{list-style:none; margin:0; padding:0;}
+  .tstage{display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:12px; margin-bottom:8px; border:1px solid transparent;}
+  .tstage.done{background:var(--verified-bg);}
+  .tstage.active{background:var(--citation-bg); border-color:var(--citation);}
+  .tstage.pending{background:var(--card); border-color:var(--line-soft);}
+  .tstage .ic{width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0;}
+  .tstage.done .ic{background:var(--verified); color:#fff;}
+  .tstage.active .ic{background:var(--citation); color:#fff;}
+  .tstage.pending .ic{background:var(--line-soft); color:var(--muted-2);}
+  .tstage .sname{font-size:13.5px; font-weight:600; flex:1;}
+  .tstage.pending .sname{color:var(--muted-2);}
+  .tstage .sstatus{font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600;}
+  .tstage.done .sstatus{color:var(--verified);}
+  .tstage.active .sstatus{color:var(--citation);}
+  .tstage.pending .sstatus{color:var(--muted-2);}
+
+  .footer-badge{display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--card); border:1px solid var(--line-soft); border-radius:12px; padding:12px 16px; margin-top:20px; font-size:12px; color:var(--muted); flex-wrap:wrap;}
+  .footer-badge .b{font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; color:var(--citation); background:var(--citation-bg); padding:4px 10px; border-radius:20px;}
+
+  @media (max-width: 780px){ .desk-nav{display:none;} .hamburger{display:block;} }
+  @media (max-width: 600px){ h1{font-size:20px;} .topic-card, .footer-badge{flex-direction:column; align-items:flex-start;} }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="inner">
+    <div class="app-logo">Nichorr<span>.</span></div>
+    <nav class="desk-nav"><a href="#">Dashboard</a><a href="#">Projects</a><a href="#" class="active">Research</a><a href="#">Sources</a><a href="#">Content</a><a href="#">Quality</a></nav>
+    <div class="nav-right"><div class="avatar">AH</div><button class="hamburger">☰</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="top-row">
+    <span class="live-tag"><span class="dot"></span>LIVE BACKEND STATE STREAM</span>
+    <button class="cancel">⊗ Cancel Run</button>
+  </div>
+  <h1>Research Execution Pipeline</h1>
+
+  <div class="topic-card">
+    <div>
+      <div class="lbl">ACTIVE RESEARCH TOPIC</div>
+      <div class="name">Samsung Galaxy S26 Ultra vs iPhone 18 Pro Max</div>
+    </div>
+    <span class="tag">Comparison</span>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-top">
+      <span class="lbl">◈ Research Progress</span>
+      <span class="pct">38%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill"></div></div>
+    <div class="prog-meta"><span>STAGE 4 OF 12</span><span>PROCESSING…</span></div>
+  </div>
+
+  <div class="active-card">
+    <div class="lbl">CURRENT ACTIVE STAGE</div>
+    <div class="name"><span class="spin"></span> Extracting Granular Evidence Excerpts</div>
+    <div class="desc">Pulling verifiable quotes and figures from retrieved source documents.</div>
+  </div>
+
+  <div class="mono" style="font-size:10.5px; color:var(--muted-2); letter-spacing:.5px; margin-bottom:10px;">PIPELINE EXECUTION STAGE TIMELINE</div>
+  <ul class="timeline">
+    <li class="tstage done"><div class="ic">✓</div><div class="sname">Deconstructing Objective & Queries</div><span class="sstatus">COMPLETED</span></li>
+    <li class="tstage done"><div class="ic">✓</div><div class="sname">Discovering Independent & Official Sources</div><span class="sstatus">COMPLETED</span></li>
+    <li class="tstage done"><div class="ic">✓</div><div class="sname">Retrieving Source Documents & Specifications</div><span class="sstatus">COMPLETED</span></li>
+    <li class="tstage active"><div class="ic"><span class="spin" style="width:10px;height:10px;border-width:1.5px;"></span></div><div class="sname">Extracting Granular Evidence Excerpts</div><span class="sstatus">PROCESSING</span></li>
+    <li class="tstage pending"><div class="ic">5</div><div class="sname">Formulating Atomic Technical Claims</div><span class="sstatus">QUEUED</span></li>
+    <li class="tstage pending"><div class="ic">6</div><div class="sname">Verifying Claims & Corroborating Sources</div><span class="sstatus">QUEUED</span></li>
+    <li class="tstage pending"><div class="ic">7</div><div class="sname">Surfacing Disagreements & Methodological Conflicts</div><span class="sstatus">QUEUED</span></li>
+    <li class="tstage pending"><div class="ic">8</div><div class="sname">Analyzing Community Forum Signals & User Reports</div><span class="sstatus">QUEUED</span></li>
+    <li class="tstage pending"><div class="ic">9</div><div class="sname">Identifying Unanswered Audience Question Gaps</div><span class="sstatus">QUEUED</span></li>
+    <li class="tstage pending"><div class="ic">10</div><div class="sname">Scoring Evidence-Backed Content Opportunities</div><span class="sstatus">QUEUED</span></li>
+    <li class="tstage pending"><div class="ic">11</div><div class="sname">Executing Pre-Brief Quality Gate Audit</div><span class="sstatus">QUEUED</span></li>
+    <li class="tstage pending"><div class="ic">12</div><div class="sname">Synthesizing Final Structured Research Brief</div><span class="sstatus">QUEUED</span></li>
+  </ul>
+
+  <div class="footer-badge">
+    <span>✓ Real backend state representation — no fabricated percentages</span>
+    <span class="b">STATUS: IN PROGRESS</span>
+  </div>
+</div>
+
+</body>
+</html>

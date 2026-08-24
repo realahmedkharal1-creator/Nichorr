@@ -1,4 +1,6 @@
-"use client";
+const fs = require('fs');
+
+const liveCode = `"use client";
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -35,13 +37,13 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await fetch(`/api/research/${params.id}/status`);
+        const res = await fetch(\`/api/research/\${params.id}/status\`);
         const data = await res.json();
         if (data.success && data.run) {
           setRun(data.run);
           if (data.run.status === "CREATED" && !executionTriggeredRef.current) {
             executionTriggeredRef.current = true;
-            fetch(`/api/research/${params.id}/execute`, { method: "POST" })
+            fetch(\`/api/research/\${params.id}/execute\`, { method: "POST" })
               .then((r) => r.json())
               .then((execData) => {
                 if (execData.success && execData.run) {
@@ -100,8 +102,8 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
     if (cancelling) return;
     setCancelling(true);
     try {
-      await fetch(`/api/research/${params.id}/execute`, { method: "DELETE" });
-      const res = await fetch(`/api/research/${params.id}/status`);
+      await fetch(\`/api/research/\${params.id}/execute\`, { method: "DELETE" });
+      const res = await fetch(\`/api/research/\${params.id}/status\`);
       const data = await res.json();
       if (data.success) setRun(data.run);
     } catch (e) {
@@ -146,7 +148,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
         <div className="bg-verified-bg border border-verified rounded-2xl p-5 mb-[18px] text-verified text-sm font-medium flex items-center gap-3">
           <CheckCircle2 className="w-6 h-6 shrink-0" />
           <p>Research Completed & Audited. Every technical claim is verified and grounded.</p>
-          <Button variant="primary" onClick={() => router.push(`/research/${params.id}/results`)} className="ml-auto shrink-0">
+          <Button variant="primary" onClick={() => router.push(\`/research/\${params.id}/results\`)} className="ml-auto shrink-0">
             View Results →
           </Button>
         </div>
@@ -167,7 +169,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
             <span className="font-mono font-bold text-citation text-[13.5px]">{progressPercent}%</span>
           </div>
           <div className="h-2 bg-line-soft rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-citation to-[#4A7CB5] rounded-full transition-all duration-700 ease-out" style={{ width: `${progressPercent}%` }}></div>
+            <div className="h-full bg-gradient-to-r from-citation to-[#4A7CB5] rounded-full transition-all duration-700 ease-out" style={{ width: \`\${progressPercent}%\` }}></div>
           </div>
           <div className="flex justify-between mt-2 font-mono text-[11px] text-muted-2 uppercase">
             <span>STAGE {Math.max(1, currentStageIndex + (isCompleted ? 0 : 1))} OF {STAGES.length}</span>
@@ -213,12 +215,12 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
           }
 
           return (
-            <li key={stg.id} className={`flex items-center gap-3.5 p-[13px] sm:px-4 rounded-xl mb-2 border ${stageClass}`}>
-              <div className={`w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] shrink-0 ${iconClass}`}>
+            <li key={stg.id} className={\`flex items-center gap-3.5 p-[13px] sm:px-4 rounded-xl mb-2 border \${stageClass}\`}>
+              <div className={\`w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] shrink-0 \${iconClass}\`}>
                 {isDone ? "✓" : isCurrent ? <div className="w-2.5 h-2.5 border-[1.5px] border-white border-t-transparent rounded-full animate-[spin_0.8s_linear_infinite]"></div> : (idx + 1)}
               </div>
-              <div className={`text-[13.5px] font-semibold flex-1 ${textClass}`}>{stg.label}</div>
-              <span className={`font-mono text-[10.5px] font-semibold ${statusTextClass}`}>{statusText}</span>
+              <div className={\`text-[13.5px] font-semibold flex-1 \${textClass}\`}>{stg.label}</div>
+              <span className={\`font-mono text-[10.5px] font-semibold \${statusTextClass}\`}>{statusText}</span>
             </li>
           );
         })}
@@ -231,3 +233,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/app/research/[id]/live/page.tsx', liveCode);
+console.log('Done writing live page.');
