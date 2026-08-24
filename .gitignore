@@ -7,3 +7,7 @@ _archive/
 coverage/
 *.log
 .vercel
+
+# One-off script patterns
+scratch-*
+patch-*.js
