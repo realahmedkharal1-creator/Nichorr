@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import styles from "./landing.module.css";
 
@@ -93,9 +94,9 @@ export default function LandingPage() {
       {/* HEADER */}
       <header className={styles.header}>
         <nav className={`${styles.wrap} ${styles.navWrap}`}>
-          <div className={styles.wordmark}>
-            Nichorr<span>.</span>
-          </div>
+          <Link href="/" className={styles.wordmark}>
+            <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={120} height={32} style={{ height: "32px", width: "auto" }} priority />
+          </Link>
           <div className={styles.navActions}>
             <Link href="/login" className={styles.signInLink}>
               Sign In
