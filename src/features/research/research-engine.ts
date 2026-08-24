@@ -333,15 +333,35 @@ export class ResearchEngine {
         product_entity: entityInfo.modelName,
       }));
     } else {
-      session.evidence = session.sources.map((s, idx) => ({
-        id: `ev-${idx + 1}`,
-        source_id: s.id,
-        excerpt: s.extractedText
-          ? s.extractedText.slice(0, 300)
-          : `Technical review and specification excerpt for ${session!.topic} from ${s.publisher} (${s.title}).`,
-        evidence_type: s.sourceType === "OFFICIAL_SPEC" ? "OFFICIAL_FACT" : "MEASURED_RESULT",
-        product_entity: entityInfo.modelName,
-      }));
+      session.evidence = session.sources.map((s, idx) => {
+        let textToUse = s.extractedText || "";
+        
+        // Basic sanity filter for nav-menu/boilerplate scrapes
+        const isNavGarbage = (text: string) => {
+          if (!text) return true;
+          const words = text.trim().split(/\s+/);
+          if (words.length < 8) return false; // allow very short actual values if any
+          const capitalized = words.filter(w => /^[A-Z]/.test(w)).length;
+          if (capitalized / words.length > 0.6) return true;
+          if (/Login\s*Signup|Facebook\s*X\s*Twitter|Home\s*About\s*Contact/i.test(text)) return true;
+          return false;
+        };
+
+        if (isNavGarbage(textToUse)) {
+          // Treat as failed extraction for this source to avoid garbage text
+          textToUse = `[EXTRACTION_FAILED] Content heavily obfuscated or matched navigation boilerplate for ${s.publisher}.`;
+        } else {
+          textToUse = textToUse.slice(0, 300);
+        }
+
+        return {
+          id: `ev-${idx + 1}`,
+          source_id: s.id,
+          excerpt: textToUse,
+          evidence_type: s.sourceType === "OFFICIAL_SPEC" ? "OFFICIAL_FACT" : "MEASURED_RESULT",
+          product_entity: entityInfo.modelName,
+        };
+      });
     }
 
     await updateStatus("CLAIMING");

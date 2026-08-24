@@ -49,28 +49,36 @@ export default function OpportunitiesPage({ params }: { params: { id: string } }
       <ResearchTabNav runId={run.id} />
 
       <div className="space-y-4">
-        {(run.opportunities || []).map((opp) => (
-          <div key={opp.id} className="bg-white rounded-[24px] shadow-sm border border-pink-200 p-6 space-y-4 hover:border-pink-300 transition-all">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-              <span className="badge-opportunity px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-pink-100 text-pink-700">
-                {opp.opportunity_type} OPPORTUNITY
-              </span>
-              <span className="text-xs font-mono text-pink-700 font-bold bg-pink-50 px-3 py-1 rounded-full border border-pink-200 shadow-sm">
-                OPPORTUNITY SCORE: {opp.score} / 10
-              </span>
-            </div>
-
-            <div className="space-y-1.5">
-              <h3 className="text-lg font-bold text-slate-900">{opp.title}</h3>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans">{opp.description}</p>
-            </div>
-
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100 text-xs font-mono text-slate-500 space-y-1">
-              <span className="text-indigo-600 font-bold block uppercase text-[11px]">EVIDENCE JUSTIFICATION:</span>
-              <p className="text-slate-700">Supported by 2 independent benchmark sources + high audience question gap signal.</p>
-            </div>
+        {(run.opportunities || []).length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+            <Lightbulb className="w-8 h-8 text-slate-300 mx-auto mb-3" />
+            <h3 className="text-slate-900 font-bold">No content opportunities identified yet</h3>
+            <p className="text-sm text-slate-500 mt-1">This run did not identify any high-demand video angles.</p>
           </div>
-        ))}
+        ) : (
+          (run.opportunities || []).map((opp) => (
+            <div key={opp.id} className="bg-white rounded-[24px] shadow-sm border border-pink-200 p-6 space-y-4 hover:border-pink-300 transition-all">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <span className="badge-opportunity px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-pink-100 text-pink-700">
+                  {opp.opportunity_type} OPPORTUNITY
+                </span>
+                <span className="text-xs font-mono text-pink-700 font-bold bg-pink-50 px-3 py-1 rounded-full border border-pink-200 shadow-sm">
+                  OPPORTUNITY SCORE: {opp.score} / 10
+                </span>
+              </div>
+  
+              <div className="space-y-1.5">
+                <h3 className="text-lg font-bold text-slate-900">{opp.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans">{opp.description}</p>
+              </div>
+  
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100 text-xs font-mono text-slate-500 space-y-1">
+                <span className="text-indigo-600 font-bold block uppercase text-[11px]">EVIDENCE JUSTIFICATION:</span>
+                <p className="text-slate-700">Supported by 2 independent benchmark sources + high audience question gap signal.</p>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

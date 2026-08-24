@@ -101,45 +101,45 @@ export default function ProjectsListPage() {
 
       {/* Create Project Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="slate-card p-6 max-w-md w-full space-y-4 bg-slate-900 border-indigo-900/60 shadow-2xl">
-            <h2 className="text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">Create Research Project</h2>
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-[24px] p-6 max-w-md w-full space-y-4 border border-slate-200 shadow-2xl">
+            <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Create Research Project</h2>
             <form onSubmit={handleCreateProject} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-200">Project Name <span className="text-rose-400">*</span></label>
+                <label className="block text-xs font-semibold text-slate-700">Project Name <span className="text-rose-500">*</span></label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Galaxy S27 Ultra vs iPhone 18 Pro Max"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 placeholder:text-slate-400 text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm"
                 />
               </div>
-
+  
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-200">Description / Goal (Optional)</label>
+                <label className="block text-xs font-semibold text-slate-700">Description / Goal (Optional)</label>
                 <textarea
                   rows={3}
                   placeholder="Describe the scope of this project and key benchmark comparisons..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 placeholder:text-slate-400 text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm"
                 />
               </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-850">
+  
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!name.trim() || creating}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-xl text-xs font-semibold shadow-md transition disabled:opacity-50"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-xs font-semibold shadow-md transition disabled:opacity-50"
                 >
                   {creating ? "Creating..." : "Save Project"}
                 </button>

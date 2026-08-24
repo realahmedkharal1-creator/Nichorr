@@ -43,6 +43,9 @@ export default function DashboardPage() {
           <div className="w-6 h-6 rounded-full border border-slate-200/90 flex items-center justify-center -mt-4 shadow-sm bg-white">
              <LinkIcon className="w-3 h-3 text-slate-500" />
           </div>
+          <span className="ml-3 px-3 py-1 bg-amber-100 text-amber-800 border border-amber-300 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5">
+            <Lightbulb className="w-3.5 h-3.5" /> Sample Data
+          </span>
         </div>
 
         <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-600">

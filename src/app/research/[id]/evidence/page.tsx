@@ -78,6 +78,27 @@ export default function EvidencePage({ params }: { params: { id: string } }) {
 
   const categories = ["All Claims", "Performance & SoC", "Camera & Optics", "Battery & Charging", "Display & Thermals"];
 
+  // Calculate Confidence
+  let confidenceBadge = "High Confidence (100%)";
+  let confidenceColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
+  if (totalClaims === 0) {
+    confidenceBadge = "No data yet";
+    confidenceColor = "bg-slate-50 text-slate-600 border-slate-200";
+  } else {
+    const claimsWithEvidence = claims.filter(c => c.evidence_ids && c.evidence_ids.length > 0).length;
+    const confidencePct = Math.round((claimsWithEvidence / totalClaims) * 100);
+    if (confidencePct >= 80) {
+      confidenceBadge = `High Confidence (${confidencePct}%)`;
+      confidenceColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
+    } else if (confidencePct >= 50) {
+      confidenceBadge = `Medium Confidence (${confidencePct}%)`;
+      confidenceColor = "bg-amber-50 text-amber-700 border-amber-200";
+    } else {
+      confidenceBadge = `Low Confidence (${confidencePct}%)`;
+      confidenceColor = "bg-rose-50 text-rose-700 border-rose-200";
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -120,13 +141,13 @@ export default function EvidencePage({ params }: { params: { id: string } }) {
           <div>
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">CONFIDENCE RATING</p>
             <div className="mt-1">
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                High Confidence (100%)
+              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${confidenceColor}`}>
+                {confidenceBadge}
               </span>
             </div>
           </div>
-          <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-            <Zap className="w-5 h-5 text-emerald-600" />
+          <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+            <Zap className="w-5 h-5 text-slate-400" />
           </div>
         </div>
       </div>

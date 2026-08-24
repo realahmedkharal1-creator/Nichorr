@@ -49,25 +49,33 @@ export default function AudiencePage({ params }: { params: { id: string } }) {
       <ResearchTabNav runId={run.id} />
 
       <div className="space-y-4">
-        {(run.audienceQuestions || []).map((q, idx) => (
-          <div key={q.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-3.5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-              <span className="text-xs font-mono text-indigo-600 font-bold">AUDIENCE GAP #{idx + 1}</span>
-              <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold ${
-                q.coverage_gap === 'HIGH' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-              }`}>
-                {q.coverage_gap === 'HIGH' ? 'HIGH UNDERSERVED GAP' : 'COVERED'}
-              </span>
-            </div>
-
-            <h3 className="text-base font-bold text-slate-900 leading-snug">{q.question}</h3>
-
-            <div className="flex items-center gap-6 text-xs font-mono text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <span>IMPORTANCE: <strong className="text-slate-700">{q.importance}</strong></span>
-              <span>GAP SCORE: <strong className="text-indigo-600">{q.coverage_gap === 'HIGH' ? '8.8 / 10' : '4.2 / 10'}</strong></span>
-            </div>
+        {(run.audienceQuestions || []).length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+            <HelpCircle className="w-8 h-8 text-slate-300 mx-auto mb-3" />
+            <h3 className="text-slate-900 font-bold">No audience question gaps identified yet</h3>
+            <p className="text-sm text-slate-500 mt-1">This run did not identify any unanswered questions from the audience.</p>
           </div>
-        ))}
+        ) : (
+          (run.audienceQuestions || []).map((q, idx) => (
+            <div key={q.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-3.5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <span className="text-xs font-mono text-indigo-600 font-bold">AUDIENCE GAP #{idx + 1}</span>
+                <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold ${
+                  q.coverage_gap === 'HIGH' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                }`}>
+                  {q.coverage_gap === 'HIGH' ? 'HIGH UNDERSERVED GAP' : 'COVERED'}
+                </span>
+              </div>
+  
+              <h3 className="text-base font-bold text-slate-900 leading-snug">{q.question}</h3>
+  
+              <div className="flex items-center gap-6 text-xs font-mono text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <span>IMPORTANCE: <strong className="text-slate-700">{q.importance}</strong></span>
+                <span>GAP SCORE: <strong className="text-indigo-600">{q.coverage_gap === 'HIGH' ? '8.8 / 10' : '4.2 / 10'}</strong></span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

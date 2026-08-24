@@ -49,11 +49,19 @@ export default function ConflictsPage({ params }: { params: { id: string } }) {
       <ResearchTabNav runId={run.id} />
 
       {(run.conflicts || []).length === 0 ? (
-        <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-12 text-center space-y-3 bg-white">
-          <ShieldAlert className="w-10 h-10 text-emerald-600 mx-auto" />
-          <h3 className="text-base font-bold text-slate-900">Zero Critical Conflicts Detected</h3>
-          <p className="text-xs text-slate-500 font-mono">All independent lab publications and official spec sheets concur on primary findings.</p>
-        </div>
+        (run.claims || []).length === 0 && (run.sources || []).length === 0 ? (
+          <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-12 text-center space-y-3 bg-white">
+            <Info className="w-10 h-10 text-slate-300 mx-auto" />
+            <h3 className="text-base font-bold text-slate-900">No data yet</h3>
+            <p className="text-xs text-slate-500 font-mono">Nothing to check for conflicts.</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-12 text-center space-y-3 bg-white">
+            <ShieldAlert className="w-10 h-10 text-emerald-600 mx-auto" />
+            <h3 className="text-base font-bold text-slate-900">Zero Critical Conflicts Detected</h3>
+            <p className="text-xs text-slate-500 font-mono">All independent lab publications and official spec sheets concur on primary findings.</p>
+          </div>
+        )
       ) : (
         <div className="space-y-4">
           {(run.conflicts || []).map((cnf) => (

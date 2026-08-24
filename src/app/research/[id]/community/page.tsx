@@ -57,25 +57,33 @@ export default function CommunityPage({ params }: { params: { id: string } }) {
       </div>
 
       <div className="space-y-4">
-        {(run.communitySignals || []).map((sig) => (
-          <div key={sig.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-3.5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-              <span className="badge-community px-3 py-1 rounded-full text-xs font-mono font-bold uppercase">
-                {sig.signal_type}
-              </span>
-              <div className="flex gap-4 text-xs font-mono text-slate-500">
-                <span>FREQUENCY: <strong className="text-slate-700">{sig.frequency_level}</strong></span>
-                <span>FIRSTHAND LIKELIHOOD: <strong className="text-slate-700">{sig.firsthand_likelihood}</strong></span>
+        {(run.communitySignals || []).length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+            <MessageSquare className="w-8 h-8 text-slate-300 mx-auto mb-3" />
+            <h3 className="text-slate-900 font-bold">No community signals found yet for this research run</h3>
+            <p className="text-sm text-slate-500 mt-1">This run did not identify any strong community patterns.</p>
+          </div>
+        ) : (
+          (run.communitySignals || []).map((sig) => (
+            <div key={sig.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 space-y-3.5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <span className="badge-community px-3 py-1 rounded-full text-xs font-mono font-bold uppercase">
+                  {sig.signal_type}
+                </span>
+                <div className="flex gap-4 text-xs font-mono text-slate-500">
+                  <span>FREQUENCY: <strong className="text-slate-700">{sig.frequency_level}</strong></span>
+                  <span>FIRSTHAND LIKELIHOOD: <strong className="text-slate-700">{sig.firsthand_likelihood}</strong></span>
+                </div>
+              </div>
+  
+              <p className="text-sm font-bold text-slate-900 leading-snug">{sig.signal}</p>
+  
+              <div className="text-xs text-slate-500 font-mono bg-slate-50 p-3 rounded-xl border border-slate-100">
+                Source Context: Verified multi-post thread activity on technical Reddit subreddits and forums.
               </div>
             </div>
-
-            <p className="text-sm font-bold text-slate-900 leading-snug">{sig.signal}</p>
-
-            <div className="text-xs text-slate-500 font-mono bg-slate-50 p-3 rounded-xl border border-slate-100">
-              Source Context: Verified multi-post thread activity on technical Reddit subreddits and forums.
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
