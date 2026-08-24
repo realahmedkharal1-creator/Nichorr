@@ -49,16 +49,21 @@ export async function updateSession(request: NextRequest) {
   const isAuthPage = pathname === "/login" || pathname === "/signup";
   
   const isSupabaseConfigured = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL !== "https://placeholder-project.supabase.co";
+  const isLocalDev = process.env.NODE_ENV === "development";
 
-  // Enforce auth strictly ONLY if Supabase is configured
-  if (isSupabaseConfigured && isProtected && !user) {
+  // If in production, always enforce auth (fail securely if misconfigured).
+  // In local dev, only enforce auth if Supabase is configured.
+  const shouldEnforceAuth = process.env.NODE_ENV === "production" || isSupabaseConfigured;
+
+  // Enforce auth strictly
+  if (shouldEnforceAuth && isProtected && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("redirectTo", request.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
 
-  if (isSupabaseConfigured && isAuthPage && user) {
+  if (shouldEnforceAuth && isAuthPage && user) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

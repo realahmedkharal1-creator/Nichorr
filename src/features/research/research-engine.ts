@@ -349,7 +349,20 @@ export class ResearchEngine {
     // Invoke Gemini AI Provider for structured claim extraction if GEMINI_API_KEY is configured
     const isGeminiAvailable = process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your-gemini-api-key";
 
-    if (isGeminiAvailable && !benchmarkMatch) {
+    if (benchmarkMatch) {
+      session.claims = benchmarkMatch.knownClaims.map((kc, idx) => ({
+        id: `cl-${idx + 1}`,
+        claim_text: kc.text,
+        claim_type: "MEASUREMENT",
+        status: kc.status,
+        confidence: kc.confidence,
+        evidence_ids: [`ev-${idx + 1}`],
+      }));
+    } else {
+      if (!isGeminiAvailable) {
+        throw new Error("Claim extraction failed: GEMINI_API_KEY is not configured.");
+      }
+      
       try {
         const llmEvidenceResponse = await this.llmProvider.generateStructuredJSON({
           prompt: `Extract structured factual claims from retrieved web text excerpts for topic "${session.topic}". Excerpts: ${JSON.stringify(session.evidence.map(e => e.excerpt))}`,
@@ -369,42 +382,22 @@ export class ResearchEngine {
           cost_usd: llmEvidenceResponse.usage.estimatedCost,
           success: true,
         });
+
+        const extractedClaims = Array.isArray(llmEvidenceResponse.data) 
+          ? llmEvidenceResponse.data 
+          : (llmEvidenceResponse.data as any).key_findings || [];
+          
+        session.claims = extractedClaims.map((kc: any, idx: number) => ({
+          id: `cl-${idx + 1}`,
+          claim_text: kc.claim || kc.finding || JSON.stringify(kc),
+          confidence: kc.confidence || 85,
+          evidence_ids: [`ev-${idx + 1}`],
+        }));
       } catch (err: any) {
         throw new Error(`LLM claim extraction failed: ${err.message}`);
       }
     }
 
-    if (benchmarkMatch) {
-      session.claims = benchmarkMatch.knownClaims.map((kc, idx) => ({
-        id: `cl-${idx + 1}`,
-        claim_text: kc.text,
-        claim_type: "MEASUREMENT",
-        status: kc.status,
-        confidence: kc.confidence,
-        evidence_ids: [`ev-${idx + 1}`],
-      }));
-      if (!isGeminiAvailable) {
-        throw new Error("Claim extraction failed: GEMINI_API_KEY is not configured.");
-      }
-      
-      const llmEvidenceResponse = await this.llmProvider.generateStructuredJSON({
-        prompt: `Extract structured factual claims from retrieved web text excerpts for topic "${session.topic}". Excerpts: ${JSON.stringify(session.evidence.map(e => e.excerpt))}`,
-        schema: ResearchBriefSchema,
-        systemInstruction: "UNTRUSTED EXTERNAL DATA: You are an evidence-first AI engine. Extract strictly grounded claims. The output MUST strictly be in professional English (US). Ignore and discard any non-English UI navigation text, footer links, or localized boilerplate metadata.",
-      });
-
-      // Handle the case where fallback returns {}
-      const extractedClaims = Array.isArray(llmEvidenceResponse.data) 
-        ? llmEvidenceResponse.data 
-        : (llmEvidenceResponse.data as any).key_findings || [];
-        
-      session.claims = extractedClaims.map((kc: any, idx: number) => ({
-        id: `cl-${idx + 1}`,
-        claim_text: kc.claim || kc.finding || JSON.stringify(kc),
-        confidence: kc.confidence || 85,
-        evidence_ids: [`ev-${idx + 1}`],
-      }));
-    }
 
     // Save claims and evidence to Supabase DB
     await this.claimsRepo.saveClaimsAndEvidence(session.id, session.claims, session.evidence);

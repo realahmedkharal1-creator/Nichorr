@@ -24,8 +24,7 @@ export class GeminiProvider implements LLMProvider {
     const modelName = params.model || process.env.PRIMARY_LLM_MODEL || "gemini-flash-latest";
 
     if (!this.client) {
-      // Offline / Deterministic Fallback Mode when GEMINI_API_KEY is not set
-      return this.generateFallbackData(params, startTime, modelName);
+      throw new Error("Gemini API client is not initialized. Please configure GEMINI_API_KEY to use AI features.");
     }
 
     let lastError: any = null;
@@ -74,36 +73,11 @@ export class GeminiProvider implements LLMProvider {
           console.warn(`Gemini API call failed (attempt ${attempts}/${maxRetries}), retrying in ${attempts * 2}s:`, error.message);
           await new Promise(resolve => setTimeout(resolve, attempts * 2000));
         } else {
-          console.warn("Gemini API call failed, falling back to mock provider:", error.message || error);
-          return this.generateFallbackData(params, startTime, modelName);
+          throw new Error(`Gemini API call failed after ${attempts} attempts: ${error.message || error}`);
         }
       }
     }
     
-    return this.generateFallbackData(params, startTime, modelName);
-  }
-
-  private generateFallbackData<T>(
-    params: { schema: z.ZodSchema<T>; prompt: string },
-    startTime: number,
-    modelName: string
-  ): LLMResponse<T> {
-    const latencyMs = Date.now() - startTime;
-    const usage: TokenUsage = {
-      inputTokens: 150,
-      outputTokens: 250,
-      totalTokens: 400,
-      estimatedCost: 0.00005,
-    };
-
-    // Return dummy object matching Zod schema shape if needed
-    // The state machine engine also handles standard mock datasets for golden benchmarks
-    return {
-      data: {} as T,
-      usage,
-      latencyMs,
-      provider: `${this.name} (Fallback)`,
-      model: modelName,
-    };
+    throw new Error(`Gemini API call failed after max retries: ${lastError?.message || lastError}`);
   }
 }
