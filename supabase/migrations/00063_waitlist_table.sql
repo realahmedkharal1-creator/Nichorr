@@ -10,6 +10,7 @@ create table if not exists public.waitlist (
 alter table public.waitlist enable row level security;
 
 -- Allow anyone (anonymous visitors) to INSERT a signup, but never read, update, or delete via the public API.
+drop policy if exists "Public can join waitlist" on public.waitlist;
 create policy "Public can join waitlist"
   on public.waitlist
   for insert
