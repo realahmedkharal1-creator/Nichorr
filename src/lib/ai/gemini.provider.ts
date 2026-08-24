@@ -42,7 +42,15 @@ export class GeminiProvider implements LLMProvider {
           systemInstruction: params.systemInstruction,
         });
 
-        const response = await model.generateContent(params.prompt);
+        const timeoutPromise = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error("Gemini API call timed out after 60s")), 60000)
+        );
+
+        const response = await Promise.race([
+          model.generateContent(params.prompt),
+          timeoutPromise
+        ]);
+        
         const text = response.response.text();
         const rawJson = JSON.parse(text);
         const validatedData = params.schema.parse(rawJson);
@@ -66,8 +74,8 @@ export class GeminiProvider implements LLMProvider {
         lastError = error;
         attempts++;
         
-        // Only retry on 503 or 429 errors
-        const isRetryable = error.status === 503 || error.status === 429 || error.message?.includes("503") || error.message?.includes("429") || error.message?.includes("fetch failed");
+        // Only retry on 503, 429 errors, fetch failures, or timeouts
+        const isRetryable = error.status === 503 || error.status === 429 || error.message?.includes("503") || error.message?.includes("429") || error.message?.includes("fetch failed") || error.message?.includes("timed out");
         
         if (isRetryable && attempts < maxRetries) {
           console.warn(`Gemini API call failed (attempt ${attempts}/${maxRetries}), retrying in ${attempts * 2}s:`, error.message);
