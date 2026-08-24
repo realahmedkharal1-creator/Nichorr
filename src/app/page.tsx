@@ -3,29 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import styles from "./landing.module.css";
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
-
-const ibmPlexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-ibm-plex-sans",
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-ibm-plex-mono",
-  display: "swap",
-});
 
 export default function LandingPage() {
   const [evidenceOpen, setEvidenceOpen] = useState(false);
@@ -88,9 +66,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div
-      className={`${styles.landingRoot} ${fraunces.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
-    >
+    <div className={styles.landingRoot}>
       {/* HEADER */}
       <header className={styles.header}>
         <nav className={`${styles.wrap} ${styles.navWrap}`}>

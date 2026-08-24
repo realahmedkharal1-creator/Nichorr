@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, Sparkles, ArrowRight, ShieldCheck, Zap, Layers } from "lucide-react";
+import { SUPPORTED_RESEARCH_LANGUAGES, DEFAULT_RESEARCH_LANGUAGE } from "@/lib/constants/languages";
 
 function CreateResearchForm() {
   const router = useRouter();
@@ -14,6 +15,7 @@ function CreateResearchForm() {
   const [contentType, setContentType] = useState("Comparison");
   const [targetAudience, setTargetAudience] = useState("Technology Content Creators");
   const [requestedDepth, setRequestedDepth] = useState("Standard");
+  const [outputLanguage, setOutputLanguage] = useState(DEFAULT_RESEARCH_LANGUAGE);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -38,6 +40,7 @@ function CreateResearchForm() {
           contentType,
           targetAudience,
           requestedDepth,
+          outputLanguage,
         }),
       });
       const data = await res.json();
@@ -185,7 +188,7 @@ function CreateResearchForm() {
           />
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-6 pt-6 border-t border-slate-100 ">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6 border-t border-slate-100 ">
           <div className="space-y-2">
             <label className="block text-[10px] font-mono font-semibold uppercase text-slate-500">Content Type</label>
             <select
@@ -223,6 +226,19 @@ function CreateResearchForm() {
               <option>Standard</option>
               <option>Comprehensive (Lab Data)</option>
               <option>Forensic (Exhaustive)</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-[10px] font-mono font-semibold uppercase text-slate-500">Output Language</label>
+            <select
+              value={outputLanguage}
+              onChange={(e) => setOutputLanguage(e.target.value)}
+              className="w-full bg-white border border-slate-300 focus:ring-2 focus:ring-slate-900  rounded-xl px-4 py-2.5 text-xs text-slate-800  focus:outline-none"
+            >
+              {SUPPORTED_RESEARCH_LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>{l.englishName} ({l.nativeName})</option>
+              ))}
             </select>
           </div>
         </div>

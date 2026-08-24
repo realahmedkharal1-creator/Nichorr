@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Settings, ShieldCheck, ArrowRight, Layers, Globe, Filter, Loader2, Check } from "lucide-react";
 import { ResearchRunSession } from "@/features/research/research-engine";
 import { SkeletonCard } from "@/components/ui/Skeleton";
+import { getLanguageByCode } from "@/lib/constants/languages";
 
 export default function ConfigPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -100,7 +101,12 @@ export default function ConfigPage({ params }: { params: { id: string } }) {
 
       <div className="bg-white rounded-[24px] border border-slate-200/90 shadow-lg shadow-slate-200/50 p-6 sm:p-8 space-y-8">
         <div className="space-y-2 bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-inner">
-          <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold flex items-center gap-2"><Globe className="w-3.5 h-3.5" /> ACTIVE TARGET TOPIC</label>
+          <div className="flex items-center justify-between gap-4">
+            <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold flex items-center gap-2"><Globe className="w-3.5 h-3.5" /> ACTIVE TARGET TOPIC</label>
+            <span className="text-[10px] font-mono font-bold px-2.5 py-1 bg-white border border-slate-200 rounded-full text-slate-600 shadow-sm whitespace-nowrap">
+              OUTPUT: {getLanguageByCode(run.outputLanguage).englishName}
+            </span>
+          </div>
           <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">{run.topic}</p>
         </div>
 

@@ -106,7 +106,10 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
       <ResearchTabNav runId={run.id} />
 
       {/* Structured Brief Document Card */}
-      <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 sm:p-10 space-y-8 font-sans">
+      <div
+        dir={run.outputLanguage === "ar" ? "rtl" : "ltr"}
+        className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 sm:p-10 space-y-8 font-sans"
+      >
         {/* Executive Summary */}
         <div className="space-y-3">
           <h2 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">

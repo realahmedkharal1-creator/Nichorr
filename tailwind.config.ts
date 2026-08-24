@@ -8,36 +8,27 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-ibm-plex-sans)', 'sans-serif'],
+        serif: ['var(--font-fraunces)', 'serif'],
+        mono: ['var(--font-ibm-plex-mono)', 'monospace'],
+      },
       colors: {
-        slate: {
-          850: '#1e293b',
-          950: '#020617',
-        },
-        apple: {
-          blue: '#0071E3',
-          midnight: '#1D1D1F',
-          gray: '#F5F5F7',
-          border: '#E5E5EA',
-          green: '#34C759',
-          orange: '#FF9500',
-          red: '#FF3B30',
-        },
-        indigo: {
-          500: '#0071E3',
-          600: '#0071E3',
-        },
-        emerald: {
-          500: '#34C759',
-          600: '#28CD41',
-        },
-        amber: {
-          500: '#FF9500',
-        },
-        rose: {
-          500: '#FF3B30',
-        },
-        surface: '#FFFFFF',
-        bento: '#FFFFFF',
+        ink: '#12161C',
+        paper: '#F3F5F4',
+        card: '#FFFFFF',
+        citation: '#2C4A73',
+        'citation-bg': '#E9EEF4',
+        verified: '#1E7A5F',
+        'verified-bg': '#E7F3EE',
+        conflict: '#9C3B2E',
+        'conflict-bg': '#F7E9E5',
+        warning: '#96650E',
+        'warning-bg': '#FBF0DD',
+        muted: '#5C6167',
+        'muted-2': '#8A8F96',
+        line: '#DADDD8',
+        'line-soft': '#E8EAE7',
       },
     },
   },

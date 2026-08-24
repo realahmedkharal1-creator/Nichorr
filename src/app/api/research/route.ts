@@ -61,6 +61,7 @@ export async function POST(request: Request) {
       contentType: body.contentType,
       targetAudience: body.targetAudience,
       requestedDepth: body.requestedDepth,
+      outputLanguage: body.outputLanguage,
     }, user?.id);
 
     return NextResponse.json({ success: true, run: session });
