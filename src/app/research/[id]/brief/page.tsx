@@ -8,13 +8,14 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 
 export default function BriefPage({ params }: { params: { id: string } }) {
   const [run, setRun] = useState<ResearchRunSession | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     fetch(`/api/research/${params.id}/status`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) setRun(data.run);
+        if (data.success) { setRun(data.run); } else { setNotFound(true); }
       });
   }, [params.id]);
 

@@ -9,6 +9,7 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 export default function ConfigPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [run, setRun] = useState<ResearchRunSession | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [depth, setDepth] = useState("Standard");
   const [region, setRegion] = useState("US");
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +40,15 @@ export default function ConfigPage({ params }: { params: { id: string } }) {
           className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold">
           Create New Research Run
         </button>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="max-w-4xl mx-auto py-12 px-6 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-slate-800">Run Not Found</h2>
+        <p className="text-slate-600">This research run could not be recovered. Please start a new one.</p>
       </div>
     );
   }

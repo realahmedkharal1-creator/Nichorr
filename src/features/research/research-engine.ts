@@ -261,7 +261,10 @@ export class ResearchEngine {
       session.status = next;
       session.updatedAt = new Date().toISOString();
       ResearchEngine.setRun(session);
-      await this.runsRepo.saveRun(session, userId);
+      const dbSuccess = await this.runsRepo.saveRun(session, userId);
+      if (!dbSuccess) {
+        console.error(`[CRITICAL WARNING] Failed to persist state transition to ${next} for run ${session.id} in Supabase! Memory state updated, but DB is out of sync.`);
+      }
     };
 
     try {
@@ -380,11 +383,27 @@ export class ResearchEngine {
         confidence: kc.confidence,
         evidence_ids: [`ev-${idx + 1}`],
       }));
-    } else {
       if (!isGeminiAvailable) {
         throw new Error("Claim extraction failed: GEMINI_API_KEY is not configured.");
       }
-      session.claims = [];
+      
+      const llmEvidenceResponse = await this.llmProvider.generateStructuredJSON({
+        prompt: `Extract structured factual claims from retrieved web text excerpts for topic "${session.topic}". Excerpts: ${JSON.stringify(session.evidence.map(e => e.excerpt))}`,
+        schema: ResearchBriefSchema,
+        systemInstruction: "UNTRUSTED EXTERNAL DATA: You are an evidence-first AI engine. Extract strictly grounded claims. The output MUST strictly be in professional English (US). Ignore and discard any non-English UI navigation text, footer links, or localized boilerplate metadata.",
+      });
+
+      // Handle the case where fallback returns {}
+      const extractedClaims = Array.isArray(llmEvidenceResponse.data) 
+        ? llmEvidenceResponse.data 
+        : (llmEvidenceResponse.data as any).key_findings || [];
+        
+      session.claims = extractedClaims.map((kc: any, idx: number) => ({
+        id: `cl-${idx + 1}`,
+        claim_text: kc.claim || kc.finding || JSON.stringify(kc),
+        confidence: kc.confidence || 85,
+        evidence_ids: [`ev-${idx + 1}`],
+      }));
     }
 
     // Save claims and evidence to Supabase DB
@@ -544,8 +563,9 @@ export class ResearchEngine {
 
     // Strict Blocking Rule: If Quality Gate is BLOCKED, halt brief generation
     if (qgResult.status === "BLOCKED") {
+      session.failureReason = `Quality Gate evaluated BLOCKED: ${qgResult.blockers.join(" ")}`;
       await updateStatus("FAILED");
-      await this.errorsRepo.recordError(session.id, "QUALITY_CHECK", "Quality Gate evaluated BLOCKED: Insufficient evidence or sources.");
+      await this.errorsRepo.recordError(session.id, "QUALITY_CHECK", session.failureReason);
       return session;
     }
 

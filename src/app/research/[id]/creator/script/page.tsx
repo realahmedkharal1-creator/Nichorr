@@ -9,6 +9,7 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 
 export default function ScriptOutlinePage({ params }: { params: { id: string } }) {
   const [run, setRun] = useState<ResearchRunSession | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [scriptOutline, setScriptOutline] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);

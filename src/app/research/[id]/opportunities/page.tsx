@@ -8,14 +8,24 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 
 export default function OpportunitiesPage({ params }: { params: { id: string } }) {
   const [run, setRun] = useState<ResearchRunSession | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     fetch(`/api/research/${params.id}/status`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) setRun(data.run);
+        if (data.success) { setRun(data.run); } else { setNotFound(true); }
       });
   }, [params.id]);
+
+  if (notFound) {
+    return (
+      <div className="max-w-4xl mx-auto py-12 px-6 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-slate-800">Run Not Found</h2>
+        <p className="text-slate-600">This research run could not be recovered. Please start a new one.</p>
+      </div>
+    );
+  }
 
   if (!run) {
     return (

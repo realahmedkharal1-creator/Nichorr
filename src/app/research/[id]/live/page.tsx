@@ -23,6 +23,7 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 export default function LiveExecutionPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [run, setRun] = useState<ResearchRunSession | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [retrying, setRetrying] = useState(false);
   const executionTriggeredRef = useRef(false);
@@ -60,6 +61,15 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
 
     return () => clearInterval(interval);
   }, [params.id]);
+
+  if (notFound) {
+    return (
+      <div className="max-w-4xl mx-auto py-12 px-6 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-slate-800">Run Not Found</h2>
+        <p className="text-slate-600">This research run could not be recovered. Please start a new one.</p>
+      </div>
+    );
+  }
 
   if (!run) {
     return (

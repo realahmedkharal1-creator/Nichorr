@@ -9,6 +9,7 @@ import { FactCheckResult } from "@/lib/intelligence/fact-checker";
 
 export default function FactCheckPage({ params }: { params: { id: string } }) {
   const [run, setRun] = useState<ResearchRunSession | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [draftStatement, setDraftStatement] = useState("");
   const [result, setResult] = useState<FactCheckResult | null>(null);
   const [checking, setChecking] = useState(false);
@@ -17,7 +18,7 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
     fetch(`/api/research/${params.id}/status`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) setRun(data.run);
+        if (data.success) { setRun(data.run); } else { setNotFound(true); }
       });
   }, [params.id]);
 
@@ -42,6 +43,15 @@ export default function FactCheckPage({ params }: { params: { id: string } }) {
       setChecking(false);
     }
   };
+
+  if (notFound) {
+    return (
+      <div className="max-w-4xl mx-auto py-12 px-6 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-slate-800">Run Not Found</h2>
+        <p className="text-slate-600">This research run could not be recovered. Please start a new one.</p>
+      </div>
+    );
+  }
 
   if (!run) {
     return (

@@ -28,40 +28,59 @@ export class GeminiProvider implements LLMProvider {
       return this.generateFallbackData(params, startTime, modelName);
     }
 
-    try {
-      const model = this.client.getGenerativeModel({
-        model: modelName,
-        generationConfig: {
-          responseMimeType: "application/json",
-          temperature: params.temperature ?? 0.2,
-        },
-        systemInstruction: params.systemInstruction,
-      });
+    let lastError: any = null;
+    let attempts = 0;
+    const maxRetries = 3;
 
-      const response = await model.generateContent(params.prompt);
-      const text = response.response.text();
-      const rawJson = JSON.parse(text);
-      const validatedData = params.schema.parse(rawJson);
+    while (attempts < maxRetries) {
+      try {
+        const model = this.client.getGenerativeModel({
+          model: modelName,
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: params.temperature ?? 0.2,
+          },
+          systemInstruction: params.systemInstruction,
+        });
 
-      const latencyMs = Date.now() - startTime;
-      const usage: TokenUsage = {
-        inputTokens: response.response.usageMetadata?.promptTokenCount || 250,
-        outputTokens: response.response.usageMetadata?.candidatesTokenCount || 400,
-        totalTokens: response.response.usageMetadata?.totalTokenCount || 650,
-        estimatedCost: 0.00015,
-      };
+        const response = await model.generateContent(params.prompt);
+        const text = response.response.text();
+        const rawJson = JSON.parse(text);
+        const validatedData = params.schema.parse(rawJson);
 
-      return {
-        data: validatedData,
-        usage,
-        latencyMs,
-        provider: this.name,
-        model: modelName,
-      };
-    } catch (error) {
-      console.warn("Gemini API call failed, falling back to mock provider:", error);
-      return this.generateFallbackData(params, startTime, modelName);
+        const latencyMs = Date.now() - startTime;
+        const usage: TokenUsage = {
+          inputTokens: response.response.usageMetadata?.promptTokenCount || 250,
+          outputTokens: response.response.usageMetadata?.candidatesTokenCount || 400,
+          totalTokens: response.response.usageMetadata?.totalTokenCount || 650,
+          estimatedCost: 0.00015,
+        };
+
+        return {
+          data: validatedData,
+          usage,
+          latencyMs,
+          provider: this.name,
+          model: modelName,
+        };
+      } catch (error: any) {
+        lastError = error;
+        attempts++;
+        
+        // Only retry on 503 or 429 errors
+        const isRetryable = error.status === 503 || error.status === 429 || error.message?.includes("503") || error.message?.includes("429") || error.message?.includes("fetch failed");
+        
+        if (isRetryable && attempts < maxRetries) {
+          console.warn(`Gemini API call failed (attempt ${attempts}/${maxRetries}), retrying in ${attempts * 2}s:`, error.message);
+          await new Promise(resolve => setTimeout(resolve, attempts * 2000));
+        } else {
+          console.warn("Gemini API call failed, falling back to mock provider:", error.message || error);
+          return this.generateFallbackData(params, startTime, modelName);
+        }
+      }
     }
+    
+    return this.generateFallbackData(params, startTime, modelName);
   }
 
   private generateFallbackData<T>(

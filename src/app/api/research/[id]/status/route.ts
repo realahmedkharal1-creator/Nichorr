@@ -151,28 +151,8 @@ export async function GET(
       }
     }
 
-    // Fallback: If run is completely lost (e.g. dev server restart), return a mock so the UI doesn't blank out.
-    const fallbackMock: ResearchRunSession = {
-      id: params.id,
-      topic: "Recovered Mock Research Session",
-      objective: "Deep dive technical analysis",
-      contentType: "Tech Deep Dive Video",
-      targetAudience: "Tech Enthusiasts",
-      requestedDepth: "Comprehensive",
-      status: "COMPLETED",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      sources: [],
-      claims: [],
-      evidence: [],
-      conflicts: [],
-      communitySignals: [],
-      audienceQuestions: [],
-      opportunities: [],
-      qualityGateStatus: "READY",
-      // currentStage: "GENERATING_BRIEF"
-    };
-    return NextResponse.json({ success: true, run: fallbackMock });
+    // Fallback: If run is not found
+    return NextResponse.json({ success: false, error: "This research run could not be found. It may have failed before completing, or the link may be invalid." }, { status: 404 });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
