@@ -5,6 +5,23 @@ export class ResearchRunsRepository {
   async saveRun(session: ResearchRunSession, userId?: string): Promise<boolean> {
     try {
       const supabase = createClient();
+
+      // Guard against a stale/orphaned invocation (e.g. a serverless function that kept running
+      // after the client disconnected, then finished long after a faster parallel invocation
+      // already completed the same run) clobbering an already-finished run with an earlier-stage
+      // snapshot. Once a run is terminal in the DB, only another terminal write may touch it.
+      const TERMINAL_STATUSES = ["COMPLETED", "FAILED", "CANCELLED", "PARTIAL"];
+      if (session.id && !session.id.startsWith("run-") && !TERMINAL_STATUSES.includes(session.status)) {
+        const { data: existing } = await supabase
+          .from("research_runs")
+          .select("status")
+          .eq("id", session.id)
+          .single();
+        if (existing && TERMINAL_STATUSES.includes(existing.status)) {
+          return true;
+        }
+      }
+
       const payload: any = {
         topic: session.topic,
         objective: session.objective,

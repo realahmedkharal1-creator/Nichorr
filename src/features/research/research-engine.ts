@@ -108,6 +108,14 @@ export class ResearchEngine {
   static setRun(session: ResearchRunSession): void {
     pruneRunStore();
     if (session && session.id) {
+      // Same reasoning as the DB-level guard in ResearchRunsRepository.saveRun(): a stale/orphaned
+      // invocation must never be allowed to overwrite an already-terminal in-memory session with an
+      // earlier-stage snapshot (e.g. after the frontend's /status poll already cached COMPLETED).
+      const TERMINAL_STATUSES = ['COMPLETED', 'FAILED', 'CANCELLED', 'PARTIAL'];
+      const existing = runStore.get(session.id);
+      if (existing && existing !== session && TERMINAL_STATUSES.includes(existing.status) && !TERMINAL_STATUSES.includes(session.status)) {
+        return;
+      }
       runStore.set(session.id, session);
     }
   }
