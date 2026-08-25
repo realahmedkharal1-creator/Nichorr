@@ -9,13 +9,19 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // 1. Fast in-memory hit check (0ms network & DB latency)
+    // 1. Fast in-memory hit check (0ms network & DB latency) -- only safe to trust unconditionally
+    // once terminal, since nothing can advance it further. Vercel spreads consecutive polls across
+    // multiple independent warm containers, each with its own separate runStore; a container that
+    // cached this run mid-pipeline has no way to know a DIFFERENT container (or the DB) has since
+    // moved it to a later stage or completed it, so a non-terminal in-memory hit must still be
+    // cross-checked against the DB below rather than trusted as-is.
     const memorySession = ResearchEngine.getRun(params.id);
-    if (memorySession) {
+    const TERMINAL_STATUSES = ["COMPLETED", "FAILED", "CANCELLED", "PARTIAL"];
+    if (memorySession && TERMINAL_STATUSES.includes(memorySession.status)) {
       return NextResponse.json({ success: true, run: memorySession });
     }
 
-    // 2. Query database repository if not in memory
+    // 2. Query database repository (the single source of truth shared across all instances)
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -31,6 +37,13 @@ export async function GET(
       // Cache in memory so all subsequent sub-tab clicks open INSTANTLY
       ResearchEngine.setRun(dbRun);
       return NextResponse.json({ success: true, run: dbRun });
+    }
+
+    // DB row not found/unreachable (e.g. transient connectivity issue, or a request that raced
+    // ahead of the very first saveRun() landing) -- fall back to whatever this instance has
+    // in memory rather than surfacing a false "not found".
+    if (memorySession) {
+      return NextResponse.json({ success: true, run: memorySession });
     }
 
     // 3. Explicit Benchmark Mode Recovery ONLY for explicit "bm-" test case IDs

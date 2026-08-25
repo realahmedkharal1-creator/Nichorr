@@ -123,11 +123,22 @@ export class ResearchEngine {
   static async getRunAsync(id: string, userId?: string): Promise<ResearchRunSession | undefined> {
     pruneRunStore();
     const inMemory = runStore.get(id);
-    if (inMemory) return inMemory;
+    const TERMINAL_STATUSES = ['COMPLETED', 'FAILED', 'CANCELLED', 'PARTIAL'];
+    if (inMemory && TERMINAL_STATUSES.includes(inMemory.status)) return inMemory;
 
-    // Database recovery fallback when session is evicted from runStore memory
+    // Database recovery fallback when session is evicted from runStore memory, and also a
+    // cross-check even when a non-terminal in-memory hit exists: Vercel spreads requests across
+    // multiple independent containers, each with its own separate runStore, so a container that
+    // only ever saw this run mid-pipeline has no way to know the DB (shared across all containers)
+    // has since recorded it as finished elsewhere. Only override memory when the DB is terminal --
+    // preferring memory otherwise avoids redundant reprocessing from a merely slightly-behind DB read.
     const repo = new ResearchRunsRepository();
     const persisted = await repo.getRunById(id, userId);
+    if (persisted && TERMINAL_STATUSES.includes(persisted.status)) {
+      ResearchEngine.setRun(persisted);
+      return persisted;
+    }
+    if (inMemory) return inMemory;
     if (persisted) {
       runStore.set(id, persisted);
       return persisted;
@@ -240,10 +251,10 @@ export class ResearchEngine {
       return ResearchEngine.activeExecutions.get(runId)!;
     }
 
-    let session = runStore.get(runId);
-    if (!session) {
-      session = await ResearchEngine.getRunAsync(runId, userId);
-    }
+    // Always route through getRunAsync (not a raw runStore.get) so a container whose local cache
+    // is stale mid-pipeline gets cross-checked against the DB before reprocessing a step that
+    // another container may have already advanced past or completed.
+    const session = await ResearchEngine.getRunAsync(runId, userId);
     if (!session) throw new Error(`Run ${runId} not found`);
 
     if (['COMPLETED', 'CANCELLED', 'FAILED', 'PARTIAL'].includes(session.status)) return session;
