@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SUPPORTED_RESEARCH_LANGUAGES, DEFAULT_RESEARCH_LANGUAGE } from "@/lib/constants/languages";
 import { Stepper, Step } from "@/components/ui/Stepper";
 import { Button } from "@/components/ui/Button";
+import { InfoTooltip } from "@/components/ui/Tooltip";
 
 function CreateResearchForm() {
   const router = useRouter();
@@ -131,6 +132,7 @@ function CreateResearchForm() {
         <div className="mb-[22px]">
           <label className="block text-[13px] font-bold mb-2">
             Primary Tech Topic <span className="text-conflict">*</span>
+            <InfoTooltip content="Enter the core subject or claim you want to research." />
           </label>
           <input
             type="text"
@@ -145,6 +147,7 @@ function CreateResearchForm() {
         <div className="mb-[22px]">
           <label className="block text-[13px] font-bold mb-2">
             Specific Content Objective
+            <InfoTooltip content="Add more specific details on what you want the research engine to uncover." />
           </label>
           <textarea
             value={objective}
@@ -156,7 +159,7 @@ function CreateResearchForm() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="mb-[22px]">
-            <label className="block font-mono text-[10.5px] tracking-[0.4px] text-muted-2 uppercase mb-2">Content Type</label>
+            <label className="block font-mono text-[10.5px] tracking-[0.4px] text-muted-2 uppercase mb-2">Content Type <InfoTooltip content="Determines the structural template of the generated outputs." /></label>
             <select
               value={contentType}
               onChange={(e) => setContentType(e.target.value)}
@@ -170,7 +173,7 @@ function CreateResearchForm() {
           </div>
 
           <div className="mb-[22px]">
-            <label className="block font-mono text-[10.5px] tracking-[0.4px] text-muted-2 uppercase mb-2">Target Audience</label>
+            <label className="block font-mono text-[10.5px] tracking-[0.4px] text-muted-2 uppercase mb-2">Target Audience <InfoTooltip content="Helps the AI adapt the tone and complexity of the output." /></label>
             <select
               value={targetAudience}
               onChange={(e) => setTargetAudience(e.target.value)}
@@ -183,7 +186,7 @@ function CreateResearchForm() {
           </div>
 
           <div className="mb-[22px]">
-            <label className="block font-mono text-[10.5px] tracking-[0.4px] text-muted-2 uppercase mb-2">Output Language</label>
+            <label className="block font-mono text-[10.5px] tracking-[0.4px] text-muted-2 uppercase mb-2">Output Language <InfoTooltip content="The language used for the final generated scripts and content." /></label>
             <select
               value={outputLanguage}
               onChange={(e) => setOutputLanguage(e.target.value)}

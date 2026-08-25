@@ -43,3 +43,28 @@ export function TechnicalTooltip({ term, definition, importance, children }: Too
     </span>
   );
 }
+
+interface InfoTooltipProps {
+  content: string;
+}
+
+export function InfoTooltip({ content }: InfoTooltipProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <span className="relative inline-flex items-center ml-1.5 align-middle">
+      <HelpCircle
+        className="w-3.5 h-3.5 text-muted-2 hover:text-ink cursor-help transition-colors"
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+        onClick={() => setIsVisible(!isVisible)}
+      />
+      {isVisible && (
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 bg-ink border border-slate-700 rounded-lg shadow-xl text-xs z-50 pointer-events-none animate-in fade-in zoom-in-95 duration-150">
+          <p className="text-paper leading-relaxed font-sans font-normal normal-case m-0 tracking-normal">{content}</p>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-ink" />
+        </div>
+      )}
+    </span>
+  );
+}

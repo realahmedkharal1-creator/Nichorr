@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { InfoTooltip } from "@/components/ui/Tooltip";
 
 const chartData = [
   { index: 0, month: 'JAN', runs: 8, x: 31, cx: 55, y: 101.5, height: 38.5 },
@@ -91,7 +92,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr_1fr] gap-[18px] mb-[18px]">
         <Card className="flex flex-col">
-          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-[10px]">Research Velocity</div>
+          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-[10px]">Research Velocity <InfoTooltip content="The number of research runs you complete over time." /></div>
           <svg viewBox="0 0 460 172" style={{ width: '100%', height: 'auto', marginTop: '6px', overflow: 'visible' }}>
             <defs>
               <linearGradient id="barPeak" x1="0" y1="0" x2="0" y2="1">
@@ -151,12 +152,12 @@ export default function DashboardPage() {
           </svg>
         </Card>
         <Card>
-          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-[10px]">Verified Claims</div>
+          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-[10px]">Verified Claims <InfoTooltip content="Total number of evidence-backed claims successfully extracted and verified." /></div>
           <div className="font-serif font-semibold text-[34px] leading-none text-ink">106</div>
           <div className="text-[12.5px] text-muted mt-[8px]"><span className="text-verified font-semibold">+24</span> vs last week</div>
         </Card>
         <Card>
-          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-[10px]">Active Research Runs</div>
+          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-[10px]">Active Research Runs <InfoTooltip content="Research runs that are currently in progress or awaiting review." /></div>
           <div className="font-serif font-semibold text-[34px] leading-none text-ink">12</div>
           <div className="text-[12.5px] text-muted mt-[8px]"><span className="text-verified font-semibold">+4</span> vs last week</div>
         </Card>
@@ -214,7 +215,7 @@ export default function DashboardPage() {
 
       <div className="bg-ink text-paper rounded-[16px] p-[24px] flex items-center justify-between gap-[20px] flex-wrap">
         <div>
-          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-[#9AA4AF] mb-[10px]">Quality Gate & Audit</div>
+          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-[#9AA4AF] mb-[10px]">Quality Gate & Audit <InfoTooltip content="Percentage of generated content that passes all automated safety and accuracy checks." /></div>
           <div className="font-serif font-semibold text-[44px]">96.8%</div>
           <div className="bg-white/15 rounded-[6px] h-[6px] w-full max-w-[280px] overflow-hidden mt-[10px]">
             <div className="h-full bg-verified rounded-[6px]" style={{ width: '96.8%' }}></div>

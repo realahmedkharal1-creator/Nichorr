@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Sparkles, CheckCircle2, ArrowRight, Building, Video, Cpu } from "lucide-react";
+import { InfoTooltip } from "@/components/ui/Tooltip";
 
 export default function ProductOnboardingPage() {
   const [step, setStep] = useState(1);
@@ -33,7 +34,10 @@ export default function ProductOnboardingPage() {
         {/* Step 1: Workspace Name */}
         {step === 1 && (
           <div className="space-y-4">
-            <label className="text-xs font-mono text-slate-500 block">Workspace Name</label>
+            <label className="text-xs font-mono text-slate-500 block mb-2">
+              Workspace Name
+              <InfoTooltip content="A descriptive name for your workspace, like your YouTube channel or publication name." />
+            </label>
             <input
               type="text"
               value={wsName}
@@ -46,7 +50,10 @@ export default function ProductOnboardingPage() {
         {/* Step 2: Use Case Selection */}
         {step === 2 && (
           <div className="space-y-3">
-            <label className="text-xs font-mono text-slate-500 block">Select Primary Use Case</label>
+            <label className="text-xs font-mono text-slate-500 block mb-2">
+              Select Primary Use Case
+              <InfoTooltip content="What primary topics do you cover? This helps pre-configure the research engine." />
+            </label>
 
             <button
               onClick={() => setUseCase("TECH_CREATOR")}
