@@ -7,9 +7,8 @@ export class ResearchErrorsRepository {
       const { error } = await supabase.from("research_errors").insert({
         research_run_id: runId,
         stage,
-        error_type: "PIPELINE_ERROR",
-        message,
-        timestamp: new Date().toISOString(),
+        error_code: "PIPELINE_ERROR",
+        error_message: message,
       });
 
       if (error) {

@@ -764,7 +764,9 @@ export class ResearchEngine {
       session.failureReason = err?.message || "Unknown pipeline error";
       ResearchEngine.setRun(session);
       try {
-        await this.errorsRepo.recordError(session.id, "PIPELINE", session.failureReason || "Unknown pipeline error");
+        // "stage" is a DB enum (run_status_type) — session.status is already 'FAILED' at this
+        // point, which is a valid member, unlike the literal "PIPELINE" this used to send.
+        await this.errorsRepo.recordError(session.id, session.status, session.failureReason || "Unknown pipeline error");
         await this.runsRepo.saveRun(session, userId);
       } catch (persistErr) {
         console.warn("Failed to persist FAILED run state:", persistErr);
