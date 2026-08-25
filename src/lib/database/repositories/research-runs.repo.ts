@@ -16,6 +16,12 @@ export class ResearchRunsRepository {
         source_count: session.sources.length,
         claim_count: session.claims.length,
         token_usage: { sources: session.sources },
+        error_message: session.failureReason || null,
+        // Full-fidelity snapshot so a later, possibly cold-started, serverless invocation can
+        // resume the pipeline exactly where a previous short-lived invocation left off, instead
+        // of losing in-memory-only fields (conflicts, community signals, youtube report, etc.)
+        // that aren't modeled as their own DB columns/tables.
+        session_state: session,
       };
 
       if (session.projectId) {
@@ -82,6 +88,17 @@ export class ResearchRunsRepository {
       const { data, error } = await query.single();
       if (error || !data) return null;
 
+      // Prefer the full session snapshot when present — it carries fields (conflicts, community
+      // signals, youtube intelligence, etc.) that aren't reconstructable from the relational
+      // columns/tables below, which is what makes resuming a partially-completed run possible.
+      if (data.session_state && typeof data.session_state === "object" && data.session_state.id) {
+        return {
+          ...(data.session_state as ResearchRunSession),
+          status: data.status || data.session_state.status,
+          failureReason: data.error_message || data.session_state.failureReason,
+        };
+      }
+
       const briefData = Array.isArray(data.research_briefs) && data.research_briefs.length > 0
         ? data.research_briefs[0]
         : data.research_briefs || undefined;
@@ -95,6 +112,7 @@ export class ResearchRunsRepository {
         requestedDepth: data.requested_depth || "Standard",
         outputLanguage: data.output_language || "en",
         status: data.status || "COMPLETED",
+        failureReason: data.error_message || undefined,
         createdAt: data.created_at,
         updatedAt: data.created_at,
         sources: (data.sources || []).map((s: any) => ({

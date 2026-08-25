@@ -30,25 +30,39 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
   const [notFound, setNotFound] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [retrying, setRetrying] = useState(false);
-  const executionTriggeredRef = useRef(false);
+  // The pipeline now advances one short stage per /execute call (so each request finishes well
+  // inside a free-tier serverless function's time limit). This ref guards against firing a second
+  // /execute call while one is still in flight — the polling loop keeps nudging the server, one
+  // stage at a time, until the run reaches a terminal status.
+  const executionInFlightRef = useRef(false);
 
   useEffect(() => {
+    const TERMINAL_STATUSES = ["COMPLETED", "FAILED", "CANCELLED", "PARTIAL"];
+
+    const triggerNextStage = () => {
+      if (executionInFlightRef.current) return;
+      executionInFlightRef.current = true;
+      fetch(`/api/research/${params.id}/execute`, { method: "POST" })
+        .then((r) => r.json())
+        .then((execData) => {
+          if (execData.success && execData.run) {
+            setRun(execData.run);
+          }
+        })
+        .catch((err) => console.error("Stage execution error:", err))
+        .finally(() => {
+          executionInFlightRef.current = false;
+        });
+    };
+
     const fetchStatus = async () => {
       try {
         const res = await fetch(`/api/research/${params.id}/status`);
         const data = await res.json();
         if (data.success && data.run) {
           setRun(data.run);
-          if (data.run.status === "CREATED" && !executionTriggeredRef.current) {
-            executionTriggeredRef.current = true;
-            fetch(`/api/research/${params.id}/execute`, { method: "POST" })
-              .then((r) => r.json())
-              .then((execData) => {
-                if (execData.success && execData.run) {
-                  setRun(execData.run);
-                }
-              })
-              .catch((err) => console.error("Auto-execution trigger error:", err));
+          if (!TERMINAL_STATUSES.includes(data.run.status)) {
+            triggerNextStage();
           }
         } else {
           setNotFound(true);

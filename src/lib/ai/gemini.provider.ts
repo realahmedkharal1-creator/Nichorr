@@ -29,7 +29,11 @@ export class GeminiProvider implements LLMProvider {
 
     let lastError: any = null;
     let attempts = 0;
-    const maxRetries = 3;
+    // Kept short so a single pipeline stage (which makes at most one of these calls) finishes
+    // comfortably inside a free-tier serverless function's real execution time cap, instead of
+    // the 60s x 3-retry worst case this used to allow (which alone could exceed the cap).
+    const maxRetries = 2;
+    const perAttemptTimeoutMs = 25000;
 
     while (attempts < maxRetries) {
       try {
@@ -42,8 +46,8 @@ export class GeminiProvider implements LLMProvider {
           systemInstruction: params.systemInstruction,
         });
 
-        const timeoutPromise = new Promise<never>((_, reject) => 
-          setTimeout(() => reject(new Error("Gemini API call timed out after 60s")), 60000)
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error(`Gemini API call timed out after ${perAttemptTimeoutMs / 1000}s`)), perAttemptTimeoutMs)
         );
 
         const response = await Promise.race([
