@@ -49,6 +49,7 @@ export interface ResearchRunSession {
   provenanceReport?: ResearchProvenanceReport;
   qualityGateStatus: 'READY' | 'READY_WITH_WARNINGS' | 'PARTIAL' | 'NOT_READY' | 'BLOCKED';
   failureReason?: string;
+  claimingRetryCount?: number;
 }
 
 const MAX_RUNSTORE_ENTRIES = 100;
@@ -465,6 +466,22 @@ export class ResearchEngine {
                 evidence_ids: kc.evidence_ids.length > 0 ? kc.evidence_ids : [`ev-${idx + 1}`],
               }));
             } catch (err: any) {
+              // Gemini timeouts/rate-limits/network blips are transient — session.evidence is
+              // already durably persisted (saveRun ran when RETRIEVING advanced to CLAIMING), so
+              // instead of marking the whole run FAILED and forcing the user to redo web search
+              // and extraction from scratch, let the frontend's poll loop simply hit /execute
+              // again: same status, same evidence, a fresh attempt. Capped so a sustained outage
+              // (bad API key, prolonged Gemini downtime) still surfaces as a real failure instead
+              // of polling forever.
+              const isTransient = /timed out|503|429|fetch failed/i.test(err.message || "");
+              const retryCount = session.claimingRetryCount || 0;
+              if (isTransient && retryCount < 4) {
+                session.claimingRetryCount = retryCount + 1;
+                session.updatedAt = new Date().toISOString();
+                ResearchEngine.setRun(session);
+                await this.runsRepo.saveRun(session, userId);
+                return session;
+              }
               throw new Error(`LLM claim extraction failed: ${err.message}`);
             }
           }
