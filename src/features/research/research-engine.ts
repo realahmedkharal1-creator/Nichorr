@@ -394,7 +394,7 @@ export class ResearchEngine {
                 // Treat as failed extraction for this source to avoid garbage text
                 textToUse = `[EXTRACTION_FAILED] Content heavily obfuscated or matched navigation boilerplate for ${s.publisher}.`;
               } else {
-                textToUse = textToUse.slice(0, 300);
+                textToUse = textToUse.slice(0, 2000);
               }
 
               return {
