@@ -21,7 +21,11 @@ export class GeminiProvider implements LLMProvider {
     model?: string;
   }): Promise<LLMResponse<T>> {
     const startTime = Date.now();
-    const modelName = params.model || process.env.PRIMARY_LLM_MODEL || "gemini-flash-latest";
+    // "gemini-flash-latest" is an alias whose target shifts over time; it was observed returning
+    // sustained 503 "high demand" errors while the explicitly-pinned current model below responded
+    // in 3-4s for the same production-sized prompts. Pin to the named model to avoid being silently
+    // routed to whatever overloaded/preview build the alias currently points to.
+    const modelName = params.model || process.env.PRIMARY_LLM_MODEL || "gemini-3.6-flash";
 
     if (!this.client) {
       throw new Error("Gemini API client is not initialized. Please configure GEMINI_API_KEY to use AI features.");
