@@ -1,7 +1,7 @@
 import React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "accent" | "ghost";
+  variant?: "primary" | "accent" | "ghost" | "light";
 }
 
 export function Button({ variant = "primary", className = "", children, ...props }: ButtonProps) {
@@ -17,6 +17,9 @@ export function Button({ variant = "primary", className = "", children, ...props
       break;
     case "ghost":
       variantClasses = "bg-transparent text-ink border border-line hover:bg-card hover:border-muted-2";
+      break;
+    case "light":
+      variantClasses = "bg-paper text-ink hover:opacity-90";
       break;
   }
 

@@ -5,9 +5,26 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
+const chartData = [
+  { index: 0, month: 'JAN', runs: 8, x: 31, cx: 55, y: 101.5, height: 38.5 },
+  { index: 1, month: 'FEB', runs: 12, x: 101, cx: 125, y: 82.8, height: 57.2 },
+  { index: 2, month: 'MAR', runs: 18, x: 171, cx: 195, y: 54.2, height: 85.8, isPeak: true },
+  { index: 3, month: 'APR', runs: 14, x: 241, cx: 265, y: 74, height: 66 },
+  { index: 4, month: 'MAY', runs: 10, x: 311, cx: 335, y: 91.6, height: 48.4 },
+  { index: 5, month: 'JUN', runs: 16, x: 381, cx: 405, y: 65.2, height: 74.8 },
+];
+
 export default function DashboardPage() {
   const router = useRouter();
   const [exploreTopic, setExploreTopic] = useState("");
+  
+  const [dateRange, setDateRange] = useState("Jan 01 – Jul 31");
+  const [isDateMenuOpen, setIsDateMenuOpen] = useState(false);
+  
+  const [period, setPeriod] = useState("Daily");
+  const [isPeriodMenuOpen, setIsPeriodMenuOpen] = useState(false);
+  
+  const [hoveredBar, setHoveredBar] = useState<number | null>(null);
 
   const handleExploreSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,8 +44,41 @@ export default function DashboardPage() {
       <div className="flex items-end justify-between gap-[16px] flex-col md:flex-row mb-[24px] md:items-end">
         <h1 className="font-serif font-semibold text-[30px] m-0 self-start md:self-auto">Overview</h1>
         <div className="flex gap-[10px] flex-wrap items-center justify-between w-full md:w-auto">
-          <span className="text-[12.5px] font-semibold text-muted bg-card border border-line px-[14px] py-[8px] rounded-[9px]">Jan 01 – Jul 31</span>
-          <span className="text-[12.5px] font-semibold text-muted bg-card border border-line px-[14px] py-[8px] rounded-[9px]">Daily ▾</span>
+          <div className="relative">
+            <button 
+              onClick={() => { setIsDateMenuOpen(!isDateMenuOpen); setIsPeriodMenuOpen(false); }}
+              className="text-[12.5px] font-semibold text-muted bg-card border border-line px-[14px] py-[8px] rounded-[9px] cursor-pointer"
+            >
+              {dateRange}
+            </button>
+            {isDateMenuOpen && (
+              <div className="absolute top-full mt-1 w-[140px] bg-card border border-line rounded-[9px] shadow-sm z-10 py-1">
+                {["Last 30 days", "Last 90 days", "Jan 01 – Jul 31"].map(opt => (
+                  <div key={opt} onClick={() => { setDateRange(opt); setIsDateMenuOpen(false); }} className="px-3 py-2 text-[12.5px] text-ink hover:bg-paper cursor-pointer font-medium">
+                    {opt}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          <div className="relative">
+            <button 
+              onClick={() => { setIsPeriodMenuOpen(!isPeriodMenuOpen); setIsDateMenuOpen(false); }}
+              className="text-[12.5px] font-semibold text-muted bg-card border border-line px-[14px] py-[8px] rounded-[9px] cursor-pointer"
+            >
+              {period} ▾
+            </button>
+            {isPeriodMenuOpen && (
+              <div className="absolute top-full mt-1 w-[100px] bg-card border border-line rounded-[9px] shadow-sm z-10 py-1">
+                {["Daily", "Weekly", "Monthly"].map(opt => (
+                  <div key={opt} onClick={() => { setPeriod(opt); setIsPeriodMenuOpen(false); }} className="px-3 py-2 text-[12.5px] text-ink hover:bg-paper cursor-pointer font-medium">
+                    {opt}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <Button onClick={() => router.push('/research/create')} className="whitespace-nowrap w-full md:w-auto text-center py-[13px] md:py-[10px]">
             + New Research
           </Button>
@@ -54,28 +104,50 @@ export default function DashboardPage() {
               </linearGradient>
             </defs>
             <line x1="16" y1="140" x2="444" y2="140" stroke="#E8EAE7" strokeWidth="1"/>
-            <rect x="31" y="101.5" width="48" height="38.5" rx="7" fill="url(#barSoft)"/>
-            <rect x="101" y="82.8" width="48" height="57.2" rx="7" fill="url(#barSoft)"/>
-            <rect x="171" y="54.2" width="48" height="85.8" rx="7" fill="url(#barPeak)"/>
-            <rect x="241" y="74" width="48" height="66" rx="7" fill="url(#barSoft)"/>
-            <rect x="311" y="91.6" width="48" height="48.4" rx="7" fill="url(#barSoft)"/>
-            <rect x="381" y="65.2" width="48" height="74.8" rx="7" fill="url(#barSoft)"/>
-            <polyline points="55,101.5 125,82.8 195,54.2 265,74 335,91.6 405,65.2" fill="none" stroke="#1E7A5F" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" opacity="0.55" strokeDasharray="1 6"/>
-            <circle cx="55" cy="101.5" r="3" fill="#1E7A5F" opacity="0.7"/>
-            <circle cx="125" cy="82.8" r="3" fill="#1E7A5F" opacity="0.7"/>
-            <circle cx="195" cy="54.2" r="3.5" fill="#1E7A5F"/>
-            <circle cx="265" cy="74" r="3" fill="#1E7A5F" opacity="0.7"/>
-            <circle cx="335" cy="91.6" r="3" fill="#1E7A5F" opacity="0.7"/>
-            <circle cx="405" cy="65.2" r="3" fill="#1E7A5F" opacity="0.7"/>
+            
+            {chartData.map((d) => (
+              <g 
+                key={d.month}
+                onMouseEnter={() => setHoveredBar(d.index)}
+                onMouseLeave={() => setHoveredBar(null)}
+                className="cursor-pointer transition-opacity outline-none"
+                tabIndex={0}
+                onFocus={() => setHoveredBar(d.index)}
+                onBlur={() => setHoveredBar(null)}
+              >
+                {/* Transparent overlay for easier hover targets */}
+                <rect x={d.x} y={10} width="48" height={130} fill="transparent" />
+                <rect x={d.x} y={d.y} width="48" height={d.height} rx="7" fill={d.isPeak ? "url(#barPeak)" : "url(#barSoft)"}/>
+              </g>
+            ))}
+
+            <polyline points={chartData.map(d => `${d.cx},${d.y}`).join(' ')} fill="none" stroke="#1E7A5F" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" opacity="0.55" strokeDasharray="1 6"/>
+            
+            {chartData.map((d) => (
+              <circle key={`dot-${d.month}`} cx={d.cx} cy={d.y} r={d.isPeak ? 3.5 : 3} fill="#1E7A5F" opacity={d.isPeak ? 1 : 0.7}/>
+            ))}
+
+            {chartData.map((d) => (
+              <text key={`label-${d.month}`} x={d.cx} y="156" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill={d.isPeak ? "#2C4A73" : "#8A8F96"} fontWeight={d.isPeak ? "600" : "normal"}>
+                {d.month}
+              </text>
+            ))}
+
+            {/* Static Label for Peak (Always Visible) */}
             <line x1="195" y1="42" x2="195" y2="52" stroke="#2C4A73" strokeWidth="1.5"/>
             <rect x="160" y="12" width="70" height="26" rx="13" fill="#12161C"/>
             <text x="195" y="29" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="11" fontWeight="600" fill="#F3F5F4">18 runs</text>
-            <text x="55" y="156" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#8A8F96">JAN</text>
-            <text x="125" y="156" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#8A8F96">FEB</text>
-            <text x="195" y="156" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#2C4A73" fontWeight="600">MAR</text>
-            <text x="265" y="156" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#8A8F96">APR</text>
-            <text x="335" y="156" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#8A8F96">MAY</text>
-            <text x="405" y="156" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#8A8F96">JUN</text>
+
+            {/* Dynamic Tooltip */}
+            {hoveredBar !== null && hoveredBar !== 2 && (
+              <g className="pointer-events-none">
+                <line x1={chartData[hoveredBar].cx} y1={chartData[hoveredBar].y - 12.2} x2={chartData[hoveredBar].cx} y2={chartData[hoveredBar].y - 2.2} stroke="#2C4A73" strokeWidth="1.5"/>
+                <rect x={chartData[hoveredBar].cx - 35} y={chartData[hoveredBar].y - 42.2} width="70" height="26" rx="13" fill="#12161C"/>
+                <text x={chartData[hoveredBar].cx} y={chartData[hoveredBar].y - 25.2} textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="11" fontWeight="600" fill="#F3F5F4">
+                  {chartData[hoveredBar].runs} runs
+                </text>
+              </g>
+            )}
           </svg>
         </Card>
         <Card>
@@ -151,10 +223,11 @@ export default function DashboardPage() {
         <div className="max-w-[280px] text-[13px] text-[#C4C8CD]">
           All evidence claims passed multi-source verification. 0 critical contradictions detected.
         </div>
-        <Button onClick={() => router.push('/content')} className="bg-paper text-ink hover:opacity-90">
+        <Button onClick={() => router.push('/content')} variant="light">
           Content Board →
         </Button>
       </div>
     </div>
   );
 }
+
