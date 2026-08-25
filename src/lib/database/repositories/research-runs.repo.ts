@@ -111,6 +111,15 @@ export class ResearchRunsRepository {
       if (data.session_state && typeof data.session_state === "object" && data.session_state.id) {
         return {
           ...(data.session_state as ResearchRunSession),
+          // The very first saveRun() call embeds whatever placeholder "run-<timestamp>" id the
+          // session had BEFORE the DB assigned its real UUID (the payload is built, then sent,
+          // before the returned row's real id is known) -- that stale id is permanently baked
+          // into this row's session_state blob. Always trust the row's actual primary key
+          // instead: reusing the stale id here made saveRun()'s `!id.startsWith("run-")` check
+          // skip setting payload.id on every later save, silently INSERTing a new orphan row
+          // instead of updating this one, which is why resumed runs never advanced past their
+          // first save.
+          id: data.id,
           status: data.status || data.session_state.status,
           failureReason: data.error_message || data.session_state.failureReason,
         };
