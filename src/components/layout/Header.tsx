@@ -74,7 +74,7 @@ export function Header() {
     { href: "/research/sources", label: "Sources" },
     { href: "/content", label: "Content" },
     { href: "/research/quality", label: "Quality" },
-    
+    { href: "/docs", label: "Docs" },
   ];
 
   return (
