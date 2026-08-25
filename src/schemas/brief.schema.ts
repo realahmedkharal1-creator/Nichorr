@@ -24,3 +24,17 @@ export const ResearchBriefSchema = z.object({
 });
 
 export type ResearchBriefData = z.infer<typeof ResearchBriefSchema>;
+
+// verified_facts, measured_results, conflicts, community_signals, audience_questions, and
+// content_opportunities are all already-computed structured data from earlier pipeline stages
+// (session.claims/conflicts/communitySignals/audienceQuestions/opportunities) -- asking the LLM
+// to regenerate all of that from scratch inside ResearchBriefSchema's full shape was unreliable
+// (a thin prompt against a large 9-field nested schema) and redundant. Only these three fields
+// genuinely require LLM synthesis; the rest are assembled directly from session data.
+export const BriefSynthesisSchema = z.object({
+  executive_summary: z.array(z.string()),
+  key_findings: z.array(KeyFindingSchema),
+  important_caveats: z.array(z.string()),
+});
+
+export type BriefSynthesisData = z.infer<typeof BriefSynthesisSchema>;
