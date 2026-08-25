@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export interface ClaimRecord {
   id: string;
@@ -33,7 +33,7 @@ export class ClaimsRepository {
 
   async saveClaimsAndEvidence(sessionId: string, claims: any[], evidence: any[]): Promise<boolean> {
     try {
-      const supabase = createClient();
+      const supabase = createServiceClient();
       
       if (evidence && evidence.length > 0) {
         await supabase.from("evidence").upsert(

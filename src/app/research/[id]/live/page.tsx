@@ -63,6 +63,10 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
           setRun(data.run);
           if (!TERMINAL_STATUSES.includes(data.run.status)) {
             triggerNextStage();
+          } else {
+            // Run has reached a terminal state -- stop polling so this tab doesn't keep hammering
+            // /execute and /status indefinitely (each stray call re-triggers real API cost).
+            clearInterval(interval);
           }
         } else {
           setNotFound(true);

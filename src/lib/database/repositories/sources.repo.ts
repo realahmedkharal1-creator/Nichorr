@@ -1,10 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 
 export class SourcesRepository {
   async saveSources(runId: string, sources: any[]): Promise<boolean> {
     if (sources.length === 0) return true;
     try {
-      const supabase = createClient();
+      const supabase = createServiceClient();
       const records = sources.map((s) => ({
         canonical_url: s.url,
         original_url: s.url,

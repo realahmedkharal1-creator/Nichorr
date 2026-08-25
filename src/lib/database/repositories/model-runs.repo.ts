@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 
 export class ModelRunsRepository {
   async recordModelRun(record: {
@@ -16,7 +16,7 @@ export class ModelRunsRepository {
   }): Promise<boolean> {
     if (!record.research_run_id || record.research_run_id.startsWith("run-")) return false;
     try {
-      const supabase = createClient();
+      const supabase = createServiceClient();
       const payload: any = {
         research_run_id: record.research_run_id,
         stage: record.stage || "EXTRACTING",

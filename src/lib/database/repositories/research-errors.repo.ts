@@ -1,9 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 
 export class ResearchErrorsRepository {
   async recordError(runId: string, stage: string, message: string): Promise<boolean> {
     try {
-      const supabase = createClient();
+      const supabase = createServiceClient();
       const { error } = await supabase.from("research_errors").insert({
         research_run_id: runId,
         stage,

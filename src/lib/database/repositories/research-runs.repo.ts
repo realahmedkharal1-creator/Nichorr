@@ -1,10 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { ResearchRunSession } from "@/features/research/research-engine";
 
 export class ResearchRunsRepository {
   async saveRun(session: ResearchRunSession, userId?: string): Promise<boolean> {
     try {
-      const supabase = createClient();
+      const supabase = createServiceClient();
 
       // Guard against a stale/orphaned invocation (e.g. a serverless function that kept running
       // after the client disconnected, then finished long after a faster parallel invocation

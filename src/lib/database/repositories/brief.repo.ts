@@ -1,10 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export class BriefRepository {
   async saveBrief(runId: string, brief: any): Promise<boolean> {
     if (!brief || !runId || runId.startsWith("run-")) return false;
     try {
-      const supabase = createClient();
+      const supabase = createServiceClient();
       const { error } = await supabase.from("research_briefs").upsert({
         research_run_id: runId,
         executive_summary: brief.executive_summary,
