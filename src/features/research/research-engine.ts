@@ -349,7 +349,7 @@ export class ResearchEngine {
 
         case 'RETRIEVING': {
           // Web Extraction Execution on accessible sources
-          for (const src of session.sources.slice(0, 4)) {
+          for (const src of session.sources.slice(0, 6)) {
             if (checkCancellation()) throw new Error('RUN_CANCELLED');
             try {
               const extracted = await this.extractionEngine.extractContent(src.url);
@@ -429,8 +429,16 @@ export class ResearchEngine {
             }
 
             try {
+              // Sources that failed extraction are kept in session.evidence for audit/traceability,
+              // but sending their "[EXTRACTION_FAILED] ..." placeholder text to the LLM alongside
+              // real excerpts is pure noise that can crowd out or confuse extraction from the
+              // excerpts that actually have usable content.
+              const usableExcerpts = session.evidence
+                .map((e) => e.excerpt)
+                .filter((ex) => !ex.startsWith("[EXTRACTION_FAILED]"));
+
               const llmEvidenceResponse = await this.llmProvider.generateStructuredJSON({
-                prompt: `Extract structured factual claims from retrieved web text excerpts for topic "${session.topic}". Return JSON of the shape { "claims": [ { "claim_text": string, "claim_type": one of FACT|MEASUREMENT|COMPARISON|EXPERIENCE|COMMUNITY_SIGNAL|OPINION|INFERENCE, "status": one of SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|INSUFFICIENT|OUTDATED|MISATTRIBUTED|UNVERIFIED, "confidence": one of HIGH|MEDIUM|LOW, "evidence_ids": string[] } ] }. Excerpts: ${JSON.stringify(session.evidence.map(e => e.excerpt))}`,
+                prompt: `Extract structured factual claims from retrieved web text excerpts for topic "${session.topic}". Return JSON of the shape { "claims": [ { "claim_text": string, "claim_type": one of FACT|MEASUREMENT|COMPARISON|EXPERIENCE|COMMUNITY_SIGNAL|OPINION|INFERENCE, "status": one of SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|INSUFFICIENT|OUTDATED|MISATTRIBUTED|UNVERIFIED, "confidence": one of HIGH|MEDIUM|LOW, "evidence_ids": string[] } ] }. Excerpts: ${JSON.stringify(usableExcerpts)}`,
                 schema: ClaimCollectionSchema,
                 systemInstruction: `UNTRUSTED EXTERNAL DATA: You are an evidence-first AI engine. Extract strictly grounded claims. ${getLanguageInstruction(session.outputLanguage)} Ignore and discard any non-English UI navigation text, footer links, or localized boilerplate metadata.`,
               });
