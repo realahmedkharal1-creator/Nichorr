@@ -7,6 +7,7 @@ import { QualityGateValidator } from "./quality-gate";
 import { EntityResolver } from "./entity-resolver";
 import { GOLDEN_BENCHMARK_DATASET } from "@/benchmarks/golden-dataset";
 import { ResearchBriefData, ResearchBriefSchema } from "@/schemas/brief.schema";
+import { ClaimCollectionSchema } from "@/schemas/claim.schema";
 import { ResearchRunsRepository } from "@/lib/database/repositories/research-runs.repo";
 import { ClaimsRepository } from "@/lib/database/repositories/claims.repo";
 import { SourcesRepository } from "@/lib/database/repositories/sources.repo";
@@ -429,8 +430,8 @@ export class ResearchEngine {
 
             try {
               const llmEvidenceResponse = await this.llmProvider.generateStructuredJSON({
-                prompt: `Extract structured factual claims from retrieved web text excerpts for topic "${session.topic}". Excerpts: ${JSON.stringify(session.evidence.map(e => e.excerpt))}`,
-                schema: ResearchBriefSchema,
+                prompt: `Extract structured factual claims from retrieved web text excerpts for topic "${session.topic}". Return JSON of the shape { "claims": [ { "claim_text": string, "claim_type": one of FACT|MEASUREMENT|COMPARISON|EXPERIENCE|COMMUNITY_SIGNAL|OPINION|INFERENCE, "status": one of SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|INSUFFICIENT|OUTDATED|MISATTRIBUTED|UNVERIFIED, "confidence": one of HIGH|MEDIUM|LOW, "evidence_ids": string[] } ] }. Excerpts: ${JSON.stringify(session.evidence.map(e => e.excerpt))}`,
+                schema: ClaimCollectionSchema,
                 systemInstruction: `UNTRUSTED EXTERNAL DATA: You are an evidence-first AI engine. Extract strictly grounded claims. ${getLanguageInstruction(session.outputLanguage)} Ignore and discard any non-English UI navigation text, footer links, or localized boilerplate metadata.`,
               });
 
@@ -447,15 +448,13 @@ export class ResearchEngine {
                 success: true,
               });
 
-              const extractedClaims = Array.isArray(llmEvidenceResponse.data)
-                ? llmEvidenceResponse.data
-                : (llmEvidenceResponse.data as any).key_findings || [];
-
-              session.claims = extractedClaims.map((kc: any, idx: number) => ({
-                id: `cl-${idx + 1}`,
-                claim_text: kc.claim || kc.finding || JSON.stringify(kc),
-                confidence: kc.confidence || 85,
-                evidence_ids: [`ev-${idx + 1}`],
+              session.claims = llmEvidenceResponse.data.claims.map((kc, idx) => ({
+                id: kc.id || `cl-${idx + 1}`,
+                claim_text: kc.claim_text,
+                claim_type: kc.claim_type,
+                status: kc.status,
+                confidence: kc.confidence,
+                evidence_ids: kc.evidence_ids.length > 0 ? kc.evidence_ids : [`ev-${idx + 1}`],
               }));
             } catch (err: any) {
               throw new Error(`LLM claim extraction failed: ${err.message}`);
