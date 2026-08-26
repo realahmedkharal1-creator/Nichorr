@@ -113,6 +113,7 @@ const CLAIM_TONE_CLASSES: Record<string, { flag: string; dot: string }> = {
 export default function LandingPage() {
   const [openClaim, setOpenClaim] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activeVideo, setActiveVideo] = useState(0);
 
   return (
     <div className="bg-paper text-ink min-h-screen">
@@ -332,25 +333,52 @@ export default function LandingPage() {
             </h3>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {VIDEO_SHOWCASE.map((v) => (
-              <div key={v.id} className="bg-card border border-line rounded-2xl overflow-hidden">
-                <div className="aspect-video bg-ink">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${v.id}`}
-                    title={v.title}
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                  />
-                </div>
-                <div className="p-4">
-                  <span className="font-mono text-[10.5px] tracking-wide uppercase text-citation">{v.channel}</span>
-                  <h4 className="text-[14px] font-semibold text-ink mt-1.5 leading-snug">{v.title}</h4>
-                </div>
+          <div className="bg-ink rounded-3xl p-3 md:p-4 grid lg:grid-cols-[280px_1fr] gap-3 md:gap-4">
+            <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-1 pb-2 lg:pb-0">
+              {VIDEO_SHOWCASE.map((v, i) => (
+                <button
+                  key={v.id}
+                  onClick={() => setActiveVideo(i)}
+                  type="button"
+                  className={`shrink-0 lg:shrink text-left flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap lg:whitespace-normal ${
+                    i === activeVideo ? "bg-white/10" : "hover:bg-white/5"
+                  }`}
+                >
+                  <span
+                    className={`font-mono text-[11px] font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
+                      i === activeVideo ? "bg-citation text-white" : "bg-white/10 text-white/60"
+                    }`}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className={`text-[13.5px] font-semibold ${i === activeVideo ? "text-white" : "text-white/60"}`}>
+                    {v.channel}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div>
+              <div className="aspect-video rounded-2xl overflow-hidden bg-black">
+                <iframe
+                  key={VIDEO_SHOWCASE[activeVideo].id}
+                  src={`https://www.youtube.com/embed/${VIDEO_SHOWCASE[activeVideo].id}`}
+                  title={VIDEO_SHOWCASE[activeVideo].title}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
               </div>
-            ))}
+              <div className="px-1 pt-4 pb-1">
+                <span className="font-mono text-[10.5px] tracking-wide uppercase text-citation">
+                  {VIDEO_SHOWCASE[activeVideo].channel}
+                </span>
+                <h4 className="text-[15px] md:text-[16px] font-semibold text-white mt-1.5 leading-snug">
+                  {VIDEO_SHOWCASE[activeVideo].title}
+                </h4>
+              </div>
+            </div>
           </div>
         </div>
       </section>
