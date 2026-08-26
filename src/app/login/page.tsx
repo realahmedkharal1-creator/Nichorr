@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-[80vh] flex items-center justify-center bg-[#F0F2F6]">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-[80vh] flex items-center justify-center bg-paper">Loading...</div>}>
       <LoginContent />
     </Suspense>
   );

@@ -5,14 +5,83 @@ import Link from "next/link";
 import { ResearchRunSession } from "@/features/research/research-engine";
 import { YouTubeIntelligenceReport, YouTubeVideoItem } from "@/lib/youtube/youtube.types";
 import { SkeletonCard } from "@/components/ui/Skeleton";
-import { ExternalLink, PlayCircle, Bot, Send, HelpCircle, Sparkles, AlertTriangle, ShieldCheck, CheckCircle2, ShieldAlert, Info, Filter, X, Copy, Quote, MessageSquare, Eye, ThumbsUp, Plus } from "lucide-react";
+import {
+  ExternalLink, PlayCircle, Bot, Send, HelpCircle, Sparkles, AlertTriangle, ShieldCheck,
+  CheckCircle2, ShieldAlert, Info, Filter, X, Copy, Quote, MessageSquare, Eye, ThumbsUp, Plus,
+  Search, Download, ArrowRight, BadgeCheck, Users, TrendingUp, ChevronRight, LayoutDashboard,
+  Video, FileCheck, GitBranch, FileText, Loader2,
+} from "lucide-react";
+
+type Tone = "ink" | "verified" | "conflict" | "citation" | "warning";
+
+const TONE_ICON_BG: Record<Tone, string> = {
+  ink: "bg-paper text-ink",
+  verified: "bg-verified-bg text-verified",
+  conflict: "bg-conflict-bg text-conflict",
+  citation: "bg-citation-bg text-citation",
+  warning: "bg-warning-bg text-warning",
+};
+
+const TONE_VALUE_TEXT: Record<Tone, string> = {
+  ink: "text-ink",
+  verified: "text-verified",
+  conflict: "text-conflict",
+  citation: "text-citation",
+  warning: "text-warning",
+};
+
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  sublabel,
+  tone = "ink",
+}: {
+  icon: any;
+  label: string;
+  value: React.ReactNode;
+  sublabel?: string;
+  tone?: Tone;
+}) {
+  return (
+    <div className="group relative bg-card border border-line-soft rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+      <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${TONE_ICON_BG[tone]}`}>
+        <Icon className="w-4 h-4" />
+      </div>
+      <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-1.5">{label}</div>
+      <div className={`font-serif font-semibold text-[28px] leading-none ${TONE_VALUE_TEXT[tone]}`}>{value}</div>
+      {sublabel && <div className="text-[11.5px] text-muted mt-1.5">{sublabel}</div>}
+    </div>
+  );
+}
+
+function SectionLabel({ icon: Icon, children }: { icon?: any; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2 font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-3">
+      {Icon && <Icon className="w-3.5 h-3.5" />}
+      {children}
+    </div>
+  );
+}
+
+function EmptyState({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
+  return (
+    <div className="bg-card border border-dashed border-line rounded-2xl p-10 text-center">
+      <div className="w-12 h-12 rounded-2xl bg-paper flex items-center justify-center mx-auto mb-4 text-muted-2">
+        <Icon className="w-5 h-5" />
+      </div>
+      <h4 className="m-0 mb-1.5 text-[15px] font-semibold text-ink font-serif">{title}</h4>
+      <p className="m-0 text-[13px] text-muted max-w-sm mx-auto leading-relaxed">{description}</p>
+    </div>
+  );
+}
 
 export default function ResultsPage({ params }: { params: { id: string } }) {
   const [run, setRun] = useState<ResearchRunSession | null>(null);
   const [youtubeReport, setYoutubeReport] = useState<YouTubeIntelligenceReport | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   // Tab State
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -46,7 +115,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
         setAskMessages([
           {
             role: "assistant",
-            content: `👋 I'm your research-grounded assistant for "${statusData.run.topic}". Ask me any technical question, and I'll answer strictly using the ${statusData.run.claims?.length || 0} verified claims and ${statusData.run.sources?.length || 0} audited sources in this investigation.`,
+            content: `I'm your research-grounded assistant for "${statusData.run.topic}". Ask me any technical question, and I'll answer strictly using the ${statusData.run.claims?.length || 0} verified claims and ${statusData.run.sources?.length || 0} audited sources in this investigation.`,
             citations: []
           }
         ]);
@@ -90,117 +159,141 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
   if (notFound) {
     return (
-      <div className="max-w-[1180px] mx-auto py-12 px-5 text-center">
-        <h2 className="text-[24px] font-semibold text-ink font-[Fraunces]">Run Not Found</h2>
-        <p className="text-muted">This research run could not be recovered.</p>
+      <div className="max-w-[1180px] mx-auto py-20 px-5 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-conflict-bg text-conflict flex items-center justify-center mx-auto mb-4">
+          <Info className="w-6 h-6" />
+        </div>
+        <h2 className="text-[22px] font-serif font-semibold text-ink mb-1.5">Run Not Found</h2>
+        <p className="text-muted text-[13.5px]">This research run could not be recovered.</p>
       </div>
     );
   }
 
   if (loading || !run) {
     return (
-      <div className="max-w-[1180px] mx-auto py-6 px-5 space-y-6">
+      <div className="max-w-[1180px] mx-auto py-6 px-5 space-y-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[0, 1, 2, 3].map(i => <SkeletonCard key={i} />)}
+        </div>
         <SkeletonCard />
       </div>
     );
   }
 
   const tabs = [
-    { id: "overview", label: "Overview" },
-    { id: "youtube", label: "YouTube Intel" },
-    { id: "evidence", label: "Evidence" },
-    { id: "conflicts", label: "Conflicts" },
-    { id: "provenance", label: "Provenance" },
-    { id: "ask", label: "Ask AI" },
-    { id: "community", label: "Community" },
-    { id: "audience", label: "Audience Qs" },
-    { id: "opportunities", label: "Opportunities" },
-    { id: "brief", label: "Final Brief" },
+    { id: "overview", label: "Overview", icon: LayoutDashboard },
+    { id: "youtube", label: "YouTube Intel", icon: Video },
+    { id: "evidence", label: "Evidence", icon: FileCheck },
+    { id: "conflicts", label: "Conflicts", icon: AlertTriangle },
+    { id: "provenance", label: "Provenance", icon: GitBranch },
+    { id: "ask", label: "Ask AI", icon: Bot },
+    { id: "community", label: "Community", icon: MessageSquare },
+    { id: "audience", label: "Audience Qs", icon: HelpCircle },
+    { id: "opportunities", label: "Opportunities", icon: Sparkles },
+    { id: "brief", label: "Final Brief", icon: FileText },
   ];
 
   return (
     <div className="max-w-[1180px] mx-auto py-6 px-5 pb-20 font-sans">
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-[18px]">
-        <div>
-          <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold text-verified bg-verified-bg px-3 py-1 rounded-full mb-2.5">
-            ✓ AUDITED BRIEF READY
-          </span>
-          <h1 className="font-[Fraunces] font-semibold text-[26px] m-0 text-ink leading-tight">{run.topic}</h1>
+      {/* Hero header */}
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-citation-bg via-card to-card border border-line-soft p-6 sm:p-7 mb-6 shadow-sm">
+        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-citation/[0.06] blur-3xl pointer-events-none" />
+        <div className="relative flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold text-verified bg-verified-bg px-3 py-1 rounded-full mb-3">
+              <ShieldCheck className="w-3.5 h-3.5" /> AUDITED BRIEF READY
+            </span>
+            <h1 className="font-serif font-semibold text-[26px] sm:text-[32px] m-0 text-ink leading-tight max-w-xl">{run.topic}</h1>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-[12px] text-muted font-medium">
+              <span className="inline-flex items-center gap-1.5"><FileCheck className="w-3.5 h-3.5 text-citation" />{run.sources?.length || 0} sources</span>
+              <span className="inline-flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5 text-verified" />{run.claims?.length || 0} claims</span>
+              {(run.conflicts?.length || 0) > 0 && (
+                <span className="inline-flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5 text-conflict" />{run.conflicts?.length} conflicts</span>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={() => setActiveTab("brief")}
+            className="group/btn inline-flex items-center justify-center gap-2 bg-citation text-white font-semibold text-[13.5px] px-5 py-2.5 rounded-xl border-none cursor-pointer whitespace-nowrap w-full sm:w-auto shadow-sm hover:shadow-md hover:opacity-95 hover:-translate-y-0.5 transition-all"
+          >
+            View Full Brief <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
+          </button>
         </div>
-        <button onClick={() => setActiveTab("brief")} className="bg-citation text-white font-semibold text-[13.5px] px-5 py-2.5 rounded-[9px] border-none cursor-pointer whitespace-nowrap w-full sm:w-auto">
-          View Full Brief →
-        </button>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-1 mb-[22px]" style={{ scrollbarWidth: "none" }}>
-        {tabs.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setActiveTab(t.id)}
-            className={`shrink-0 font-sans text-[13px] font-semibold px-4 py-2 rounded-full border cursor-pointer whitespace-nowrap ${
-              activeTab === t.id 
-                ? "bg-ink text-paper border-ink" 
-                : "bg-card text-muted border-line"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+      {/* Tab bar */}
+      <div className="relative mb-6">
+        <div
+          className="flex gap-2 overflow-x-auto pb-2"
+          style={{
+            scrollbarWidth: "none",
+            WebkitMaskImage: "linear-gradient(to right, black calc(100% - 24px), transparent)",
+            maskImage: "linear-gradient(to right, black calc(100% - 24px), transparent)",
+          }}
+        >
+          {tabs.map(t => {
+            const Icon = t.icon;
+            const isActive = activeTab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id)}
+                className={`shrink-0 inline-flex items-center gap-1.5 font-sans text-[13px] font-semibold px-4 py-2 rounded-full border cursor-pointer whitespace-nowrap transition-all ${
+                  isActive
+                    ? "bg-ink text-paper border-ink shadow-sm"
+                    : "bg-card text-muted border-line hover:border-muted-2 hover:text-ink"
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 ${isActive ? "text-paper" : "text-muted-2"}`} />
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+        <div className="h-px bg-line-soft" />
       </div>
 
       {activeTab === "overview" && (
-        <div className="animate-in fade-in duration-300">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Verified Sources</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{run.sources?.length || 0}</div>
-              <div className="text-[11.5px] text-muted mt-1.5">100% traceable</div>
-            </div>
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Supported Claims</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{run.claims?.length || 0}</div>
-              <div className="text-[11.5px] text-muted mt-1.5">excerpt backed</div>
-            </div>
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Conflicts Surfaced</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{run.conflicts?.length || 0}</div>
-              <div className="text-[11.5px] text-conflict mt-1.5">methodological</div>
-            </div>
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Community Signals</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{run.communitySignals?.length || 0}</div>
-              <div className="text-[11.5px] text-muted mt-1.5">user reported</div>
-            </div>
+        <div className="animate-in fade-in duration-300 space-y-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard icon={FileCheck} label="Verified Sources" value={run.sources?.length || 0} sublabel="100% traceable" tone="citation" />
+            <StatCard icon={BadgeCheck} label="Supported Claims" value={run.claims?.length || 0} sublabel="excerpt backed" tone="verified" />
+            <StatCard icon={AlertTriangle} label="Conflicts Surfaced" value={run.conflicts?.length || 0} sublabel="methodological" tone="conflict" />
+            <StatCard icon={Users} label="Community Signals" value={run.communitySignals?.length || 0} sublabel="user reported" tone="warning" />
           </div>
-          
-          <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm mb-4.5">
-            <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Executive Summary</div>
-            <div className="text-[14px] leading-[1.7] m-0 text-ink">
+
+          <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+            <SectionLabel icon={Sparkles}>Executive Summary</SectionLabel>
+            <div className="text-[14px] leading-[1.75] m-0 text-ink">
               {(run.brief?.executive_summary || [run.objective || "Research brief summary processing..."]).map((para, idx) => (
-                <p key={idx} className="mb-2 last:mb-0">{para}</p>
+                <p key={idx} className="mb-2.5 last:mb-0">{para}</p>
               ))}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Key Verified Findings</div>
-              {(run.claims || []).slice(0, 3).map((c, idx) => (
-                <div key={idx} className="py-3 border-b border-line-soft last:border-b-0 text-[13.5px] leading-[1.6] text-ink">
-                  {c.claim_text.replace(/^Verified finding:s*/i, "")}
-                  <button onClick={() => setActiveTab("evidence")} className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none align-super ml-1 cursor-pointer hover:bg-citation hover:text-white transition-colors">{(idx % 3) + 1}</button>
-                </div>
-              ))}
-              {(run.claims || []).length === 0 && <p className="text-[13px] text-muted">No findings yet.</p>}
+            <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+              <SectionLabel icon={BadgeCheck}>Key Verified Findings</SectionLabel>
+              <div className="divide-y divide-line-soft">
+                {(run.claims || []).slice(0, 3).map((c, idx) => (
+                  <div key={idx} className="py-3 first:pt-0 last:pb-0 flex items-start gap-3 text-[13.5px] leading-[1.6] text-ink">
+                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-verified-bg text-verified font-mono text-[10px] font-bold flex items-center justify-center">{idx + 1}</span>
+                    <span className="flex-1">{c.claim_text.replace(/^Verified finding:\s*/i, "")}</span>
+                    <button onClick={() => setActiveTab("evidence")} className="shrink-0 inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none cursor-pointer hover:bg-citation hover:text-white transition-colors">{(idx % 3) + 1}</button>
+                  </div>
+                ))}
+                {(run.claims || []).length === 0 && <p className="text-[13px] text-muted py-2">No findings yet.</p>}
+              </div>
             </div>
-            
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Disagreements & Conflicts</div>
-              <p className="text-[13px] text-muted m-0 mb-2.5">Independent labs disagree on ambient-temperature methodology for thermal tests.</p>
-              <div className="font-mono text-[10.5px] font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 bg-conflict-bg text-conflict cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setActiveTab("conflicts")}>
+
+            <div className="bg-card border border-conflict/20 rounded-2xl p-5 sm:p-6 shadow-sm">
+              <SectionLabel icon={AlertTriangle}>Disagreements & Conflicts</SectionLabel>
+              <p className="text-[13px] text-muted m-0 mb-3 leading-relaxed">Independent labs disagree on ambient-temperature methodology for thermal tests.</p>
+              <button onClick={() => setActiveTab("conflicts")} className="font-mono text-[10.5px] font-semibold px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-conflict-bg text-conflict cursor-pointer hover:opacity-80 transition-opacity border-none">
                 <span className="w-1.5 h-1.5 rounded-full bg-conflict"></span>
                 {(run.conflicts || []).length} OPEN — see Conflicts tab
-              </div>
+                <ChevronRight className="w-3 h-3" />
+              </button>
             </div>
           </div>
         </div>
@@ -209,76 +302,74 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
       {activeTab === "youtube" && (
         <div className="animate-in fade-in duration-300">
           {!youtubeReport ? (
-            <div className="bg-card border border-line-soft rounded-2xl p-12 text-center shadow-sm">
-              <div className="w-10 h-10 rounded-full bg-paper flex items-center justify-center mx-auto mb-3.5 text-muted-2">
-                <AlertTriangle className="w-5 h-5" />
-              </div>
-              <h4 className="m-0 mb-1.5 text-[15px] font-bold text-ink">No YouTube Intel Found</h4>
-              <p className="m-0 text-[13px] text-muted">No youtube report available for this research run.</p>
-            </div>
+            <EmptyState icon={Video} title="No YouTube Intel Found" description="No YouTube report available for this research run." />
           ) : (
-            <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-                <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-                  <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Videos Analyzed</div>
-                  <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{youtubeReport.videos.length}</div>
-                  <div className="text-[11.5px] text-muted mt-1.5">independent channels</div>
-                </div>
-                <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-                  <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Reviewer Claims</div>
-                  <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{youtubeReport.claims.length}</div>
-                  <div className="text-[11.5px] text-muted mt-1.5">timestamped citations</div>
-                </div>
-                <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-                  <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Disagreements</div>
-                  <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{youtubeReport.reviewerDisagreements.length}</div>
-                  <div className="text-[11.5px] text-conflict mt-1.5">methodology / variant</div>
-                </div>
-                <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-                  <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Recurring Issues</div>
-                  <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{youtubeReport.recurringProblems.length}</div>
-                  <div className="text-[11.5px] text-amber mt-1.5">real user complaints</div>
-                </div>
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <StatCard icon={PlayCircle} label="Videos Analyzed" value={youtubeReport.videos.length} sublabel="independent channels" tone="citation" />
+                <StatCard icon={MessageSquare} label="Reviewer Claims" value={youtubeReport.claims.length} sublabel="timestamped citations" tone="verified" />
+                <StatCard icon={AlertTriangle} label="Disagreements" value={youtubeReport.reviewerDisagreements.length} sublabel="methodology / variant" tone="conflict" />
+                <StatCard icon={Users} label="Recurring Issues" value={youtubeReport.recurringProblems.length} sublabel="real user complaints" tone="warning" />
               </div>
 
-              <div className="flex gap-1.5 overflow-x-auto mb-[18px]" style={{ scrollbarWidth: "none" }}>
-                <div onClick={() => setYtActiveTab("consensus")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "consensus" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Reviewer Consensus & Gaps</div>
-                <div onClick={() => setYtActiveTab("disagreements")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "disagreements" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Disagreements</div>
-                <div onClick={() => setYtActiveTab("transcripts")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "transcripts" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Transcript Evidence</div>
-                <div onClick={() => setYtActiveTab("community")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "community" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Community & Complaints</div>
-                <div onClick={() => setYtActiveTab("audience")} className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-[9px] cursor-pointer whitespace-nowrap ${ytActiveTab === "audience" ? "bg-card text-ink shadow-[0_1px_2px_rgba(18,22,28,0.06)]" : "text-muted"}`}>Audience Questions</div>
+              <div className="flex gap-1.5 overflow-x-auto p-1 bg-paper rounded-xl border border-line-soft" style={{ scrollbarWidth: "none" }}>
+                {[
+                  { id: "consensus", label: "Reviewer Consensus & Gaps" },
+                  { id: "disagreements", label: "Disagreements" },
+                  { id: "transcripts", label: "Transcript Evidence" },
+                  { id: "community", label: "Community & Complaints" },
+                  { id: "audience", label: "Audience Questions" },
+                ].map(sub => (
+                  <button
+                    key={sub.id}
+                    onClick={() => setYtActiveTab(sub.id)}
+                    className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-lg cursor-pointer whitespace-nowrap transition-all border-none ${
+                      ytActiveTab === sub.id ? "bg-card text-ink shadow-sm" : "text-muted hover:text-ink bg-transparent"
+                    }`}
+                  >
+                    {sub.label}
+                  </button>
+                ))}
               </div>
 
               {ytActiveTab === "consensus" && (
                 <>
-                  <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm mb-4">
-                    <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Reviewer Consensus (Multi-Channel Agreement)</div>
-                    {youtubeReport.reviewerConsensus.map((con, idx) => (
-                      <div key={idx} className="flex gap-2.5 py-2.5 text-[13.5px] leading-[1.5] text-ink">
-                        <span className="text-verified shrink-0">✓</span> {con}
-                      </div>
-                    ))}
+                  <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+                    <SectionLabel icon={CheckCircle2}>Reviewer Consensus (Multi-Channel Agreement)</SectionLabel>
+                    <div className="divide-y divide-line-soft">
+                      {youtubeReport.reviewerConsensus.map((con, idx) => (
+                        <div key={idx} className="flex gap-3 py-3 first:pt-0 last:pb-0 text-[13.5px] leading-[1.5] text-ink">
+                          <span className="shrink-0 w-5 h-5 rounded-full bg-verified-bg text-verified flex items-center justify-center mt-0.5"><CheckCircle2 className="w-3.5 h-3.5" /></span>
+                          {con}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  
-                  <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-                    <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Under-Covered Research Gaps</div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 my-4">
+
+                  <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm mt-5">
+                    <SectionLabel icon={Search}>Under-Covered Research Gaps</SectionLabel>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5">
                       {youtubeReport.coverageGaps.map((gap, idx) => (
-                        <div key={idx} className="bg-paper rounded-xl p-3.5">
-                          <span className="font-mono text-[10px] text-amber bg-amber-bg px-2 py-1 rounded-[5px] mb-2 inline-block">GAP #{String(idx + 1).padStart(2, '0')}</span>
+                        <div key={idx} className="bg-paper border-l-[3px] border-warning rounded-r-xl rounded-l-md p-3.5">
+                          <span className="font-mono text-[10px] text-warning bg-warning-bg px-2 py-1 rounded-[5px] mb-2 inline-block font-semibold">GAP #{String(idx + 1).padStart(2, '0')}</span>
                           <p className="m-0 text-[12.5px] leading-[1.5] text-ink">{gap}</p>
                         </div>
                       ))}
                     </div>
-                    
-                    <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5 mt-2">High-Impact Content Angles</div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+
+                    <SectionLabel icon={Sparkles}>High-Impact Content Angles</SectionLabel>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
                       {youtubeReport.contentOpportunities.map((opp, idx) => (
-                        <div key={idx} className="bg-paper rounded-xl p-4 flex flex-col h-full">
-                          <div className="font-mono text-[10px] text-muted-2 uppercase mb-1.5">{opp.targetAudience}</div>
-                          <h4 className="m-0 mb-2 text-[14.5px] text-ink">{opp.title}</h4>
-                          <div className="bg-card border-l-[3px] border-citation py-2.5 px-3 text-[12.5px] italic text-muted rounded-r-lg mb-2.5 mt-auto">"{opp.hook}"</div>
-                          <button onClick={() => showToast("Added to script!")} className="bg-ink text-paper border-none rounded-lg py-2 px-3 text-[12.5px] font-semibold cursor-pointer w-full text-center">+ Add to Video Script</button>
+                        <div key={idx} className="bg-paper border border-line-soft rounded-xl p-4 flex flex-col h-full hover:shadow-sm transition-shadow">
+                          <div className="font-mono text-[10px] text-muted-2 uppercase mb-1.5 tracking-wide">{opp.targetAudience}</div>
+                          <h4 className="m-0 mb-2.5 text-[14.5px] font-semibold text-ink font-serif">{opp.title}</h4>
+                          <div className="bg-card border-l-[3px] border-citation py-2.5 px-3 text-[12.5px] italic text-muted rounded-r-lg mb-3 mt-auto flex gap-1.5">
+                            <Quote className="w-3 h-3 shrink-0 mt-0.5 text-citation" />
+                            <span>{opp.hook}</span>
+                          </div>
+                          <button onClick={() => showToast("Added to script!")} className="bg-ink text-paper border-none rounded-lg py-2 px-3 text-[12.5px] font-semibold cursor-pointer w-full flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity">
+                            <Plus className="w-3.5 h-3.5" /> Add to Video Script
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -288,49 +379,58 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               {ytActiveTab === "disagreements" && (
                 <div className="space-y-4">
                   {youtubeReport.reviewerDisagreements.map((dis, idx) => (
-                    <div key={idx} className="bg-card border border-conflict rounded-2xl p-5 shadow-sm bg-conflict-bg">
-                      <h4 className="m-0 mb-2.5 text-[14px] text-conflict">⚠ {dis.aspect}</h4>
-                      {dis.reviewers.map((rev, rIdx) => (
-                        <div key={rIdx} className="bg-white rounded-[10px] p-2.5 mb-2 text-[12.5px] text-ink border border-line-soft">
-                          <b>{rev.channel}</b> — {rev.claim} ({rev.methodologyNotes})
-                        </div>
-                      ))}
-                      <div className="text-[12px] text-muted italic mt-2">{dis.explanation} - {dis.suggestedCreatorAngle}</div>
+                    <div key={idx} className="bg-conflict-bg border border-conflict/30 rounded-2xl p-5 shadow-sm">
+                      <h4 className="m-0 mb-3 text-[14px] font-semibold text-conflict flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {dis.aspect}</h4>
+                      <div className="space-y-2 mb-2">
+                        {dis.reviewers.map((rev, rIdx) => (
+                          <div key={rIdx} className="bg-white rounded-[10px] p-3 text-[12.5px] text-ink border border-line-soft">
+                            <b>{rev.channel}</b> — {rev.claim} <span className="text-muted">({rev.methodologyNotes})</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="text-[12px] text-muted italic mt-2 flex gap-1.5"><Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />{dis.explanation} — {dis.suggestedCreatorAngle}</div>
                     </div>
                   ))}
                 </div>
               )}
               {ytActiveTab === "transcripts" && (
                 <div className="flex flex-col md:flex-row h-[500px] border border-line-soft rounded-2xl overflow-hidden shadow-sm">
-                   <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-line-soft bg-paper overflow-y-auto">
-                     {youtubeReport.videos.map(vid => (
-                       <div key={vid.videoId} onClick={() => setSelectedVideo(vid)} className={`p-3.5 border-b border-line-soft cursor-pointer transition-colors ${selectedVideo?.videoId === vid.videoId ? "bg-white" : "hover:bg-card/50"}`}>
-                         <div className="text-[13px] font-semibold text-ink line-clamp-2">{vid.title}</div>
-                       </div>
-                     ))}
-                   </div>
-                   <div className="w-full md:w-2/3 bg-card overflow-y-auto p-4 space-y-4">
-                     {selectedVideo && youtubeReport.transcripts[selectedVideo.videoId] ? (
-                       youtubeReport.transcripts[selectedVideo.videoId].segments.map((seg, i) => (
-                         <div key={i} className="flex gap-3 text-[13px]">
-                           <span className="shrink-0 font-mono text-[10.5px] text-citation bg-citation-bg px-2 py-0.5 rounded h-fit">{seg.formattedTime}</span>
-                           <span className="text-ink">{seg.text}</span>
-                         </div>
-                       ))
-                     ) : (
-                       <div className="text-muted text-[13px]">No transcript available.</div>
-                     )}
-                   </div>
+                  <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-line-soft bg-paper overflow-y-auto">
+                    {youtubeReport.videos.map(vid => (
+                      <div
+                        key={vid.videoId}
+                        onClick={() => setSelectedVideo(vid)}
+                        className={`p-3.5 border-b border-line-soft cursor-pointer transition-colors flex items-center gap-2.5 ${
+                          selectedVideo?.videoId === vid.videoId ? "bg-white border-l-[3px] border-l-citation" : "hover:bg-white/60"
+                        }`}
+                      >
+                        <PlayCircle className={`w-4 h-4 shrink-0 ${selectedVideo?.videoId === vid.videoId ? "text-citation" : "text-muted-2"}`} />
+                        <div className={`text-[13px] font-semibold line-clamp-2 ${selectedVideo?.videoId === vid.videoId ? "text-ink" : "text-muted"}`}>{vid.title}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="w-full md:w-2/3 bg-card overflow-y-auto p-4 space-y-4">
+                    {selectedVideo && youtubeReport.transcripts[selectedVideo.videoId] ? (
+                      youtubeReport.transcripts[selectedVideo.videoId].segments.map((seg, i) => (
+                        <div key={i} className="flex gap-3 text-[13px]">
+                          <span className="shrink-0 font-mono text-[10.5px] text-citation bg-citation-bg px-2 py-0.5 rounded h-fit">{seg.formattedTime}</span>
+                          <span className="text-ink">{seg.text}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-muted text-[13px]">No transcript available.</div>
+                    )}
+                  </div>
                 </div>
               )}
               {ytActiveTab === "community" && (
                 <div className="space-y-4">
                   {youtubeReport.recurringProblems.map((prob, i) => (
                     <div key={i} className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-                      <div className="font-mono text-[10px] text-amber bg-amber-bg px-2 py-1 rounded inline-block mb-2 uppercase">{prob.category} - {prob.commentCount} REPORTS</div>
+                      <div className="font-mono text-[10px] text-warning bg-warning-bg px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 mb-3 font-semibold uppercase"><AlertTriangle className="w-3 h-3" />{prob.category} · {prob.commentCount} REPORTS</div>
                       <div className="space-y-2">
                         {prob.sampleComments.map((com, idx) => (
-                          <div key={idx} className="bg-paper p-3 rounded-xl text-[13px] italic text-muted">"{com.text}"</div>
+                          <div key={idx} className="bg-paper p-3 rounded-xl text-[13px] italic text-muted flex gap-2"><Quote className="w-3 h-3 shrink-0 mt-1 text-muted-2" />"{com.text}"</div>
                         ))}
                       </div>
                     </div>
@@ -340,151 +440,136 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               {ytActiveTab === "audience" && (
                 <div className="grid sm:grid-cols-2 gap-4">
                   {youtubeReport.audienceQuestions.map((q, i) => (
-                    <div key={i} className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-                      <div className="font-mono text-[10px] text-citation uppercase mb-1">{q.category} • {q.frequency}x FREQUENCY</div>
-                      <div className="text-[14px] font-semibold text-ink mb-2">"{q.question}"</div>
+                    <div key={i} className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="font-mono text-[10px] text-citation uppercase mb-2 flex items-center gap-1.5"><HelpCircle className="w-3 h-3" />{q.category} · {q.frequency}× FREQUENCY</div>
+                      <div className="text-[14px] font-semibold text-ink font-serif">"{q.question}"</div>
                     </div>
                   ))}
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       )}
 
       {activeTab === "evidence" && (
-        <div className="animate-in fade-in duration-300">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-[18px]">
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Total Claims</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{(run.claims || []).length}</div>
-              <div className="text-[11.5px] text-muted mt-1.5">100% traced to sources</div>
-            </div>
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Source Distribution</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">{(run.sources || []).length}</div>
-              <div className="text-[11.5px] text-muted mt-1.5">YouTube & Web Specs</div>
-            </div>
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Confidence Rating</div>
-              <div className="font-[Fraunces] font-semibold text-[22px] leading-[1.2] text-verified">High (92%)</div>
-              <div className="text-[11.5px] text-muted mt-1.5">claims w/ matched evidence</div>
-            </div>
+        <div className="animate-in fade-in duration-300 space-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <StatCard icon={FileCheck} label="Total Claims" value={(run.claims || []).length} sublabel="100% traced to sources" tone="citation" />
+            <StatCard icon={ExternalLink} label="Source Distribution" value={(run.sources || []).length} sublabel="YouTube & Web Specs" tone="ink" />
+            <StatCard icon={ShieldCheck} label="Confidence Rating" value="High (92%)" sublabel="claims w/ matched evidence" tone="verified" />
           </div>
-          
-          <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-            <div className="flex gap-2.5 mb-3.5 flex-wrap">
-              <input 
-                type="text" 
-                placeholder="Search claims, excerpts, or sources…" 
+
+          <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+            <div className="relative mb-3.5">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-2" />
+              <input
+                type="text"
+                placeholder="Search claims, excerpts, or sources…"
                 value={evidenceSearch}
                 onChange={(e) => setEvidenceSearch(e.target.value)}
-                className="flex-1 min-w-[200px] font-sans text-[13.5px] px-3.5 py-2.5 border border-line rounded-[9px] bg-card text-ink outline-none focus:border-citation"
+                className="w-full font-sans text-[13.5px] pl-10 pr-3.5 py-2.5 border border-line rounded-xl bg-paper text-ink outline-none focus:border-citation focus:bg-card transition-colors"
               />
             </div>
             <div className="flex gap-2 mb-4 flex-wrap">
               {["All Claims", "Performance & SoC", "Camera & Optics", "Battery & Charging"].map(cat => (
-                <div 
-                  key={cat} 
+                <button
+                  key={cat}
                   onClick={() => setEvidenceFilter(cat)}
-                  className={`text-[12px] font-semibold px-[13px] py-[7px] rounded-full border cursor-pointer ${evidenceFilter === cat ? "bg-ink text-paper border-ink" : "bg-card border-line text-muted"}`}
+                  className={`text-[12px] font-semibold px-3.5 py-[7px] rounded-full border cursor-pointer transition-colors ${
+                    evidenceFilter === cat ? "bg-ink text-paper border-ink" : "bg-card border-line text-muted hover:border-muted-2"
+                  }`}
                 >
                   {cat}
-                </div>
+                </button>
               ))}
             </div>
 
-            <div className="space-y-0">
+            <div className="divide-y divide-line-soft">
               {(run.claims || [])
                 .filter(c => c.claim_text.toLowerCase().includes(evidenceSearch.toLowerCase()))
                 .map((claim, idx) => (
-                <div key={idx} className="py-[14px] border-b border-line-soft last:border-b-0">
-                  <div className="text-[14px] leading-[1.6] mb-2 text-ink">{claim.claim_text} <button className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none align-super ml-0.5 cursor-pointer hover:bg-citation hover:text-white transition-colors">{(idx % 3) + 1}</button></div>
-                  <div className="flex gap-2 items-center flex-wrap">
-                    <span className="font-mono text-[10.5px] font-semibold px-2 py-1 rounded-full inline-flex items-center gap-1.5 bg-verified-bg text-verified uppercase">
-                      <span className="w-1.5 h-1.5 rounded-full bg-verified"></span>VERIFIED
-                    </span>
-                    <span className="font-mono text-[11px] text-muted-2">AnandTech · Tier 1</span>
+                  <div key={idx} className="py-4 first:pt-0 last:pb-0">
+                    <div className="text-[14px] leading-[1.6] mb-2 text-ink">
+                      {claim.claim_text}{" "}
+                      <button className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none align-super ml-0.5 cursor-pointer hover:bg-citation hover:text-white transition-colors">{(idx % 3) + 1}</button>
+                    </div>
+                    <div className="flex gap-2 items-center flex-wrap">
+                      <span className="font-mono text-[10.5px] font-semibold px-2 py-1 rounded-full inline-flex items-center gap-1.5 bg-verified-bg text-verified uppercase">
+                        <BadgeCheck className="w-3 h-3" />VERIFIED
+                      </span>
+                      <span className="font-mono text-[11px] text-muted-2">AnandTech · Tier 1</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              {(run.claims || []).length === 0 && <p className="text-[13px] text-muted py-3">No claims extracted yet.</p>}
             </div>
           </div>
         </div>
       )}
 
       {activeTab === "conflicts" && (
-        <div className="animate-in fade-in duration-300">
+        <div className="animate-in fade-in duration-300 space-y-3.5">
           {(run.conflicts || []).length > 0 ? (
             run.conflicts?.map((cnf, idx) => (
-              <div key={idx} className="border border-conflict bg-conflict-bg rounded-[14px] p-4 sm:p-[18px] mb-3.5">
-                <h4 className="m-0 mb-2.5 text-[14px] text-conflict">⚠ {cnf.conflict_type} Disagreement</h4>
-                <div className="bg-white rounded-[10px] p-2.5 mb-2 text-[12.5px] text-ink">
+              <div key={idx} className="border border-conflict/30 bg-conflict-bg rounded-2xl p-4 sm:p-5">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <div className="w-7 h-7 rounded-full bg-conflict text-white flex items-center justify-center shrink-0"><AlertTriangle className="w-3.5 h-3.5" /></div>
+                  <h4 className="m-0 text-[14px] font-semibold text-conflict">{cnf.conflict_type} Disagreement</h4>
+                </div>
+                <div className="bg-white rounded-xl p-3 mb-2.5 text-[12.5px] text-ink border border-conflict/10">
                   {cnf.explanation}
                 </div>
-                <div className="text-[12px] text-muted italic mt-2">Nichorr's read: both are methodologically valid but not directly comparable — flagged rather than averaged.</div>
+                <div className="text-[12px] text-muted italic mt-2 flex gap-1.5"><Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-muted-2" />Nichorr's read: both are methodologically valid but not directly comparable — flagged rather than averaged.</div>
               </div>
             ))
+          ) : (run.claims || []).length === 0 && (run.sources || []).length === 0 ? (
+            <EmptyState icon={Info} title="No data yet" description="Nothing to check for conflicts." />
           ) : (
-            (run.claims || []).length === 0 && (run.sources || []).length === 0 ? (
-              <div className="bg-card border border-line-soft rounded-[16px] p-5 shadow-sm text-center py-[36px]">
-                <div className="w-[36px] h-[36px] rounded-full bg-paper text-muted-2 flex items-center justify-center mx-auto mb-3">
-                  <Info className="w-5 h-5" />
-                </div>
-                <h4 className="m-0 mb-1.5 text-[15px] text-ink">No data yet</h4>
-                <p className="m-0 text-[13px] text-muted">Nothing to check for conflicts.</p>
-              </div>
-            ) : (
-              <div className="bg-card border border-line-soft rounded-[16px] p-5 shadow-sm text-center py-[36px]">
-                <div className="w-[36px] h-[36px] rounded-full bg-verified-bg text-verified flex items-center justify-center mx-auto mb-3 text-[17px]">✓</div>
-                <h4 className="m-0 mb-1.5 text-[15px] text-ink">No critical conflicts detected</h4>
-                <p className="m-0 text-[13px] text-muted">All other independent lab publications and official spec sheets concur on primary findings.</p>
-              </div>
-            )
+            <div className="bg-verified-bg border border-verified/30 rounded-2xl p-8 shadow-sm text-center">
+              <div className="w-12 h-12 rounded-2xl bg-white text-verified flex items-center justify-center mx-auto mb-3 shadow-sm"><CheckCircle2 className="w-6 h-6" /></div>
+              <h4 className="m-0 mb-1.5 text-[15px] font-semibold text-ink font-serif">No critical conflicts detected</h4>
+              <p className="m-0 text-[13px] text-muted max-w-sm mx-auto">All other independent lab publications and official spec sheets concur on primary findings.</p>
+            </div>
           )}
         </div>
       )}
 
       {activeTab === "provenance" && (
-        <div className="animate-in fade-in duration-300">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Grounding Score</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-verified">96%</div>
-              <div className="text-[11.5px] text-muted mt-1.5">20/21 verified chains</div>
-            </div>
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Primary OEM Sources</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">3</div>
-              <div className="text-[11.5px] text-muted mt-1.5">Tier 1 authoritative specs</div>
-            </div>
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Independent Labs</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">6</div>
-              <div className="text-[11.5px] text-muted mt-1.5">lab benchmarks & FLIR</div>
-            </div>
-            <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-              <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Independence Score</div>
-              <div className="font-[Fraunces] font-semibold text-[28px] leading-none text-ink">8/10</div>
-              <div className="text-[11.5px] text-muted mt-1.5">zero copied syndication</div>
-            </div>
+        <div className="animate-in fade-in duration-300 space-y-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard icon={ShieldCheck} label="Grounding Score" value="96%" sublabel="20/21 verified chains" tone="verified" />
+            <StatCard icon={FileText} label="Primary OEM Sources" value="3" sublabel="Tier 1 authoritative specs" tone="ink" />
+            <StatCard icon={GitBranch} label="Independent Labs" value="6" sublabel="lab benchmarks & FLIR" tone="citation" />
+            <StatCard icon={TrendingUp} label="Independence Score" value="8/10" sublabel="zero copied syndication" tone="ink" />
           </div>
 
-          <div className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-            <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-2.5">Full Evidence Lineage Chain</div>
-            <div className="bg-paper rounded-[10px] p-3 mb-2.5 text-[13px] relative text-ink">
-              <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase">HOP 1 · CREATOR STUDIO SCRIPT STATEMENT</span>
-              "S26 Ultra sustains 4K60 recording noticeably longer than the iPhone 18 Pro Max."
-            </div>
-            <div className="text-center text-line my-0.5">↓</div>
-            <div className="bg-paper rounded-[10px] p-3 mb-2.5 text-[13px] relative text-ink">
-              <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase">HOP 2 · STRUCTURED VERIFIED CLAIM</span>
-              Sustained 4K60 recording duration before thermal-triggered shutdown, delta 22%.
-            </div>
-            <div className="text-center text-line my-0.5">↓</div>
-            <div className="bg-paper rounded-[10px] p-3 mb-2.5 text-[13px] relative text-ink border-l-[3px] border-verified">
-              <span className="font-mono text-[10px] text-verified mb-1.5 block uppercase">HOP 3 · PRIMARY SOURCE PROVENANCE</span>
-              AnandTech Hardware Reviews — Tier 1 Independent Lab <a href="#" className="text-citation text-[12px] ml-1 text-decoration-none">↗ Original Source</a>
+          <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+            <SectionLabel icon={GitBranch}>Full Evidence Lineage Chain</SectionLabel>
+            <div className="relative pl-2">
+              <div className="absolute left-[19px] top-3 bottom-3 w-px bg-line" />
+              <div className="relative flex gap-3 pb-5">
+                <div className="shrink-0 w-9 h-9 rounded-full bg-citation-bg text-citation flex items-center justify-center font-mono text-[11px] font-bold z-10">1</div>
+                <div className="bg-paper rounded-xl p-3.5 text-[13px] text-ink flex-1">
+                  <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase tracking-wide">Creator Studio Script Statement</span>
+                  "S26 Ultra sustains 4K60 recording noticeably longer than the iPhone 18 Pro Max."
+                </div>
+              </div>
+              <div className="relative flex gap-3 pb-5">
+                <div className="shrink-0 w-9 h-9 rounded-full bg-citation-bg text-citation flex items-center justify-center font-mono text-[11px] font-bold z-10">2</div>
+                <div className="bg-paper rounded-xl p-3.5 text-[13px] text-ink flex-1">
+                  <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase tracking-wide">Structured Verified Claim</span>
+                  Sustained 4K60 recording duration before thermal-triggered shutdown, delta 22%.
+                </div>
+              </div>
+              <div className="relative flex gap-3">
+                <div className="shrink-0 w-9 h-9 rounded-full bg-verified text-white flex items-center justify-center z-10"><CheckCircle2 className="w-4 h-4" /></div>
+                <div className="bg-verified-bg rounded-xl p-3.5 text-[13px] text-ink flex-1 border border-verified/20">
+                  <span className="font-mono text-[10px] text-verified mb-1.5 block uppercase tracking-wide">Primary Source Provenance</span>
+                  AnandTech Hardware Reviews — Tier 1 Independent Lab
+                  <a href="#" className="text-citation text-[12px] ml-1.5 font-semibold inline-flex items-center gap-1 hover:underline"><ExternalLink className="w-3 h-3" />Original Source</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -492,34 +577,53 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
       {activeTab === "ask" && (
         <div className="animate-in fade-in duration-300">
-          <div className="flex gap-2 flex-wrap mb-[18px]">
+          <div className="flex gap-2 flex-wrap mb-5">
             {["What are the strongest verified claims?", "What conflicting evidence was found?", "What should I be careful about saying in a video?"].map(q => (
-              <button key={q} onClick={() => handleAskSend(q)} className="text-[12.5px] font-semibold text-citation bg-citation-bg border-none px-3.5 py-2 rounded-full cursor-pointer hover:opacity-80 transition-opacity">
+              <button key={q} onClick={() => handleAskSend(q)} className="text-[12.5px] font-semibold text-citation bg-citation-bg border border-citation/10 px-3.5 py-2 rounded-full cursor-pointer hover:bg-citation hover:text-white transition-colors">
                 {q}
               </button>
             ))}
           </div>
-          
-          <div className="bg-card border border-line-soft rounded-[14px] p-4 text-[13.5px] leading-[1.6] max-w-[600px] mb-5 text-ink">
+
+          <div className="bg-card border border-line-soft rounded-2xl p-5 max-w-[640px] mb-5 space-y-4 shadow-sm">
             {askMessages.map((msg, i) => (
-              <div key={i} className={`mb-4 ${msg.role === 'user' ? 'text-citation font-semibold' : ''}`}>
-                {msg.role === 'user' ? "Q: " : "👋 "}{msg.content}
-              </div>
+              msg.role === 'user' ? (
+                <div key={i} className="flex justify-end">
+                  <div className="bg-citation text-white text-[13.5px] leading-[1.6] rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">{msg.content}</div>
+                </div>
+              ) : (
+                <div key={i} className="flex gap-2.5">
+                  <div className="shrink-0 w-7 h-7 rounded-full bg-citation-bg text-citation flex items-center justify-center mt-0.5"><Bot className="w-3.5 h-3.5" /></div>
+                  <div className="bg-paper text-ink text-[13.5px] leading-[1.6] rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%]">{msg.content}</div>
+                </div>
+              )
             ))}
-            {askLoading && <div className="text-muted italic">Thinking...</div>}
+            {askLoading && (
+              <div className="flex gap-2.5">
+                <div className="shrink-0 w-7 h-7 rounded-full bg-citation-bg text-citation flex items-center justify-center mt-0.5"><Bot className="w-3.5 h-3.5" /></div>
+                <div className="bg-paper text-muted text-[13px] italic rounded-2xl rounded-tl-sm px-4 py-2.5 flex items-center gap-1.5">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Thinking...
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="flex gap-2.5">
-            <input 
-              type="text" 
-              placeholder="Ask a technical question about the findings…" 
+          <div className="flex gap-2.5 max-w-[640px]">
+            <input
+              type="text"
+              placeholder="Ask a technical question about the findings…"
               value={askQuestion}
               onChange={(e) => setAskQuestion(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAskSend()}
-              className="flex-1 font-sans text-[13.5px] px-3.5 py-3 border border-line rounded-[10px] bg-card text-ink outline-none focus:border-citation"
+              className="flex-1 font-sans text-[13.5px] px-4 py-3 border border-line rounded-xl bg-card text-ink outline-none focus:border-citation transition-colors"
             />
-            <button onClick={() => handleAskSend()} disabled={askLoading || !askQuestion.trim()} className="bg-citation text-white border-none rounded-[10px] px-4.5 cursor-pointer hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center">
-              <Send className="w-4 h-4" />
+            <button
+              onClick={() => handleAskSend()}
+              disabled={askLoading || !askQuestion.trim()}
+              aria-label="Send question"
+              className="w-[46px] h-[46px] shrink-0 rounded-xl bg-citation text-white border-none cursor-pointer flex items-center justify-center hover:opacity-90 disabled:bg-line disabled:text-muted-2 disabled:cursor-not-allowed transition-colors"
+            >
+              <Send className="w-[18px] h-[18px] translate-x-[-1px]" />
             </button>
           </div>
         </div>
@@ -527,24 +631,24 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
       {activeTab === "community" && (
         <div className="animate-in fade-in duration-300">
-          <div className="text-[12.5px] text-citation bg-citation-bg rounded-[10px] p-3 sm:px-4 mb-[18px]">
-            🛡 Ethos Rule: Community signals represent user-reported sentiment. They are logged as user reports, not universal hardware facts.
+          <div className="text-[12.5px] text-citation bg-citation-bg rounded-xl p-3.5 sm:px-4 mb-5 flex items-center gap-2.5 border border-citation/10">
+            <ShieldAlert className="w-4 h-4 shrink-0" />
+            <span><b className="font-semibold">Ethos Rule:</b> Community signals represent user-reported sentiment. They are logged as user reports, not universal hardware facts.</span>
           </div>
           {(run.communitySignals || []).length > 0 ? (
             <div className="space-y-3">
               {(run.communitySignals || []).map((s, idx) => (
-                <div key={idx} className="bg-card border border-line-soft rounded-[14px] p-4">
-                  <span className="font-mono text-[10px] text-citation uppercase tracking-[0.5px] mb-1 block">{s.signal_type}</span>
-                  <p className="m-0 text-[13.5px] text-ink">{s.signal}</p>
+                <div key={idx} className="bg-card border border-line-soft rounded-2xl p-4 flex gap-3 hover:shadow-sm transition-shadow">
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-warning-bg text-warning flex items-center justify-center"><MessageSquare className="w-4 h-4" /></div>
+                  <div>
+                    <span className="font-mono text-[10px] text-citation uppercase tracking-[0.5px] mb-1 block">{s.signal_type}</span>
+                    <p className="m-0 text-[13.5px] text-ink">{s.signal}</p>
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-[52px] px-5">
-              <div className="w-10 h-10 rounded-full bg-paper flex items-center justify-center mx-auto mb-3.5 text-muted-2 text-[19px]">💬</div>
-              <h4 className="m-0 mb-1.5 text-[15px] font-bold text-ink">No community signals found yet for this research run</h4>
-              <p className="m-0 text-[13px] text-muted">Reddit and forum threads for this topic haven't surfaced reportable patterns yet.</p>
-            </div>
+            <EmptyState icon={MessageSquare} title="No community signals found yet for this research run" description="Reddit and forum threads for this topic haven't surfaced reportable patterns yet." />
           )}
         </div>
       )}
@@ -554,18 +658,14 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           {(run.audienceQuestions || []).length > 0 ? (
             <div className="grid sm:grid-cols-2 gap-4">
               {(run.audienceQuestions || []).map((q, idx) => (
-                <div key={idx} className="bg-card border border-line-soft rounded-[14px] p-4 flex flex-col h-full">
-                  <div className="font-mono text-[10px] text-citation uppercase tracking-[0.5px] mb-2">{q.coverage_gap} GAP</div>
-                  <h4 className="m-0 mb-2 text-[14px] font-semibold text-ink">"{q.question}"</h4>
+                <div key={idx} className="bg-card border border-line-soft rounded-2xl p-4 flex flex-col h-full hover:shadow-sm transition-shadow">
+                  <div className="font-mono text-[10px] text-citation uppercase tracking-[0.5px] mb-2.5 inline-flex items-center gap-1.5 self-start bg-citation-bg px-2 py-1 rounded-full"><HelpCircle className="w-3 h-3" />{q.coverage_gap} GAP</div>
+                  <h4 className="m-0 text-[14px] font-semibold text-ink font-serif">"{q.question}"</h4>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-[52px] px-5">
-              <div className="w-10 h-10 rounded-full bg-paper flex items-center justify-center mx-auto mb-3.5 text-muted-2 text-[19px]">❓</div>
-              <h4 className="m-0 mb-1.5 text-[15px] font-bold text-ink">No audience question gaps identified yet</h4>
-              <p className="m-0 text-[13px] text-muted">Run again with Deep research depth to mine viewer comment questions.</p>
-            </div>
+            <EmptyState icon={HelpCircle} title="No audience question gaps identified yet" description="Run again with Deep research depth to mine viewer comment questions." />
           )}
         </div>
       )}
@@ -575,82 +675,82 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           {(run.opportunities || []).length > 0 || (run.brief?.content_opportunities || []).length > 0 ? (
             <div className="grid sm:grid-cols-2 gap-4">
               {(run.opportunities || run.brief?.content_opportunities || []).map((o, idx) => (
-                <div key={idx} className="bg-card border border-line-soft rounded-[14px] p-4 flex flex-col h-full">
-                  <h4 className="m-0 mb-2 text-[14px] font-bold text-ink">{o.title}</h4>
+                <div key={idx} className="bg-card border border-line-soft rounded-2xl p-4 flex flex-col h-full hover:shadow-md hover:-translate-y-0.5 transition-all">
+                  <div className="w-8 h-8 rounded-full bg-warning-bg text-warning flex items-center justify-center mb-2.5"><Sparkles className="w-4 h-4" /></div>
+                  <h4 className="m-0 mb-1.5 text-[14px] font-semibold text-ink font-serif">{o.title}</h4>
                   <p className="m-0 text-[13px] text-muted leading-[1.5]">{o.description}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-[52px] px-5">
-              <div className="w-10 h-10 rounded-full bg-paper flex items-center justify-center mx-auto mb-3.5 text-muted-2 text-[19px]">💡</div>
-              <h4 className="m-0 mb-1.5 text-[15px] font-bold text-ink">No content opportunities identified yet</h4>
-              <p className="m-0 text-[13px] text-muted">Opportunities are generated once audience question gaps are available.</p>
-            </div>
+            <EmptyState icon={Sparkles} title="No content opportunities identified yet" description="Opportunities are generated once audience question gaps are available." />
           )}
         </div>
       )}
 
       {activeTab === "brief" && (
         <div className="animate-in fade-in duration-300">
-          <div className="bg-card border border-line-soft rounded-[18px] p-5 sm:p-[36px] max-w-[760px] mx-auto">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-[22px]">
-              <span className="font-mono text-[11px] text-muted-2 tracking-[0.5px]">RESEARCH BRIEF · GENERATED FROM {(run.claims||[]).length} VERIFIED CLAIMS</span>
+          <div className="bg-card border border-line-soft rounded-3xl p-5 sm:p-10 max-w-[760px] mx-auto shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+              <span className="font-mono text-[11px] text-muted-2 tracking-[0.5px] uppercase">Research Brief · Generated from {(run.claims || []).length} verified claims</span>
               <div className="flex gap-2">
-                <button onClick={() => showToast("Copied to clipboard!")} className="text-[12px] font-semibold px-3.5 py-2 rounded-lg border border-line bg-paper text-ink cursor-pointer hover:bg-card">⧉ Copy</button>
-                <button className="text-[12px] font-semibold px-3.5 py-2 rounded-lg border border-ink bg-ink text-paper cursor-pointer hover:opacity-90">↓ Export .md</button>
+                <button onClick={() => showToast("Copied to clipboard!")} className="text-[12px] font-semibold px-3.5 py-2 rounded-lg border border-line bg-paper text-ink cursor-pointer hover:bg-card flex items-center gap-1.5 transition-colors"><Copy className="w-3.5 h-3.5" />Copy</button>
+                <button className="text-[12px] font-semibold px-3.5 py-2 rounded-lg border border-ink bg-ink text-paper cursor-pointer hover:opacity-90 flex items-center gap-1.5 transition-opacity"><Download className="w-3.5 h-3.5" />Export .md</button>
               </div>
             </div>
-            <h2 className="font-[Fraunces] font-semibold text-[22px] sm:text-[28px] m-0 mb-2.5 text-ink">{run.topic}</h2>
-            <p className="text-[13.5px] text-muted leading-[1.6] m-0 mb-[30px] pb-[26px] border-b border-line-soft">A defensible comparison brief for a YouTube review — every claim below is traced to a source. Click any marker to see the evidence.</p>
-            
-            <div className="mb-[28px]">
-              <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3">Suggested Opening Hook</div>
-              <p className="font-[Fraunces] italic text-[16px] sm:text-[18px] leading-[1.6] text-ink m-0 pl-4 border-l-[3px] border-citation">
+            <h2 className="font-serif font-semibold text-[22px] sm:text-[30px] m-0 mb-3 text-ink leading-tight">{run.topic}</h2>
+            <p className="text-[13.5px] text-muted leading-[1.6] m-0 mb-7 pb-6 border-b border-line-soft">A defensible comparison brief for a YouTube review — every claim below is traced to a source. Click any marker to see the evidence.</p>
+
+            <div className="mb-7">
+              <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" />Suggested Opening Hook</div>
+              <p className="font-serif italic text-[16px] sm:text-[19px] leading-[1.6] text-ink m-0 pl-5 border-l-[3px] border-citation relative">
                 "Every review this week told you the S26 Ultra wins on battery. What they didn't tell you is <em>why</em> — and it's not the reason you'd think."
               </p>
             </div>
 
-            <div className="mb-[28px]">
-              <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3">Verified Talking Points</div>
-              <ol className="m-0 pl-[22px] text-[14.5px] leading-[1.9] text-ink">
+            <div className="mb-7">
+              <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3 flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5" />Verified Talking Points</div>
+              <ol className="m-0 pl-0 text-[14.5px] leading-[1.9] text-ink space-y-2 list-none">
                 {(run.brief?.key_findings || []).slice(0, 3).map((f, i) => (
-                  <li key={i}>{f.finding} <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none align-super ml-0.5 cursor-pointer hover:bg-citation hover:text-white transition-colors">{i+1}</span></li>
+                  <li key={i} className="flex gap-3">
+                    <span className="shrink-0 w-6 h-6 rounded-full bg-citation-bg text-citation font-mono text-[11px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                    <span className="flex-1">{f.finding}</span>
+                  </li>
                 ))}
                 {(run.brief?.key_findings || []).length === 0 && <li className="text-muted">No findings generated yet.</li>}
               </ol>
             </div>
 
-            <div className="mb-[28px]">
-              <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3">Say This Carefully</div>
-              <div className="bg-amber-bg text-amber rounded-[10px] p-[14px] sm:px-4 text-[13px] leading-[1.6]">
-                ⚠ Independent labs disagree on ambient-temperature test methodology for thermal claims. Present both S26 Ultra and iPhone 18 Pro Max thermal figures with their test conditions stated on screen — don't present one as universally "faster."
+            <div className="mb-7">
+              <div className="font-mono text-[11px] tracking-[0.5px] text-warning uppercase mb-3 flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5" />Say This Carefully</div>
+              <div className="bg-warning-bg text-warning rounded-xl p-4 text-[13px] leading-[1.6] border border-warning/20 flex gap-2.5">
+                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>Independent labs disagree on ambient-temperature test methodology for thermal claims. Present both S26 Ultra and iPhone 18 Pro Max thermal figures with their test conditions stated on screen — don't present one as universally "faster."</span>
               </div>
             </div>
 
-            <div className="mb-[28px]">
-              <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3">Sources Cited ({(run.sources || []).length})</div>
-              <div className="flex flex-col gap-2.5">
-                {(run.sources || []).slice(0,3).map((s, idx) => (
-                  <div key={idx} className="text-[13px] flex items-center gap-2.5 text-ink">
-                    <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none cursor-pointer hover:bg-citation hover:text-white transition-colors shrink-0">{idx+1}</span>
-                    {s.title} ({s.publisher})
+            <div>
+              <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3 flex items-center gap-1.5"><FileText className="w-3.5 h-3.5" />Sources Cited ({(run.sources || []).length})</div>
+              <div className="flex flex-col gap-2">
+                {(run.sources || []).slice(0, 3).map((s, idx) => (
+                  <div key={idx} className="text-[13px] flex items-center gap-2.5 text-ink bg-paper rounded-lg px-3 py-2.5">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold shrink-0">{idx + 1}</span>
+                    <span className="flex-1">{s.title} <span className="text-muted">({s.publisher})</span></span>
+                    <ExternalLink className="w-3.5 h-3.5 text-muted-2 shrink-0" />
                   </div>
                 ))}
               </div>
             </div>
-
           </div>
         </div>
       )}
 
       {toastMessage && (
-        <div className="fixed bottom-8 right-8 bg-ink text-paper px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-bottom-5 z-50">
+        <div className="fixed bottom-8 right-8 bg-ink text-paper px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-bottom-5 z-50">
           <CheckCircle2 className="w-5 h-5 text-verified" />
-          <span className="text-sm font-bold">{toastMessage}</span>
+          <span className="text-sm font-semibold">{toastMessage}</span>
         </div>
       )}
-
     </div>
   );
 }

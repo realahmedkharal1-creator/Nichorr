@@ -96,15 +96,15 @@ export default function DashboardPage() {
           <svg viewBox="0 0 460 172" style={{ width: '100%', height: 'auto', marginTop: '6px', overflow: 'visible' }}>
             <defs>
               <linearGradient id="barPeak" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3D63A0"/>
-                <stop offset="100%" stopColor="#22385A"/>
+                <stop offset="0%" stopColor="#F2836F"/>
+                <stop offset="100%" stopColor="#D94E37"/>
               </linearGradient>
               <linearGradient id="barSoft" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#D7E1EC"/>
-                <stop offset="100%" stopColor="#E9EEF4"/>
+                <stop offset="0%" stopColor="#F6DDD5"/>
+                <stop offset="100%" stopColor="#FDECE7"/>
               </linearGradient>
             </defs>
-            <line x1="16" y1="140" x2="444" y2="140" stroke="#E8EAE7" strokeWidth="1"/>
+            <line x1="16" y1="140" x2="444" y2="140" stroke="#E7E4DF" strokeWidth="1"/>
             
             {chartData.map((d) => (
               <g 
@@ -122,29 +122,29 @@ export default function DashboardPage() {
               </g>
             ))}
 
-            <polyline points={chartData.map(d => `${d.cx},${d.y}`).join(' ')} fill="none" stroke="#1E7A5F" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" opacity="0.55" strokeDasharray="1 6"/>
-            
+            <polyline points={chartData.map(d => `${d.cx},${d.y}`).join(' ')} fill="none" stroke="#1E8F6B" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" opacity="0.55" strokeDasharray="1 6"/>
+
             {chartData.map((d) => (
-              <circle key={`dot-${d.month}`} cx={d.cx} cy={d.y} r={d.isPeak ? 3.5 : 3} fill="#1E7A5F" opacity={d.isPeak ? 1 : 0.7}/>
+              <circle key={`dot-${d.month}`} cx={d.cx} cy={d.y} r={d.isPeak ? 3.5 : 3} fill="#1E8F6B" opacity={d.isPeak ? 1 : 0.7}/>
             ))}
 
             {chartData.map((d) => (
-              <text key={`label-${d.month}`} x={d.cx} y="156" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill={d.isPeak ? "#2C4A73" : "#8A8F96"} fontWeight={d.isPeak ? "600" : "normal"}>
+              <text key={`label-${d.month}`} x={d.cx} y="156" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill={d.isPeak ? "#EF6351" : "#9A9EA1"} fontWeight={d.isPeak ? "600" : "normal"}>
                 {d.month}
               </text>
             ))}
 
             {/* Static Label for Peak (Always Visible) */}
-            <line x1="195" y1="42" x2="195" y2="52" stroke="#2C4A73" strokeWidth="1.5"/>
-            <rect x="160" y="12" width="70" height="26" rx="13" fill="#12161C"/>
-            <text x="195" y="29" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="11" fontWeight="600" fill="#F3F5F4">18 runs</text>
+            <line x1="195" y1="42" x2="195" y2="52" stroke="#EF6351" strokeWidth="1.5"/>
+            <rect x="160" y="12" width="70" height="26" rx="13" fill="#121214"/>
+            <text x="195" y="29" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="11" fontWeight="600" fill="#FAF9F7">18 runs</text>
 
             {/* Dynamic Tooltip */}
             {hoveredBar !== null && hoveredBar !== 2 && (
               <g className="pointer-events-none">
-                <line x1={chartData[hoveredBar].cx} y1={chartData[hoveredBar].y - 12.2} x2={chartData[hoveredBar].cx} y2={chartData[hoveredBar].y - 2.2} stroke="#2C4A73" strokeWidth="1.5"/>
-                <rect x={chartData[hoveredBar].cx - 35} y={chartData[hoveredBar].y - 42.2} width="70" height="26" rx="13" fill="#12161C"/>
-                <text x={chartData[hoveredBar].cx} y={chartData[hoveredBar].y - 25.2} textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="11" fontWeight="600" fill="#F3F5F4">
+                <line x1={chartData[hoveredBar].cx} y1={chartData[hoveredBar].y - 12.2} x2={chartData[hoveredBar].cx} y2={chartData[hoveredBar].y - 2.2} stroke="#EF6351" strokeWidth="1.5"/>
+                <rect x={chartData[hoveredBar].cx - 35} y={chartData[hoveredBar].y - 42.2} width="70" height="26" rx="13" fill="#121214"/>
+                <text x={chartData[hoveredBar].cx} y={chartData[hoveredBar].y - 25.2} textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="11" fontWeight="600" fill="#FAF9F7">
                   {chartData[hoveredBar].runs} runs
                 </text>
               </g>
@@ -215,13 +215,13 @@ export default function DashboardPage() {
 
       <div className="bg-ink text-paper rounded-[16px] p-[24px] flex items-center justify-between gap-[20px] flex-wrap">
         <div>
-          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-[#9AA4AF] mb-[10px]">Quality Gate & Audit <InfoTooltip content="Percentage of generated content that passes all automated safety and accuracy checks." /></div>
+          <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-white/50 mb-[10px]">Quality Gate & Audit <InfoTooltip content="Percentage of generated content that passes all automated safety and accuracy checks." /></div>
           <div className="font-serif font-semibold text-[44px]">96.8%</div>
           <div className="bg-white/15 rounded-[6px] h-[6px] w-full max-w-[280px] overflow-hidden mt-[10px]">
             <div className="h-full bg-verified rounded-[6px]" style={{ width: '96.8%' }}></div>
           </div>
         </div>
-        <div className="max-w-[280px] text-[13px] text-[#C4C8CD]">
+        <div className="max-w-[280px] text-[13px] text-white/65">
           All evidence claims passed multi-source verification. 0 critical contradictions detected.
         </div>
         <Button onClick={() => router.push('/content')} variant="light">

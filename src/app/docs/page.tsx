@@ -247,11 +247,11 @@ export default function DocsPage() {
 
             <div className="bg-ink text-paper rounded-[16px] p-[24px] mb-[24px] relative overflow-hidden group">
               <div className="relative z-10">
-                <div className="font-mono text-[11px] text-[#8FA5C4] tracking-[0.5px] mb-1.5 uppercase">
+                <div className="font-mono text-[11px] text-white/50 tracking-[0.5px] mb-1.5 uppercase">
                   End-to-End Delivery
                 </div>
                 <h3 className="font-serif font-semibold text-[22px] mb-[12px]">From Script to Schedule</h3>
-                <p className="text-[13.5px] text-[#C4C8CD] mb-[20px] max-w-[400px] leading-relaxed">
+                <p className="text-[13.5px] text-white/65 mb-[20px] max-w-[400px] leading-relaxed">
                   Export timelines directly to Final Cut Pro (FCPXML) or schedule descriptions and chapters straight to the YouTube Data API.
                 </p>
                 <Button variant="light">

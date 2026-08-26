@@ -56,7 +56,7 @@ export function AppHeader() {
       <header className="bg-ink text-paper sticky top-0 z-50">
         <div className="max-w-[1280px] mx-auto flex items-center justify-between px-5 h-[58px]">
           <Link href="/dashboard" className="font-serif font-semibold text-[18px] text-white tracking-tight">
-            Nichorr<span className="text-[#7FA6D6]">.</span>
+            Nichorr<span className="text-citation">.</span>
           </Link>
           
           <nav className="hidden md:flex gap-0.5">

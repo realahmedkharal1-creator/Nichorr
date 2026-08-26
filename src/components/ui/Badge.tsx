@@ -27,7 +27,7 @@ export function Badge({ variant, children, className = "" }: BadgeProps) {
       dotVariantClasses = "bg-conflict";
       break;
     case "neutral":
-      variantClasses = "bg-[#EEF0EE] text-muted";
+      variantClasses = "bg-line-soft text-muted";
       dotVariantClasses = "bg-muted-2";
       break;
   }

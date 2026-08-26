@@ -82,7 +82,7 @@ export default function ConfigPage({ params }: { params: { id: string } }) {
       <h1 className="font-serif font-semibold text-[23px] sm:text-[28px] m-0 mb-5">Research Scope & Protocol Settings</h1>
 
       <div className="bg-ink text-paper rounded-2xl p-5 sm:px-[22px] sm:py-[20px] mb-6">
-        <div className="font-mono text-[11px] text-[#8FA5C4] tracking-[0.5px] mb-1.5 uppercase">
+        <div className="font-mono text-[11px] text-white/50 tracking-[0.5px] mb-1.5 uppercase">
           ACTIVE TARGET TOPIC (Language: {getLanguageByCode(run.outputLanguage).englishName})
         </div>
         <div className="font-serif font-semibold text-[21px]">{run.topic}</div>

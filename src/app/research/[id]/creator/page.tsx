@@ -2067,14 +2067,14 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <span className="font-mono text-[10.5px] font-semibold px-[10px] py-[4px] rounded-[6px] bg-verified-bg text-verified uppercase">
             READY FOR PUBLISHING
           </span>
-          <span className="font-mono text-[10.5px] font-semibold px-[10px] py-[4px] rounded-[6px] bg-white/10 text-[#C9CDD3] uppercase">
+          <span className="font-mono text-[10.5px] font-semibold px-[10px] py-[4px] rounded-[6px] bg-white/10 text-white/70 uppercase">
             SCRIPT V1.0
           </span>
         </div>
         <div className="font-serif font-semibold text-[19px] mb-[10px]">
           {report?.topic || "Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max"}
         </div>
-        <div className="flex gap-[16px] flex-wrap font-mono text-[11px] text-[#8A93A0]">
+        <div className="flex gap-[16px] flex-wrap font-mono text-[11px] text-white/50">
           <span>Project Hash: 0fc1ebed18dc...</span>
           <span>Evidence Hash: ev-hash-ca32...</span>
           <span>◈ 19 Nodes</span>
