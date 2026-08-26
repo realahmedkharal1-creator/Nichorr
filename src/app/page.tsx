@@ -340,17 +340,17 @@ export default function LandingPage() {
                   key={v.id}
                   onClick={() => setActiveVideo(i)}
                   type="button"
-                  className={`shrink-0 lg:shrink text-left flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap lg:whitespace-normal ${
+                  className={`shrink-0 lg:shrink text-left flex items-center gap-3 p-2 rounded-xl transition-colors whitespace-nowrap lg:whitespace-normal ${
                     i === activeVideo ? "bg-white/10" : "hover:bg-white/5"
                   }`}
                 >
-                  <span
-                    className={`font-mono text-[11px] font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
-                      i === activeVideo ? "bg-citation text-white" : "bg-white/10 text-white/60"
-                    }`}
-                  >
-                    {i + 1}
-                  </span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
+                    alt={v.channel}
+                    className="w-16 h-11 rounded-lg object-cover shrink-0"
+                    loading="lazy"
+                  />
                   <span className={`text-[13.5px] font-semibold ${i === activeVideo ? "text-white" : "text-white/60"}`}>
                     {v.channel}
                   </span>
