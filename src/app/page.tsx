@@ -121,7 +121,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 bg-paper/90 backdrop-blur-md border-b border-line">
         <nav className="max-w-[1180px] mx-auto px-7 h-[68px] flex items-center justify-between">
           <Link href="/" className="flex items-center">
-            <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={120} height={32} style={{ height: "30px", width: "auto" }} priority />
+            <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={120} height={32} style={{ height: "40px", width: "auto" }} priority />
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-[14.5px] font-semibold text-muted hover:text-ink px-3 py-2 rounded-lg hover:bg-ink/5 transition-colors">
@@ -522,7 +522,7 @@ export default function LandingPage() {
         <div className="max-w-[1180px] mx-auto px-7">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-10 mb-10">
             <div className="max-w-[360px]">
-              <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={112} height={30} style={{ height: "26px", width: "auto" }} />
+              <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={112} height={30} style={{ height: "34px", width: "auto" }} />
               <p className="text-[13.5px] text-muted mt-3.5 leading-relaxed">
                 Evidence-first research for tech YouTubers. Every claim traced, every conflict flagged, nothing fabricated.
               </p>
