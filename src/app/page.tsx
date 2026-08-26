@@ -69,8 +69,49 @@ const FAQ_ITEMS = [
   },
 ];
 
+const CLAIM_EXAMPLES: {
+  claim: string;
+  sources: { tag: string; source: string; text: string }[];
+  flag: string;
+  tone: "conflict" | "verified" | "warning";
+}[] = [
+  {
+    claim: "The A19 Pro outperforms the Snapdragon 8 Gen 5 in sustained multi-core workloads",
+    sources: [
+      { tag: "SRC A", source: "AnandTech, Aug 2026", text: "A19 Pro leads by 12% after 15 minutes of sustained load, attributed to the new vapor chamber." },
+      { tag: "SRC B", source: "Notebookcheck, Aug 2026", text: "Snapdragon 8 Gen 5 pulls ahead past the 10-minute mark as A19 Pro throttles under thermal load." },
+    ],
+    flag: "CONFLICTING SOURCES — flagged, not averaged away",
+    tone: "conflict",
+  },
+  {
+    claim: "The Galaxy S26 Ultra's battery life beats last year's model by roughly 15%",
+    sources: [
+      { tag: "SRC A", source: "GSMArena, Jul 2026", text: "Measured 15% longer screen-on time in the standardized battery test versus the S25 Ultra." },
+      { tag: "SRC B", source: "Manufacturer spec sheet", text: "Cell capacity rated at 5,400 mAh, up from 5,000 mAh — an 8% capacity gain." },
+    ],
+    flag: "CLAIM VERIFIED — consistent across independent and official sources",
+    tone: "verified",
+  },
+  {
+    claim: "Wi-Fi 7 on mid-range phones is still mostly marketing, not a real-world gain",
+    sources: [
+      { tag: "SRC A", source: "RTINGS, Jun 2026", text: "No measurable throughput difference versus Wi-Fi 6E on current mid-range routers in real households." },
+      { tag: "SRC B", source: "r/Android megathread", text: "217 users report no noticeable change after upgrading — gains only appear on routers above $400." },
+    ],
+    flag: "INSUFFICIENT DATA — real-world benefit unconfirmed at this price tier",
+    tone: "warning",
+  },
+];
+
+const CLAIM_TONE_CLASSES: Record<string, { flag: string; dot: string }> = {
+  conflict: { flag: "bg-conflict-bg text-conflict", dot: "bg-conflict" },
+  verified: { flag: "bg-verified-bg text-verified", dot: "bg-verified" },
+  warning: { flag: "bg-warning-bg text-warning", dot: "bg-warning" },
+};
+
 export default function LandingPage() {
-  const [evidenceOpen, setEvidenceOpen] = useState(false);
+  const [openClaim, setOpenClaim] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
@@ -124,36 +165,46 @@ export default function LandingPage() {
 
           <div className="bg-card border border-line rounded-3xl p-7 shadow-[0_1px_2px_rgba(18,18,20,0.04),0_20px_40px_rgba(18,18,20,0.06)]">
             <span className="font-mono text-[11.5px] tracking-wide uppercase text-muted mb-4 block">
-              Live example — from a real research run
+              Live examples — from a real research run
             </span>
-            <p className="text-[19px] leading-[1.55] font-semibold text-ink">
-              The A19 Pro outperforms the Snapdragon 8 Gen 5 in sustained multi-core workloads
-              <button
-                onClick={() => setEvidenceOpen((v) => !v)}
-                aria-expanded={evidenceOpen}
-                aria-controls="evidence-1"
-                type="button"
-                className="inline-flex items-center justify-center align-super font-mono text-[12px] font-bold w-5 h-5 rounded-full bg-citation-bg text-citation ml-0.5 border-none cursor-pointer hover:bg-citation hover:text-white transition-colors"
-              >
-                1
-              </button>
-              .
-            </p>
-            {evidenceOpen && (
-              <div id="evidence-1" className="mt-5 pt-4 border-t border-dashed border-line">
-                <div className="flex gap-3 py-2.5 border-b border-line">
-                  <span className="font-mono text-[11px] font-semibold shrink-0 h-fit mt-0.5 px-2 py-0.5 rounded-full bg-citation-bg text-citation">SRC A</span>
-                  <p className="text-[14px] text-ink"><b className="font-semibold">AnandTech, Aug 2026</b> — A19 Pro leads by 12% after 15 minutes of sustained load, attributed to the new vapor chamber.</p>
+            {CLAIM_EXAMPLES.map((example, i) => {
+              const tone = CLAIM_TONE_CLASSES[example.tone];
+              const isOpen = openClaim === i;
+              const evidenceId = `evidence-${i + 1}`;
+              return (
+                <div key={evidenceId} className={i > 0 ? "mt-5 pt-5 border-t border-line" : undefined}>
+                  <p className="text-[19px] leading-[1.55] font-semibold text-ink">
+                    {example.claim}
+                    <button
+                      onClick={() => setOpenClaim((v) => (v === i ? null : i))}
+                      aria-expanded={isOpen}
+                      aria-controls={evidenceId}
+                      type="button"
+                      className="inline-flex items-center justify-center align-super font-mono text-[12px] font-bold w-5 h-5 rounded-full bg-citation-bg text-citation ml-0.5 border-none cursor-pointer hover:bg-citation hover:text-white transition-colors"
+                    >
+                      {i + 1}
+                    </button>
+                    .
+                  </p>
+                  {isOpen && (
+                    <div id={evidenceId} className="mt-5 pt-4 border-t border-dashed border-line">
+                      {example.sources.map((src, j) => (
+                        <div
+                          key={src.tag}
+                          className={`flex gap-3 py-2.5 ${j < example.sources.length - 1 ? "border-b border-line" : ""}`}
+                        >
+                          <span className="font-mono text-[11px] font-semibold shrink-0 h-fit mt-0.5 px-2 py-0.5 rounded-full bg-citation-bg text-citation">{src.tag}</span>
+                          <p className="text-[14px] text-ink"><b className="font-semibold">{src.source}</b> — {src.text}</p>
+                        </div>
+                      ))}
+                      <div className={`mt-4 flex items-center gap-2.5 font-mono text-[12.5px] font-semibold px-3.5 py-2.5 rounded-lg ${tone.flag}`}>
+                        <span className={`w-[7px] h-[7px] rounded-full shrink-0 ${tone.dot}`} /> {example.flag}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="flex gap-3 py-2.5">
-                  <span className="font-mono text-[11px] font-semibold shrink-0 h-fit mt-0.5 px-2 py-0.5 rounded-full bg-citation-bg text-citation">SRC B</span>
-                  <p className="text-[14px] text-ink"><b className="font-semibold">Notebookcheck, Aug 2026</b> — Snapdragon 8 Gen 5 pulls ahead past the 10-minute mark as A19 Pro throttles under thermal load.</p>
-                </div>
-                <div className="mt-4 flex items-center gap-2.5 font-mono text-[12.5px] font-semibold bg-conflict-bg text-conflict px-3.5 py-2.5 rounded-lg">
-                  <span className="w-[7px] h-[7px] rounded-full bg-conflict shrink-0" /> CONFLICTING SOURCES — flagged, not averaged away
-                </div>
-              </div>
-            )}
+              );
+            })}
           </div>
         </div>
       </section>
