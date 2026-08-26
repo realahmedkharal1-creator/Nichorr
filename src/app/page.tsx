@@ -333,8 +333,8 @@ export default function LandingPage() {
             </h3>
           </div>
 
-          <div className="bg-ink rounded-3xl p-3 md:p-4 grid lg:grid-cols-[280px_1fr] gap-3 md:gap-4">
-            <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-1 pb-2 lg:pb-0">
+          <div className="bg-ink rounded-3xl p-3 md:p-4 grid lg:grid-cols-[280px_1fr] gap-1.5 md:gap-3">
+            <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-1 pb-1 lg:pb-0">
               {VIDEO_SHOWCASE.map((v, i) => (
                 <button
                   key={v.id}
