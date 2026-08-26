@@ -358,26 +358,16 @@ export default function LandingPage() {
               ))}
             </div>
 
-            <div>
-              <div className="aspect-video rounded-2xl overflow-hidden bg-black">
-                <iframe
-                  key={VIDEO_SHOWCASE[activeVideo].id}
-                  src={`https://www.youtube.com/embed/${VIDEO_SHOWCASE[activeVideo].id}`}
-                  title={VIDEO_SHOWCASE[activeVideo].title}
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
-              </div>
-              <div className="px-1 pt-4 pb-1">
-                <span className="font-mono text-[10.5px] tracking-wide uppercase text-citation">
-                  {VIDEO_SHOWCASE[activeVideo].channel}
-                </span>
-                <h4 className="text-[15px] md:text-[16px] font-semibold text-white mt-1.5 leading-snug">
-                  {VIDEO_SHOWCASE[activeVideo].title}
-                </h4>
-              </div>
+            <div className="aspect-video rounded-2xl overflow-hidden bg-black">
+              <iframe
+                key={VIDEO_SHOWCASE[activeVideo].id}
+                src={`https://www.youtube.com/embed/${VIDEO_SHOWCASE[activeVideo].id}`}
+                title={VIDEO_SHOWCASE[activeVideo].title}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              />
             </div>
           </div>
         </div>
