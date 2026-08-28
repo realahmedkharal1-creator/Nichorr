@@ -35,7 +35,7 @@ export interface ResearchRunSession {
   status: RunStatus;
   createdAt: string;
   updatedAt: string;
-  sources: Array<{ id: string; title: string; url: string; publisher: string; sourceType: string; qualityScore: number; extractedText?: string; sourceTier?: number; isPrimary?: boolean; isSyndicated?: boolean }>;
+  sources: Array<{ id: string; title: string; url: string; publisher: string; sourceType: string; qualityScore: number; extractedText?: string; snippet?: string; sourceTier?: number; isPrimary?: boolean; isSyndicated?: boolean }>;
   claims: Array<{ id: string; claim_text: string; claim_type: string; status: string; confidence: string; evidence_ids: string[] }>;
   evidence: Array<{ id: string; source_id: string; excerpt: string; evidence_type: string; product_entity: string }>;
   conflicts: Array<{ id: string; claim_a_id: string; claim_b_id: string; conflict_type: string; explanation: string }>;
@@ -361,6 +361,10 @@ export class ResearchEngine {
             publisher: r.publisher || "Technical Publication",
             sourceType: r.sourceType,
             qualityScore: r.sourceTier === 1 ? 9.5 : r.sourceTier === 2 ? 8.5 : 7.0,
+            // Search-result snippet is a verbatim excerpt the provider already returned for this
+            // page. Kept as a grounded fallback for the ~80% of real tech sites whose full-page
+            // fetch is blocked (Cloudflare/JS-SPA/403/timeout) in the RETRIEVING stage below.
+            snippet: r.snippet || undefined,
           }));
 
           await this.sourcesRepo.saveSources(session.id, session.sources);
@@ -412,8 +416,16 @@ export class ResearchEngine {
               };
 
               if (isNavGarbage(textToUse)) {
-                // Treat as failed extraction for this source to avoid garbage text
-                textToUse = `[EXTRACTION_FAILED] Content heavily obfuscated or matched navigation boilerplate for ${s.publisher}.`;
+                // Full-page fetch produced nothing usable. Before giving up on this source,
+                // fall back to the provider's search snippet — a real verbatim excerpt from
+                // the same page. Only mark EXTRACTION_FAILED if there's no usable snippet
+                // either, so a whole run isn't lost to bot-blocked pages.
+                const snip = (s.snippet || "").trim();
+                if (snip.length >= 40 && !isNavGarbage(snip)) {
+                  textToUse = snip.slice(0, 2000);
+                } else {
+                  textToUse = `[EXTRACTION_FAILED] Content heavily obfuscated or matched navigation boilerplate for ${s.publisher}.`;
+                }
               } else {
                 textToUse = textToUse.slice(0, 2000);
               }
