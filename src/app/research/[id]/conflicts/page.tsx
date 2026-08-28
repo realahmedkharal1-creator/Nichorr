@@ -35,6 +35,10 @@ export default function ConflictsPage({ params }: { params: { id: string } }) {
     );
   }
 
+  // Only render conflicts that carry a real type and explanation. Guards against a
+  // half-populated conflict object ever showing as a blank card.
+  const conflicts = (run.conflicts || []).filter((c) => c.conflict_type && c.explanation);
+
   return (
     <div className="space-y-6">
       <div className="border-b border-slate-200 pb-4">
@@ -48,7 +52,26 @@ export default function ConflictsPage({ params }: { params: { id: string } }) {
 
       <ResearchTabNav runId={run.id} />
 
-      {(run.conflicts || []).length === 0 ? (
+      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex items-start gap-3">
+        <Info className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
+        <div className="space-y-1.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <p className="font-semibold text-slate-800">What counts as a conflict?</p>
+          <p>
+            A conflict is where two credible sources report different results for the same thing —
+            different benchmark numbers, opposite conclusions, or measurements taken under
+            incompatible conditions or on different hardware variants. Nichorr lists each one as-is
+            rather than averaging them or declaring a winner.
+          </p>
+          <p>
+            <strong className="text-slate-700">Why it matters for your script:</strong> naming the
+            disagreement and the reason behind it (e.g. a 21&deg;C vs 25&deg;C test room, or an
+            Exynos vs Snapdragon unit) earns more trust with a technical audience than one confident
+            number would.
+          </p>
+        </div>
+      </div>
+
+      {conflicts.length === 0 ? (
         (run.claims || []).length === 0 && (run.sources || []).length === 0 ? (
           <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-12 text-center space-y-3 bg-white">
             <Info className="w-10 h-10 text-slate-300 mx-auto" />
@@ -64,7 +87,7 @@ export default function ConflictsPage({ params }: { params: { id: string } }) {
         )
       ) : (
         <div className="space-y-4">
-          {(run.conflicts || []).map((cnf) => (
+          {conflicts.map((cnf) => (
             <div key={cnf.id} className="bg-white rounded-[24px] shadow-sm border border-amber-200 p-6 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <span className="badge-conflict px-3 py-1 rounded-full text-xs font-mono font-bold uppercase">

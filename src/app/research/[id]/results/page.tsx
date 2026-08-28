@@ -180,6 +180,11 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
     );
   }
 
+  // A conflict only counts if it carries a real type and explanation. Guards the UI
+  // against half-populated conflict objects rendering as blank cards, and keeps the
+  // headline count honest.
+  const conflicts = (run.conflicts || []).filter((c) => c.conflict_type && c.explanation);
+
   const tabs = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "youtube", label: "YouTube Intel", icon: Video },
@@ -207,8 +212,8 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-[12px] text-muted font-medium">
               <span className="inline-flex items-center gap-1.5"><FileCheck className="w-3.5 h-3.5 text-citation" />{run.sources?.length || 0} sources</span>
               <span className="inline-flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5 text-verified" />{run.claims?.length || 0} claims</span>
-              {(run.conflicts?.length || 0) > 0 && (
-                <span className="inline-flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5 text-conflict" />{run.conflicts?.length} conflicts</span>
+              {conflicts.length > 0 && (
+                <span className="inline-flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5 text-conflict" />{conflicts.length} conflicts</span>
               )}
             </div>
           </div>
@@ -258,7 +263,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard icon={FileCheck} label="Verified Sources" value={run.sources?.length || 0} sublabel="100% traceable" tone="citation" />
             <StatCard icon={BadgeCheck} label="Supported Claims" value={run.claims?.length || 0} sublabel="excerpt backed" tone="verified" />
-            <StatCard icon={AlertTriangle} label="Conflicts Surfaced" value={run.conflicts?.length || 0} sublabel="methodological" tone="conflict" />
+            <StatCard icon={AlertTriangle} label="Conflicts Surfaced" value={conflicts.length} sublabel="methodological" tone="conflict" />
             <StatCard icon={Users} label="Community Signals" value={run.communitySignals?.length || 0} sublabel="user reported" tone="warning" />
           </div>
 
@@ -288,12 +293,18 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
             <div className="bg-card border border-conflict/20 rounded-2xl p-5 sm:p-6 shadow-sm">
               <SectionLabel icon={AlertTriangle}>Disagreements & Conflicts</SectionLabel>
-              <p className="text-[13px] text-muted m-0 mb-3 leading-relaxed">Independent labs disagree on ambient-temperature methodology for thermal tests.</p>
-              <button onClick={() => setActiveTab("conflicts")} className="font-mono text-[10.5px] font-semibold px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-conflict-bg text-conflict cursor-pointer hover:opacity-80 transition-opacity border-none">
-                <span className="w-1.5 h-1.5 rounded-full bg-conflict"></span>
-                {(run.conflicts || []).length} OPEN — see Conflicts tab
-                <ChevronRight className="w-3 h-3" />
-              </button>
+              {conflicts.length > 0 ? (
+                <>
+                  <p className="text-[13px] text-muted m-0 mb-3 leading-relaxed">{conflicts[0].explanation}</p>
+                  <button onClick={() => setActiveTab("conflicts")} className="font-mono text-[10.5px] font-semibold px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-conflict-bg text-conflict cursor-pointer hover:opacity-80 transition-opacity border-none">
+                    <span className="w-1.5 h-1.5 rounded-full bg-conflict"></span>
+                    {conflicts.length} OPEN — see Conflicts tab
+                    <ChevronRight className="w-3 h-3" />
+                  </button>
+                </>
+              ) : (
+                <p className="text-[13px] text-muted m-0 leading-relaxed">No conflicting reports — independent sources agree on the primary findings.</p>
+              )}
             </div>
           </div>
         </div>
@@ -510,8 +521,27 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
       {activeTab === "conflicts" && (
         <div className="animate-in fade-in duration-300 space-y-3.5">
-          {(run.conflicts || []).length > 0 ? (
-            run.conflicts?.map((cnf, idx) => (
+          <div className="bg-card border border-line-soft rounded-2xl p-4 sm:p-5 flex items-start gap-3">
+            <Info className="w-4 h-4 text-muted-2 shrink-0 mt-0.5" />
+            <div className="space-y-1.5 text-[12.5px] text-muted leading-relaxed">
+              <p className="font-semibold text-ink m-0">What counts as a conflict?</p>
+              <p className="m-0">
+                A conflict is where two credible sources report different results for the same thing —
+                different benchmark numbers, opposite conclusions, or measurements taken under
+                incompatible conditions or on different hardware variants. Nichorr lists each one
+                as-is rather than averaging them or declaring a winner.
+              </p>
+              <p className="m-0">
+                <strong className="text-ink">Why it matters for your script:</strong> naming the
+                disagreement and the reason behind it (e.g. a 21&deg;C vs 25&deg;C test room, or an
+                Exynos vs Snapdragon unit) earns more trust with a technical audience than one
+                confident number would.
+              </p>
+            </div>
+          </div>
+
+          {conflicts.length > 0 ? (
+            conflicts.map((cnf, idx) => (
               <div key={idx} className="border border-conflict/30 bg-conflict-bg rounded-2xl p-4 sm:p-5">
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="w-7 h-7 rounded-full bg-conflict text-white flex items-center justify-center shrink-0"><AlertTriangle className="w-3.5 h-3.5" /></div>

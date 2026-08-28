@@ -534,16 +534,26 @@ export class ResearchEngine {
           await updateStatus("CONFLICT_ANALYSIS");
 
           const topicEntities = session.sources.map(s => EntityResolver.resolve(s.title));
-          const variantConflicts: any[] = [];
+          const variantConflicts: Array<{ id: string; claim_a_id: string; claim_b_id: string; conflict_type: string; explanation: string }> = [];
+          const seenVariantReasons = new Set<string>();
 
           for (let i = 0; i < topicEntities.length; i++) {
             for (let j = i + 1; j < topicEntities.length; j++) {
               const compatCheck = EntityResolver.areVariantsCompatible(topicEntities[i], topicEntities[j]);
-              if (!compatCheck.compatible) {
+              // Only a genuine hardware-variant incompatibility (e.g. Exynos vs Snapdragon
+              // silicon, where merging the numbers would be invalid) is a real, surfaceable
+              // conflict. A bare brand difference between two source headlines is expected in
+              // any "X vs Y" comparison — not a disagreement — so it's skipped. Dedupe on the
+              // reason so many source pairs describing the same split collapse to one card.
+              if (!compatCheck.compatible && compatCheck.reason && /SoC|silicon|hardware variant/i.test(compatCheck.reason)) {
+                if (seenVariantReasons.has(compatCheck.reason)) continue;
+                seenVariantReasons.add(compatCheck.reason);
                 variantConflicts.push({
-                  id: `conf-var-${i + 1}`,
+                  id: `conf-var-${variantConflicts.length + 1}`,
                   claim_a_id: `cl-${i + 1}`,
                   claim_b_id: `cl-${j + 1}`,
+                  conflict_type: "HARDWARE_VARIANT",
+                  explanation: compatCheck.reason,
                 });
               }
             }
