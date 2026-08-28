@@ -50,6 +50,7 @@ export interface ResearchRunSession {
   qualityGateStatus: 'READY' | 'READY_WITH_WARNINGS' | 'PARTIAL' | 'NOT_READY' | 'BLOCKED';
   failureReason?: string;
   claimingRetryCount?: number;
+  briefRetryCount?: number;
 }
 
 const MAX_RUNSTORE_ENTRIES = 100;
@@ -731,6 +732,21 @@ export class ResearchEngine {
                 };
               }
             } catch (err: any) {
+              // Same transient-failure handling as claim extraction above: a Gemini
+              // timeout/503/429 here is not a reason to throw away the whole run (all
+              // upstream stages are already durably persisted). Re-queue via the poll
+              // loop's next /execute call — status stays GENERATING_BRIEF, each retry
+              // gets a fresh serverless execution budget. Capped so a sustained outage
+              // still surfaces as a real failure.
+              const isTransient = /timed out|503|429|fetch failed/i.test(err.message || "");
+              const retryCount = session.briefRetryCount || 0;
+              if (isTransient && retryCount < 4) {
+                session.briefRetryCount = retryCount + 1;
+                session.updatedAt = new Date().toISOString();
+                ResearchEngine.setRun(session);
+                await this.runsRepo.saveRun(session, userId);
+                return session;
+              }
               throw new Error(`Brief generation failed: ${err.message}`);
             }
           }

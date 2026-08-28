@@ -33,11 +33,13 @@ export class GeminiProvider implements LLMProvider {
 
     let lastError: any = null;
     let attempts = 0;
-    // Kept short so a single pipeline stage (which makes at most one of these calls) finishes
-    // comfortably inside a free-tier serverless function's real execution time cap, instead of
-    // the 60s x 3-retry worst case this used to allow (which alone could exceed the cap).
-    const maxRetries = 2;
-    const perAttemptTimeoutMs = 25000;
+    // Budgeted against the serverless function's real execution cap (5 min): worst case here is
+    // 4 x 45s attempts + (2+4+8)s backoff ~= 3m 14s. A pipeline stage makes at most one of these
+    // calls, and the research engine also re-queues transient failures onto the next /execute
+    // invocation (fresh budget), so this is the inner, not the only, line of defence.
+    // Gemini "high demand" 503s and slow responses under load routinely outlast a 2x25s window.
+    const maxRetries = 4;
+    const perAttemptTimeoutMs = 45000;
 
     while (attempts < maxRetries) {
       try {
@@ -86,8 +88,11 @@ export class GeminiProvider implements LLMProvider {
         const isRetryable = error.status === 503 || error.status === 429 || error.message?.includes("503") || error.message?.includes("429") || error.message?.includes("fetch failed") || error.message?.includes("timed out");
         
         if (isRetryable && attempts < maxRetries) {
-          console.warn(`Gemini API call failed (attempt ${attempts}/${maxRetries}), retrying in ${attempts * 2}s:`, error.message);
-          await new Promise(resolve => setTimeout(resolve, attempts * 2000));
+          // Exponential backoff: 2s, 4s, 8s — gives a Gemini demand spike time to clear
+          // instead of hammering it on a fixed 2s interval.
+          const backoffMs = 2000 * 2 ** (attempts - 1);
+          console.warn(`Gemini API call failed (attempt ${attempts}/${maxRetries}), retrying in ${backoffMs / 1000}s:`, error.message);
+          await new Promise(resolve => setTimeout(resolve, backoffMs));
         } else {
           throw new Error(`Gemini API call failed after ${attempts} attempts: ${error.message || error}`);
         }
