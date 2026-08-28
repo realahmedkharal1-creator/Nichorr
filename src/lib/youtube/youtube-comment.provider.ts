@@ -131,11 +131,10 @@ export class YouTubeCommentProvider {
       }
     }
 
-    // If API returned 0 or no API key, use realistic deterministic comments for known tech video topics
-    if (comments.length === 0) {
-      const fallbackComments = this.getDeterministicComments(cleanId);
-      comments.push(...fallbackComments);
-    }
+    // No fabricated fallback. A previous `getDeterministicComments()` invented viewer comments
+    // (with invented authors and like counts) whenever the API was unavailable, and those became
+    // "community signals" and "audience questions" presented to the creator as real user reports.
+    // With no API key or no comments, this returns an empty list and those sections stay empty.
 
     CentralCacheProvider.set(cacheKey, comments, YouTubeCommentProvider.CACHE_TTL_MS);
     return comments;
@@ -173,24 +172,30 @@ export class YouTubeCommentProvider {
       else if (count >= 4) signalStrength = "RECURRING";
       else if (count >= 2) signalStrength = "EMERGING";
 
-      const summaryMap: Record<ProblemCategory, string> = {
-        BATTERY_DRAIN: `Multiple users report unexpected idle battery drain on 5G and during overnight standby.`,
-        OVERHEATING: `Users observe significant surface heat buildup during 30+ minute camera recording or heavy multitasking.`,
-        THROTTLING: `Enthusiast reports indicate aggressive frame-rate throttling and display dimming after 15 minutes of sustained load.`,
-        DISPLAY_FLICKER: `Sensitive viewers highlight aggressive PWM display flickering at brightness levels below 40%.`,
-        CAMERA_BUG: `User reports mention occasional shutter lag in low light and HDR ghosting on fast-moving subjects.`,
-        SOFTWARE_CRASH: `Reports of UI stutter and launcher restarts following the initial launch-day firmware patch.`,
-        CHARGING_ISSUE: `Incompatible third-party PD chargers capping input speeds to 15W instead of advertised peak speeds.`,
-        CONNECTIVITY: `Reports of Bluetooth audio dropouts when phone is placed in back pocket outdoors.`,
-        AUDIO_SPEAKER: `Minor speaker distortion and hollow acoustic resonance at volume levels above 85%.`,
-        OTHER: `Miscellaneous user-reported software quirks and setup dilemmas.`,
+      // Describe what was actually observed rather than asserting a specific technical
+      // symptom. The previous version emitted a fixed sentence per category (e.g. "Multiple
+      // users report unexpected idle battery drain on 5G and during overnight standby")
+      // regardless of what the comments said, inventing specifics the evidence didn't support.
+      const categoryLabel: Record<ProblemCategory, string> = {
+        BATTERY_DRAIN: "battery drain",
+        OVERHEATING: "device overheating",
+        THROTTLING: "performance throttling",
+        DISPLAY_FLICKER: "display flicker",
+        CAMERA_BUG: "camera problems",
+        SOFTWARE_CRASH: "software crashes or instability",
+        CHARGING_ISSUE: "charging problems",
+        CONNECTIVITY: "connectivity problems",
+        AUDIO_SPEAKER: "speaker or audio problems",
+        OTHER: "other issues",
       };
+      const label = categoryLabel[cat] || "issues";
+      const summary = `${count} viewer ${count === 1 ? "comment" : "comments"} across the analysed videos raise ${label}. See the quoted comments for what was actually said.`;
 
       recurringProblems.push({
         id: `sig_yt_${signalId++}`,
         topic,
         category: cat,
-        signalSummary: summaryMap[cat] || `User-reported issues observed in community feedback for ${topic}.`,
+        signalSummary: summary,
         signalStrength,
         commentCount: count,
         sampleComments: items.slice(0, 3).map((item) => ({
@@ -238,104 +243,5 @@ export class YouTubeCommentProvider {
     }
 
     return { recurringProblems, audienceQuestions };
-  }
-
-  /**
-   * Deterministic comment fixtures for tech videos.
-   */
-  private getDeterministicComments(videoId: string): YouTubeCommentItem[] {
-    const isS27 = videoId.includes("s27") || videoId.includes("ip18");
-
-    if (isS27) {
-      return [
-        {
-          commentId: "c_s27_01",
-          videoId,
-          author: "Alex_TechEnthusiast",
-          text: "Can someone confirm if the European model uses Exynos 2600 or Snapdragon 8 Gen 5? My local retail store had conflicting specs.",
-          likeCount: 142,
-          publishedAt: "2026-02-15",
-          category: "QUESTION",
-          spamScore: 0.02,
-          isFiltered: false,
-          sentiment: "NEUTRAL",
-        },
-        {
-          commentId: "c_s27_02",
-          videoId,
-          author: "MarcusGamer99",
-          text: "I bought it on release day and the battery drain on 5G is noticeably worse than last year. Losing about 12% overnight while sleeping.",
-          likeCount: 89,
-          publishedAt: "2026-02-17",
-          category: "PROBLEM",
-          spamScore: 0.05,
-          isFiltered: false,
-          sentiment: "NEGATIVE",
-        },
-        {
-          commentId: "c_s27_03",
-          videoId,
-          author: "OLED_Sensitive",
-          text: "Please measure the PWM dimming frequency! The screen gives me headaches in low light conditions below 30% brightness.",
-          likeCount: 114,
-          publishedAt: "2026-02-18",
-          category: "PROBLEM",
-          spamScore: 0.04,
-          isFiltered: false,
-          sentiment: "NEGATIVE",
-        },
-        {
-          commentId: "c_s27_04",
-          videoId,
-          author: "DavidK_Creator",
-          text: "How does the sustained 4K 60fps video recording hold up in direct sunlight? Does it stop recording after 10 minutes like the older model?",
-          likeCount: 67,
-          publishedAt: "2026-02-19",
-          category: "QUESTION",
-          spamScore: 0.03,
-          isFiltered: false,
-          sentiment: "NEUTRAL",
-        },
-        {
-          commentId: "c_s27_05",
-          videoId,
-          author: "BotAccount_Promo",
-          text: "Click my bio for free iPhone giveaway! Check link in profile! 🔥🔥🔥",
-          likeCount: 1,
-          publishedAt: "2026-02-20",
-          category: "NOISE",
-          spamScore: 0.98,
-          isFiltered: true,
-          sentiment: "NEUTRAL",
-        },
-      ];
-    }
-
-    return [
-      {
-        commentId: `c_${videoId}_01`,
-        videoId,
-        author: "TechReviewFan",
-        text: "Should I upgrade to this or wait for next year's model? Is the performance jump worth the extra cost?",
-        likeCount: 52,
-        publishedAt: "2026-02-01",
-        category: "QUESTION",
-        spamScore: 0.03,
-        isFiltered: false,
-        sentiment: "NEUTRAL",
-      },
-      {
-        commentId: `c_${videoId}_02`,
-        videoId,
-        author: "PowerUser_PC",
-        text: "Under heavy sustained workloads I noticed significant thermal throttling after 20 minutes of continuous rendering.",
-        likeCount: 38,
-        publishedAt: "2026-02-03",
-        category: "PROBLEM",
-        spamScore: 0.04,
-        isFiltered: false,
-        sentiment: "NEGATIVE",
-      },
-    ];
   }
 }

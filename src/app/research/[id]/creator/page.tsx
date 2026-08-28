@@ -2072,7 +2072,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           </span>
         </div>
         <div className="font-serif font-semibold text-[19px] mb-[10px]">
-          {report?.topic || "Samsung Galaxy S27 Ultra vs iPhone 18 Pro Max"}
+          {report?.topic || "Untitled research run"}
         </div>
         <div className="flex gap-[16px] flex-wrap font-mono text-[11px] text-white/50">
           <span>Project Hash: 0fc1ebed18dc...</span>

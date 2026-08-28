@@ -185,6 +185,54 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
   // headline count honest.
   const conflicts = (run.conflicts || []).filter((c) => c.conflict_type && c.explanation);
 
+  // Real per-claim source attribution. This UI previously printed a fixed "AnandTech · Tier 1"
+  // next to every claim regardless of where the claim actually came from.
+  const sourceLabelForClaim = (claim: { evidence_ids?: string[] }): string => {
+    const evId = (claim.evidence_ids || [])[0];
+    const ev = (run.evidence || []).find((e) => e.id === evId);
+    const src = ev ? (run.sources || []).find((sc) => sc.id === ev.source_id) : undefined;
+    if (!src) return "Source not linked";
+    let host = src.publisher || "";
+    try {
+      host = new URL(src.url).hostname.replace(/^www\./, "");
+    } catch {
+      /* keep publisher */
+    }
+    const tier = src.sourceTier ? ` · Tier ${src.sourceTier}` : "";
+    return `${host || src.publisher || "Unknown source"}${tier}`;
+  };
+
+  // Real confidence summary, replacing a hardcoded "High (92%)". Confidence is reported as the
+  // dominant band across claims (the product deliberately avoids fake precision percentages).
+  const claimsWithEvidence = (run.claims || []).filter((c) => (c.evidence_ids || []).length > 0).length;
+  const confidenceCounts = (run.claims || []).reduce<Record<string, number>>((acc, c) => {
+    const band = (c.confidence || "UNKNOWN").toUpperCase();
+    acc[band] = (acc[band] || 0) + 1;
+    return acc;
+  }, {});
+  const dominantConfidence =
+    Object.entries(confidenceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "N/A";
+
+  // Evidence quality, reported honestly: excerpts that failed extraction are counted, not hidden.
+  const failedEvidence = (run.evidence || []).filter((e) => e.excerpt.startsWith("[EXTRACTION_FAILED]"));
+  const usableEvidence = (run.evidence || []).filter((e) => !e.excerpt.startsWith("[EXTRACTION_FAILED]"));
+
+  // First real claim -> excerpt -> source chain, for the provenance preview.
+  // Caveats the run actually produced: the brief's own caveats, plus each real conflict.
+  const briefCaveats: string[] = [
+    ...((run.brief?.important_caveats as string[] | undefined) || []),
+    ...conflicts.map((c) => `${c.conflict_type.replace(/_/g, " ")}: ${c.explanation} State both sets of test conditions on screen rather than presenting one as definitive.`),
+  ];
+
+  const firstClaim = (run.claims || [])[0];
+  const lineage = firstClaim
+    ? (() => {
+        const ev = (run.evidence || []).find((e) => (firstClaim.evidence_ids || []).includes(e.id));
+        const src = ev ? (run.sources || []).find((sc) => sc.id === ev.source_id) : undefined;
+        return { claim: firstClaim, evidence: ev, source: src };
+      })()
+    : null;
+
   const tabs = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "youtube", label: "YouTube Intel", icon: Video },
@@ -466,9 +514,9 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
       {activeTab === "evidence" && (
         <div className="animate-in fade-in duration-300 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <StatCard icon={FileCheck} label="Total Claims" value={(run.claims || []).length} sublabel="100% traced to sources" tone="citation" />
+            <StatCard icon={FileCheck} label="Total Claims" value={(run.claims || []).length} sublabel={`${claimsWithEvidence} traced to evidence`} tone="citation" />
             <StatCard icon={ExternalLink} label="Source Distribution" value={(run.sources || []).length} sublabel="YouTube & Web Specs" tone="ink" />
-            <StatCard icon={ShieldCheck} label="Confidence Rating" value="High (92%)" sublabel="claims w/ matched evidence" tone="verified" />
+            <StatCard icon={ShieldCheck} label="Confidence Rating" value={dominantConfidence} sublabel={`${claimsWithEvidence} of ${(run.claims || []).length} claims have matched evidence`} tone="verified" />
           </div>
 
           <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
@@ -509,7 +557,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                       <span className="font-mono text-[10.5px] font-semibold px-2 py-1 rounded-full inline-flex items-center gap-1.5 bg-verified-bg text-verified uppercase">
                         <BadgeCheck className="w-3 h-3" />VERIFIED
                       </span>
-                      <span className="font-mono text-[11px] text-muted-2">AnandTech · Tier 1</span>
+                      <span className="font-mono text-[11px] text-muted-2">{sourceLabelForClaim(claim)}</span>
                     </div>
                   </div>
                 ))}
@@ -567,40 +615,62 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
       {activeTab === "provenance" && (
         <div className="animate-in fade-in duration-300 space-y-5">
+          {/* Every figure and every hop below is derived from this run. This tab previously
+              displayed a fixed demo lineage — "96% / 20-of-21 chains", "Independence 8/10",
+              an AnandTech attribution and a quote about the iPhone 18 Pro Max — none of which
+              came from the research being displayed. */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard icon={ShieldCheck} label="Grounding Score" value="96%" sublabel="20/21 verified chains" tone="verified" />
-            <StatCard icon={FileText} label="Primary OEM Sources" value="3" sublabel="Tier 1 authoritative specs" tone="ink" />
-            <StatCard icon={GitBranch} label="Independent Labs" value="6" sublabel="lab benchmarks & FLIR" tone="citation" />
-            <StatCard icon={TrendingUp} label="Independence Score" value="8/10" sublabel="zero copied syndication" tone="ink" />
+            <StatCard icon={ShieldCheck} label="Claims With Evidence" value={`${claimsWithEvidence}/${(run.claims || []).length}`} sublabel="traced to an excerpt" tone="verified" />
+            <StatCard icon={FileText} label="Sources" value={(run.sources || []).length} sublabel="retrieved this run" tone="ink" />
+            <StatCard icon={GitBranch} label="Usable Excerpts" value={usableEvidence.length} sublabel={`${failedEvidence.length} extraction failures`} tone="citation" />
+            <StatCard icon={TrendingUp} label="Confidence" value={dominantConfidence} sublabel="dominant band across claims" tone="ink" />
           </div>
 
           <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
             <SectionLabel icon={GitBranch}>Full Evidence Lineage Chain</SectionLabel>
-            <div className="relative pl-2">
-              <div className="absolute left-[19px] top-3 bottom-3 w-px bg-line" />
-              <div className="relative flex gap-3 pb-5">
-                <div className="shrink-0 w-9 h-9 rounded-full bg-citation-bg text-citation flex items-center justify-center font-mono text-[11px] font-bold z-10">1</div>
-                <div className="bg-paper rounded-xl p-3.5 text-[13px] text-ink flex-1">
-                  <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase tracking-wide">Creator Studio Script Statement</span>
-                  "S26 Ultra sustains 4K60 recording noticeably longer than the iPhone 18 Pro Max."
+            {lineage ? (
+              <div className="relative pl-2">
+                <div className="absolute left-[19px] top-3 bottom-3 w-px bg-line" />
+                <div className="relative flex gap-3 pb-5">
+                  <div className="shrink-0 w-9 h-9 rounded-full bg-citation-bg text-citation flex items-center justify-center font-mono text-[11px] font-bold z-10">1</div>
+                  <div className="bg-paper rounded-xl p-3.5 text-[13px] text-ink flex-1">
+                    <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase tracking-wide">Structured Verified Claim</span>
+                    {lineage.claim.claim_text}
+                  </div>
+                </div>
+                <div className="relative flex gap-3 pb-5">
+                  <div className="shrink-0 w-9 h-9 rounded-full bg-citation-bg text-citation flex items-center justify-center font-mono text-[11px] font-bold z-10">2</div>
+                  <div className="bg-paper rounded-xl p-3.5 text-[13px] text-ink flex-1">
+                    <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase tracking-wide">Supporting Excerpt</span>
+                    {lineage.evidence ? `"${lineage.evidence.excerpt.slice(0, 400)}"` : "No excerpt linked to this claim."}
+                  </div>
+                </div>
+                <div className="relative flex gap-3">
+                  <div className={`shrink-0 w-9 h-9 rounded-full ${lineage.source ? "bg-verified text-white" : "bg-conflict text-white"} flex items-center justify-center z-10`}>
+                    {lineage.source ? <CheckCircle2 className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
+                  </div>
+                  <div className={`rounded-xl p-3.5 text-[13px] text-ink flex-1 border ${lineage.source ? "bg-verified-bg border-verified/20" : "bg-conflict-bg border-conflict/20"}`}>
+                    <span className={`font-mono text-[10px] mb-1.5 block uppercase tracking-wide ${lineage.source ? "text-verified" : "text-conflict"}`}>Primary Source Provenance</span>
+                    {lineage.source ? (
+                      <>
+                        {lineage.source.publisher}
+                        <a href={lineage.source.url} target="_blank" rel="noopener noreferrer" className="text-citation text-[12px] ml-1.5 font-semibold inline-flex items-center gap-1 hover:underline"><ExternalLink className="w-3 h-3" />Original Source</a>
+                      </>
+                    ) : (
+                      "UNBACKED — this claim could not be traced to a retrieved source."
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="relative flex gap-3 pb-5">
-                <div className="shrink-0 w-9 h-9 rounded-full bg-citation-bg text-citation flex items-center justify-center font-mono text-[11px] font-bold z-10">2</div>
-                <div className="bg-paper rounded-xl p-3.5 text-[13px] text-ink flex-1">
-                  <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase tracking-wide">Structured Verified Claim</span>
-                  Sustained 4K60 recording duration before thermal-triggered shutdown, delta 22%.
-                </div>
-              </div>
-              <div className="relative flex gap-3">
-                <div className="shrink-0 w-9 h-9 rounded-full bg-verified text-white flex items-center justify-center z-10"><CheckCircle2 className="w-4 h-4" /></div>
-                <div className="bg-verified-bg rounded-xl p-3.5 text-[13px] text-ink flex-1 border border-verified/20">
-                  <span className="font-mono text-[10px] text-verified mb-1.5 block uppercase tracking-wide">Primary Source Provenance</span>
-                  AnandTech Hardware Reviews — Tier 1 Independent Lab
-                  <a href="#" className="text-citation text-[12px] ml-1.5 font-semibold inline-flex items-center gap-1 hover:underline"><ExternalLink className="w-3 h-3" />Original Source</a>
-                </div>
-              </div>
-            </div>
+            ) : (
+              <p className="text-[13px] text-muted py-2">No claims available to trace for this run.</p>
+            )}
+            <p className="text-[12px] text-muted mt-4">
+              Showing the first claim&apos;s chain.{" "}
+              <Link href={`/research/${run.id}/provenance`} className="text-citation font-semibold hover:underline">
+                See all {(run.claims || []).length} lineage chains
+              </Link>
+            </p>
           </div>
         </div>
       )}
@@ -731,12 +801,16 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             <h2 className="font-serif font-semibold text-[22px] sm:text-[30px] m-0 mb-3 text-ink leading-tight">{run.topic}</h2>
             <p className="text-[13.5px] text-muted leading-[1.6] m-0 mb-7 pb-6 border-b border-line-soft">A defensible comparison brief for a YouTube review — every claim below is traced to a source. Click any marker to see the evidence.</p>
 
-            <div className="mb-7">
-              <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" />Suggested Opening Hook</div>
-              <p className="font-serif italic text-[16px] sm:text-[19px] leading-[1.6] text-ink m-0 pl-5 border-l-[3px] border-citation relative">
-                "Every review this week told you the S26 Ultra wins on battery. What they didn't tell you is <em>why</em> — and it's not the reason you'd think."
-              </p>
-            </div>
+            {/* Drawn from this run's own executive summary. Previously a fixed line about the
+                S26 Ultra winning on battery, shown verbatim for every topic. */}
+            {(run.brief?.executive_summary || []).length > 0 && (
+              <div className="mb-7">
+                <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" />Lead With This</div>
+                <p className="font-serif italic text-[16px] sm:text-[19px] leading-[1.6] text-ink m-0 pl-5 border-l-[3px] border-citation relative">
+                  {run.brief!.executive_summary[0]}
+                </p>
+              </div>
+            )}
 
             <div className="mb-7">
               <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3 flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5" />Verified Talking Points</div>
@@ -751,13 +825,21 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               </ol>
             </div>
 
-            <div className="mb-7">
-              <div className="font-mono text-[11px] tracking-[0.5px] text-warning uppercase mb-3 flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5" />Say This Carefully</div>
-              <div className="bg-warning-bg text-warning rounded-xl p-4 text-[13px] leading-[1.6] border border-warning/20 flex gap-2.5">
-                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>Independent labs disagree on ambient-temperature test methodology for thermal claims. Present both S26 Ultra and iPhone 18 Pro Max thermal figures with their test conditions stated on screen — don't present one as universally "faster."</span>
+            {/* Real caveats from the brief plus this run's actual conflicts. Previously a fixed
+                warning naming the iPhone 18 Pro Max — a phone not in this research. */}
+            {briefCaveats.length > 0 && (
+              <div className="mb-7">
+                <div className="font-mono text-[11px] tracking-[0.5px] text-warning uppercase mb-3 flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5" />Say This Carefully</div>
+                <div className="flex flex-col gap-2">
+                  {briefCaveats.map((c, i) => (
+                    <div key={i} className="bg-warning-bg text-warning rounded-xl p-4 text-[13px] leading-[1.6] border border-warning/20 flex gap-2.5">
+                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span>{c}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <div>
               <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3 flex items-center gap-1.5"><FileText className="w-3.5 h-3.5" />Sources Cited ({(run.sources || []).length})</div>

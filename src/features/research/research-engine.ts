@@ -412,6 +412,17 @@ export class ResearchEngine {
                 const capitalized = words.filter(w => /^[A-Z]/.test(w)).length;
                 if (capitalized / words.length > 0.6) return true;
                 if (/Login\s*Signup|Facebook\s*X\s*Twitter|Home\s*About\s*Contact/i.test(text)) return true;
+                // Cookie/consent interstitials scrape as long, lowercase, plausible-looking prose
+                // and so slipped past the capitalisation heuristic above — a real run had a
+                // uswitch cookie banner persisted as claim evidence. Treat consent boilerplate
+                // and dense link-menu text as failed extraction.
+                if (/cookie preferences|cookie policy|essential cookies|we use cookies|accept all cookies|manage (your )?(cookie|consent)|privacy preferences/i.test(text)) return true;
+                // Nav menus repeat the same short product words; if the text is mostly a small
+                // vocabulary repeated across many words, it is a menu, not an article.
+                if (words.length >= 40) {
+                  const unique = new Set(words.map((w) => w.toLowerCase()));
+                  if (unique.size / words.length < 0.45) return true;
+                }
                 return false;
               };
 

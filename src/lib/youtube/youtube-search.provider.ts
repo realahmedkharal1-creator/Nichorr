@@ -73,163 +73,21 @@ export class YouTubeSearchProvider {
           }
         }
       } catch (err: any) {
-        console.warn("YouTube Search API query failed, using structured fallback discovery:", err.message);
+        console.warn("YouTube Search API query failed; no YouTube intelligence will be produced for this run:", err.message);
       }
     }
 
-    // If no API key is provided or API returned 0 items, provide deterministic structured tech videos for the topic
-    if (discoveredVideos.size === 0) {
-      const fallbackList = this.generateDeterministicTechVideos(topic);
-      for (const v of fallbackList) {
-        discoveredVideos.set(v.videoId, v);
-      }
+    // No fabricated fallback. If the API key is absent or the API returned nothing, this
+    // returns an empty list and the intelligence engine reports "no YouTube data" honestly.
+    // A previous `generateDeterministicTechVideos()` fallback invented videos here — fake
+    // videoIds, real creators' channel names, and fabricated view counts — which then flowed
+    // into claims, conflicts and briefs as if it were researched evidence.
+    if (discoveredVideos.size === 0 && (!apiKey || apiKey === "your-youtube-api-key")) {
+      console.warn("YouTube discovery skipped: YOUTUBE_API_KEY is not configured. No YouTube intelligence will be produced for this run.");
     }
 
     const results = Array.from(discoveredVideos.values());
     CentralCacheProvider.set(cacheKey, results, YouTubeSearchProvider.CACHE_TTL_MS);
     return results;
-  }
-
-  /**
-   * Generates deterministic, topic-grounded tech review videos for offline/testing/fallback use.
-   */
-  private generateDeterministicTechVideos(topic: string): YouTubeVideoItem[] {
-    const tLower = topic.toLowerCase();
-    const isComparison = tLower.includes("vs") || tLower.includes("compare");
-    const isPhone = tLower.includes("galaxy") || tLower.includes("iphone") || tLower.includes("ultra");
-    const isLaptop = tLower.includes("macbook") || tLower.includes("dell") || tLower.includes("xps") || tLower.includes("laptop");
-    const isGPU = tLower.includes("rtx") || tLower.includes("rx") || tLower.includes("5090") || tLower.includes("8900");
-
-    if (isPhone) {
-      return [
-        {
-          videoId: "s27_vs_ip18_review_01",
-          title: `${topic} - Real World 4K Camera & Battery Endurance Test`,
-          channelTitle: "Dave2D Tech Lab",
-          channelId: "UCtxD4y1kIqL6v1A6bU4gGSw",
-          publishedAt: "2026-02-14",
-          url: "https://www.youtube.com/watch?v=s27_vs_ip18_review_01",
-          description: "Full in-depth comparison examining 4K 60fps thermal throttling, battery drain curves, and camera dynamic range.",
-          thumbnailUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
-          viewCount: 482000,
-          likeCount: 29500,
-          commentCount: 1420,
-          dimension: "REVIEW",
-          query: `${topic} in-depth review`,
-        },
-        {
-          videoId: "s27_gaming_thermals_02",
-          title: `${topic} Sustained 120Hz Gaming & Thermal Throttling Test`,
-          channelTitle: "Geekerwan Hardware Insights",
-          channelId: "UC6v9Xq1A3qB7wY8w1A2bC3d",
-          publishedAt: "2026-02-16",
-          url: "https://www.youtube.com/watch?v=s27_gaming_thermals_02",
-          description: "Measuring peak wattage, surface temperatures using FLIR thermal cameras, and frame drop stability after 30 minutes of Genshin Impact.",
-          thumbnailUrl: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400",
-          viewCount: 315000,
-          likeCount: 21800,
-          commentCount: 980,
-          dimension: "THERMALS",
-          query: `${topic} thermal throttling`,
-        },
-        {
-          videoId: "s27_battery_drain_03",
-          title: `${topic} Ultimate Battery Drain Test (Wi-Fi, Cellular & Video)`,
-          channelTitle: "TechNick Real Life Tests",
-          channelId: "UCyG8bV4bB7yN9kK1L2mN3pQ",
-          publishedAt: "2026-02-18",
-          url: "https://www.youtube.com/watch?v=s27_battery_drain_03",
-          description: "Side-by-side battery test with normalized 200 nit screen brightness. Which flagship lasts longest?",
-          thumbnailUrl: "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400",
-          viewCount: 620000,
-          likeCount: 38400,
-          commentCount: 2150,
-          dimension: "BATTERY",
-          query: `${topic} battery drain`,
-        },
-        {
-          videoId: "s27_user_problems_04",
-          title: `Don't Buy ${topic} Until You Watch This! 2 Weeks Later Issues`,
-          channelTitle: "Mrwhosetheboss Review",
-          channelId: "UCyWqModMQlbIo8274Wh_ARw",
-          publishedAt: "2026-02-22",
-          url: "https://www.youtube.com/watch?v=s27_user_problems_04",
-          description: "Long term testing issues: PWM display flicker reports, Bluetooth stuttering in cold weather, and camera shutter lag.",
-          thumbnailUrl: "https://images.unsplash.com/photo-1567581935884-3349723552ca?w=400",
-          viewCount: 940000,
-          likeCount: 56000,
-          commentCount: 3810,
-          dimension: "ISSUES",
-          query: `${topic} known issues problems`,
-        },
-      ];
-    }
-
-    if (isGPU) {
-      return [
-        {
-          videoId: "rtx5090_efficiency_01",
-          title: `${topic} - 4K 144Hz Benchmarks & Power Draw Analysis`,
-          channelTitle: "Hardware Unboxed",
-          channelId: "UCdDbzX_yM0eC_jBwVz_uXQA",
-          publishedAt: "2026-01-20",
-          url: "https://www.youtube.com/watch?v=rtx5090_efficiency_01",
-          description: "50 game benchmark suite at 4K Native, DLSS 4 Performance, and FSR 4. Measuring total board power consumption.",
-          thumbnailUrl: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400",
-          viewCount: 512000,
-          likeCount: 34000,
-          commentCount: 2200,
-          dimension: "BENCHMARK",
-          query: `${topic} benchmark 4k`,
-        },
-        {
-          videoId: "rtx5090_thermals_02",
-          title: `${topic} Sustained Furmark Stress Test & Fan Acoustic Noise`,
-          channelTitle: "Gamers Nexus Deep Dive",
-          channelId: "UChIs72whgVU876G6F5XXEgQ",
-          publishedAt: "2026-01-22",
-          url: "https://www.youtube.com/watch?v=rtx5090_thermals_02",
-          description: "Acoustic dBA measurements, PCB heat distribution, VRAM junction thermals, and transient power spikes.",
-          thumbnailUrl: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=400",
-          viewCount: 420000,
-          likeCount: 29000,
-          commentCount: 1840,
-          dimension: "THERMALS",
-          query: `${topic} thermals power`,
-        },
-      ];
-    }
-
-    // Default Tech Video Fallback
-    return [
-      {
-        videoId: `vid_tech_review_${Math.abs(topic.length * 31)}`,
-        title: `${topic} - In-Depth Creator Research & Performance Audit`,
-        channelTitle: "Hardware Insights Lab",
-        publishedAt: new Date().toISOString().split("T")[0],
-        url: `https://www.youtube.com/watch?v=vid_tech_review_${Math.abs(topic.length * 31)}`,
-        description: `Comprehensive technical evaluation of ${topic} covering specifications, benchmarks, thermals, and real-world findings.`,
-        thumbnailUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400",
-        viewCount: 250000,
-        likeCount: 15400,
-        commentCount: 820,
-        dimension: "REVIEW",
-        query: `${topic} in-depth review`,
-      },
-      {
-        videoId: `vid_tech_thermals_${Math.abs(topic.length * 47)}`,
-        title: `${topic} Sustained Workload & Thermal Throttling Analysis`,
-        channelTitle: "Independent Benchmarks Lab",
-        publishedAt: new Date().toISOString().split("T")[0],
-        url: `https://www.youtube.com/watch?v=vid_tech_thermals_${Math.abs(topic.length * 47)}`,
-        description: `Detailed stress test measuring thermal dissipation, acoustic noise, and clock stability under sustained load for ${topic}.`,
-        thumbnailUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400",
-        viewCount: 180000,
-        likeCount: 11200,
-        commentCount: 640,
-        dimension: "THERMALS",
-        query: `${topic} thermal throttling`,
-      },
-    ];
   }
 }

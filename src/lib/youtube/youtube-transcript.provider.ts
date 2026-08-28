@@ -145,12 +145,10 @@ export class YouTubeTranscriptProvider {
       }
     }
 
-    // Fallback: Check deterministic tech video transcripts for offline benchmarks and standard tests
-    const fallbackTranscript = this.getDeterministicTranscript(cleanId);
-    if (fallbackTranscript) {
-      CentralCacheProvider.set(cacheKey, fallbackTranscript, YouTubeTranscriptProvider.CACHE_TTL_MS);
-      return fallbackTranscript;
-    }
+    // No fabricated fallback transcript. A previous `getDeterministicTranscript()` returned
+    // invented captions (fake fps figures, fake battery timings, fake thermal deltas) for
+    // hardcoded video ids, which downstream code then treated as real reviewer measurements.
+    // When captions genuinely cannot be retrieved the result below says so honestly.
 
     // If video ID is valid format but transcript is not found:
     const unavailableResult: YouTubeTranscriptResult = {
@@ -197,74 +195,5 @@ export class YouTubeTranscriptProvider {
     }
 
     return segments;
-  }
-
-  /**
-   * Deterministic transcripts for standard benchmark videos.
-   */
-  private getDeterministicTranscript(videoId: string): YouTubeTranscriptResult | null {
-    if (videoId === "s27_vs_ip18_review_01" || videoId.includes("s27_vs_ip18")) {
-      const rawSegments = [
-        { start: 0, dur: 12, text: "Welcome back to the channel. Today we have the flagship showdown: Samsung Galaxy S27 Ultra versus iPhone 18 Pro Max." },
-        { start: 12.5, dur: 22, text: "First, let's look at sustained gaming performance. Under a 30 minute Genshin Impact run at maximum settings, the S27 Ultra averaged 58.4 fps with mild thermal throttling after minute 18." },
-        { start: 35, dur: 25, text: "In comparison, the iPhone 18 Pro Max held 59.8 fps for the first 12 minutes before aggressive thermal dimming dropped the display brightness from 1200 nits down to 650 nits." },
-        { start: 60.5, dur: 28, text: "For battery endurance, in our normalized 200-nit continuous video playback loop, the Galaxy S27 Ultra lasted 14 hours and 22 minutes, while the iPhone 18 Pro Max achieved 15 hours and 40 minutes." },
-        { start: 89, dur: 31, text: "Looking at camera dynamic range in high contrast 4K 60fps video, Samsung has slightly more shadow detail but Apple maintains superior skin tone consistency and zero audio clipping." },
-        { start: 120.5, dur: 26, text: "Crucial caveat: In European markets with the Exynos 2600 variant, sustained thermals were 3.5 degrees Celsius higher than the North American Snapdragon 8 Gen 5 model." },
-      ];
-
-      const segments: YouTubeTranscriptSegment[] = rawSegments.map((s, idx) => ({
-        segmentId: `seg_${idx + 1}`,
-        videoId,
-        start: s.start,
-        duration: s.dur,
-        end: s.start + s.dur,
-        text: s.text,
-        formattedTime: YouTubeTranscriptProvider.formatTimestamp(s.start),
-        sequence: idx + 1,
-      }));
-
-      return {
-        videoId,
-        status: "AVAILABLE",
-        language: "en",
-        isGenerated: false,
-        segments,
-        fullText: segments.map((s) => s.text).join(" "),
-        retrievedAt: new Date().toISOString(),
-      };
-    }
-
-    if (videoId === "rtx5090_efficiency_01" || videoId.includes("rtx5090")) {
-      const rawSegments = [
-        { start: 0, dur: 15, text: "Today we are analyzing the RTX 5090 power efficiency and 4K rasterization performance against the RX 8900 XTX." },
-        { start: 15.5, dur: 25, text: "At native 4K resolution across 30 tested titles, the RTX 5090 delivers a 38 percent performance lead, drawing an average of 480 watts total board power." },
-        { start: 41, dur: 24, text: "With DLSS 4 frame generation enabled, power draw drops to 395 watts while maintaining over 140 frames per second in Cyberpunk 2077 Path Tracing." },
-        { start: 65.5, dur: 28, text: "Transient power spikes were measured at 590 watts for 20 milliseconds, meaning a high quality 1000 watt ATX 3.1 power supply is strongly recommended." },
-      ];
-
-      const segments: YouTubeTranscriptSegment[] = rawSegments.map((s, idx) => ({
-        segmentId: `seg_${idx + 1}`,
-        videoId,
-        start: s.start,
-        duration: s.dur,
-        end: s.start + s.dur,
-        text: s.text,
-        formattedTime: YouTubeTranscriptProvider.formatTimestamp(s.start),
-        sequence: idx + 1,
-      }));
-
-      return {
-        videoId,
-        status: "AVAILABLE",
-        language: "en",
-        isGenerated: false,
-        segments,
-        fullText: segments.map((s) => s.text).join(" "),
-        retrievedAt: new Date().toISOString(),
-      };
-    }
-
-    return null;
   }
 }
