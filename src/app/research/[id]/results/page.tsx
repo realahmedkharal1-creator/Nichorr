@@ -55,7 +55,7 @@ function StatCard({
     <div
       className={`group relative rounded-2xl border p-5 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 overflow-hidden ${TONE_SURFACE[tone]}`}
     >
-      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-4 shadow-sm ${TONE_ICON_SOLID[tone]}`}>
+      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-4 ${TONE_ICON_SOLID[tone]}`}>
         <Icon className="w-5 h-5" strokeWidth={2.25} />
       </div>
       <div className={`font-serif font-extrabold text-[36px] leading-none tracking-tight ${TONE_VALUE_TEXT[tone]}`}>
@@ -449,7 +449,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                 <StatCard icon={Users} label="Recurring Issues" value={youtubeReport.recurringProblems.length} sublabel="real user complaints" tone="warning" />
               </div>
 
-              <div className="flex gap-1.5 overflow-x-auto p-1 bg-paper rounded-xl border border-line" style={{ scrollbarWidth: "none" }}>
+              <div className="flex gap-1.5 overflow-x-auto p-1.5 bg-card rounded-2xl border border-line shadow-card" style={{ scrollbarWidth: "none" }}>
                 {[
                   { id: "consensus", label: "Reviewer Consensus & Gaps" },
                   { id: "disagreements", label: "Disagreements" },
@@ -461,7 +461,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                     key={sub.id}
                     onClick={() => setYtActiveTab(sub.id)}
                     className={`shrink-0 text-[12.5px] font-semibold px-3.5 py-2 rounded-lg cursor-pointer whitespace-nowrap transition-all border-none ${
-                      ytActiveTab === sub.id ? "bg-card text-ink shadow-sm" : "text-muted hover:text-ink bg-transparent"
+                      ytActiveTab === sub.id ? "bg-ink text-paper shadow-card" : "text-muted hover:text-ink bg-transparent"
                     }`}
                   >
                     {sub.label}
@@ -541,7 +541,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               {ytActiveTab === "disagreements" && (
                 <div className="space-y-4">
                   {youtubeReport.reviewerDisagreements.map((dis, idx) => (
-                    <div key={idx} className="bg-conflict-bg border border-conflict/30 rounded-2xl p-5 shadow-sm">
+                    <div key={idx} className="bg-conflict-bg border border-conflict/30 rounded-2xl p-6 shadow-card">
                       <h4 className="m-0 mb-3 text-[14px] font-semibold text-conflict flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {dis.aspect}</h4>
                       <div className="space-y-2 mb-2">
                         {dis.reviewers.map((rev, rIdx) => (
@@ -610,7 +610,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                   </p>
                   {youtubeReport.recurringProblems.map((prob, i) => (
                     <div key={i} className="bg-card border border-line rounded-2xl overflow-hidden shadow-card">
-                      <div className="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-line-soft bg-paper">
+                      <div className="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-line bg-card">
                         <div className="flex items-center gap-2 font-semibold text-[13px] text-ink">
                           <AlertTriangle className="w-4 h-4 text-warning" />
                           {prob.category.replace(/_/g, " ")}
@@ -695,54 +695,71 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               ))}
             </div>
 
-            <div className="divide-y divide-line-soft">
-              {filteredClaims.map((claim, idx) => (
-                  <div key={idx} className="py-4 first:pt-0 last:pb-0">
-                    <div className="text-[14px] leading-[1.6] mb-2 text-ink">
-                      {claim.claim_text}{" "}
-                      <button
-                        onClick={() => setExpandedClaimId(expandedClaimId === claim.id ? null : claim.id)}
-                        title="Show the source excerpt behind this claim"
-                        aria-expanded={expandedClaimId === claim.id}
-                        className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none align-super ml-0.5 cursor-pointer hover:bg-citation hover:text-white transition-colors"
+            <div className="space-y-3">
+              {filteredClaims.map((claim, idx) => {
+                const backed = (claim.evidence_ids || []).length > 0;
+                const open = expandedClaimId === claim.id;
+                return (
+                  <div key={idx} className="rounded-xl border border-line bg-card p-4 transition-colors hover:border-muted-2">
+                    <div className="flex items-start gap-3">
+                      <span
+                        className={`shrink-0 mt-0.5 w-6 h-6 rounded-lg font-mono text-[11px] font-bold flex items-center justify-center ${
+                          backed ? "bg-verified text-white" : "bg-conflict text-white"
+                        }`}
                       >
                         {idx + 1}
-                      </button>
-                    </div>
-                    <div className="flex gap-2 items-center flex-wrap">
-                      <span className={`font-mono text-[10.5px] font-semibold px-2 py-1 rounded-full inline-flex items-center gap-1.5 uppercase ${
-                        (claim.evidence_ids || []).length > 0 ? "bg-verified-bg text-verified" : "bg-conflict-bg text-conflict"
-                      }`}>
-                        {(claim.evidence_ids || []).length > 0
-                          ? (<><BadgeCheck className="w-3 h-3" />Verified</>)
-                          : (<><AlertTriangle className="w-3 h-3" />Unbacked</>)}
                       </span>
-                      <span className="font-mono text-[11px] text-muted-2">{sourceLabelForClaim(claim)}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[14px] leading-[1.6] text-ink m-0">{claim.claim_text}</p>
+                        <div className="flex gap-2 items-center flex-wrap mt-2.5">
+                          <span
+                            className={`font-mono text-[10px] font-bold px-2 py-1 rounded-full inline-flex items-center gap-1.5 uppercase ${
+                              backed ? "bg-verified-bg text-verified" : "bg-conflict-bg text-conflict"
+                            }`}
+                          >
+                            {backed ? <BadgeCheck className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
+                            {backed ? "Verified" : "Unbacked"}
+                          </span>
+                          <span className="font-mono text-[11px] text-muted-2">{sourceLabelForClaim(claim)}</span>
+                          <button
+                            onClick={() => setExpandedClaimId(open ? null : claim.id)}
+                            className="ml-auto font-mono text-[10.5px] font-semibold text-citation hover:underline inline-flex items-center gap-1 cursor-pointer border-none bg-transparent"
+                          >
+                            {open ? "Hide excerpt" : "Show excerpt"}
+                            <ChevronRight className={`w-3 h-3 transition-transform ${open ? "rotate-90" : ""}`} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* The citation marker now opens the actual excerpt this claim rests on,
-                        instead of being a decorative button with no handler. */}
-                    {expandedClaimId === claim.id && (() => {
+                    {open && (() => {
                       const ev = (run.evidence || []).find((e) => (claim.evidence_ids || []).includes(e.id));
                       const src = ev ? (run.sources || []).find((sc) => sc.id === ev.source_id) : undefined;
                       return (
-                        <div className="mt-3 bg-paper border border-line-soft rounded-xl p-3.5">
-                          <div className="font-mono text-[10px] uppercase tracking-wide text-muted-2 mb-1.5">Source excerpt</div>
+                        <div className="mt-3 ml-9 border-l-2 border-citation/30 pl-3.5">
+                          <div className="font-mono text-[10px] uppercase tracking-wide text-muted-2 mb-1">Source excerpt</div>
                           {ev ? (
-                            <p className="text-[12.5px] leading-[1.6] text-ink m-0">&ldquo;{ev.excerpt.slice(0, 600)}&rdquo;</p>
+                            <p className="text-[12.5px] leading-[1.65] text-ink/85 m-0">&ldquo;{ev.excerpt.slice(0, 600)}&rdquo;</p>
                           ) : (
                             <p className="text-[12.5px] text-conflict m-0">No excerpt is linked to this claim.</p>
                           )}
                           {src && (
-                            <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-citation text-[12px] mt-2 font-semibold inline-flex items-center gap-1 hover:underline">
-                              <ExternalLink className="w-3 h-3" />{src.publisher || src.title}
+                            <a
+                              href={src.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-citation text-[12px] mt-2 font-semibold inline-flex items-center gap-1 hover:underline"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              {src.publisher || src.title}
                             </a>
                           )}
                         </div>
                       );
                     })()}
                   </div>
-                ))}
+                );
+              })}
               {filteredClaims.length === 0 && (
                 <p className="text-[13px] text-muted py-3">
                   {(run.claims || []).length === 0
@@ -792,7 +809,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           ) : (run.claims || []).length === 0 && (run.sources || []).length === 0 ? (
             <EmptyState icon={Info} title="No data yet" description="Nothing to check for conflicts." />
           ) : (
-            <div className="bg-verified-bg border border-verified/30 rounded-2xl p-8 shadow-sm text-center">
+            <div className="bg-verified-bg border border-verified/30 rounded-2xl p-8 shadow-card text-center">
               <div className="w-12 h-12 rounded-2xl bg-card text-verified flex items-center justify-center mx-auto mb-3 shadow-card"><CheckCircle2 className="w-6 h-6" /></div>
               <h4 className="m-0 mb-1.5 text-[15px] font-semibold text-ink font-serif">No critical conflicts detected</h4>
               <p className="m-0 text-[13px] text-muted max-w-sm mx-auto">All other independent lab publications and official spec sheets concur on primary findings.</p>
@@ -821,14 +838,14 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                 <div className="absolute left-[19px] top-3 bottom-3 w-px bg-line" />
                 <div className="relative flex gap-3 pb-5">
                   <div className="shrink-0 w-9 h-9 rounded-full bg-citation-bg text-citation flex items-center justify-center font-mono text-[11px] font-bold z-10">1</div>
-                  <div className="bg-paper rounded-xl p-3.5 text-[13px] text-ink flex-1">
+                  <div className="bg-card border border-line rounded-xl p-3.5 text-[13px] text-ink flex-1">
                     <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase tracking-wide">Structured Verified Claim</span>
                     {lineage.claim.claim_text}
                   </div>
                 </div>
                 <div className="relative flex gap-3 pb-5">
                   <div className="shrink-0 w-9 h-9 rounded-full bg-citation-bg text-citation flex items-center justify-center font-mono text-[11px] font-bold z-10">2</div>
-                  <div className="bg-paper rounded-xl p-3.5 text-[13px] text-ink flex-1">
+                  <div className="bg-card border border-line rounded-xl p-3.5 text-[13px] text-ink flex-1">
                     <span className="font-mono text-[10px] text-citation mb-1.5 block uppercase tracking-wide">Supporting Excerpt</span>
                     {lineage.evidence ? `"${lineage.evidence.excerpt.slice(0, 400)}"` : "No excerpt linked to this claim."}
                   </div>
@@ -873,7 +890,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             ))}
           </div>
 
-          <div className="bg-card border border-line rounded-2xl p-5 max-w-[640px] mb-5 space-y-4 shadow-sm">
+          <div className="bg-card border border-line rounded-2xl p-6 max-w-[640px] mb-5 space-y-4 shadow-card">
             {askMessages.map((msg, i) => (
               msg.role === 'user' ? (
                 <div key={i} className="flex justify-end">
@@ -1037,7 +1054,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               <div className="font-mono text-[11px] tracking-[0.5px] text-citation uppercase mb-3 flex items-center gap-1.5"><FileText className="w-3.5 h-3.5" />Sources Cited ({(run.sources || []).length})</div>
               <div className="flex flex-col gap-2">
                 {(run.sources || []).slice(0, 3).map((s, idx) => (
-                  <div key={idx} className="text-[13px] flex items-center gap-2.5 text-ink bg-paper rounded-lg px-3 py-2.5">
+                  <div key={idx} className="text-[13px] flex items-center gap-2.5 text-ink bg-card border border-line rounded-lg px-3 py-2.5">
                     <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold shrink-0">{idx + 1}</span>
                     <span className="flex-1">{s.title} <span className="text-muted">({s.publisher})</span></span>
                     <ExternalLink className="w-3.5 h-3.5 text-muted-2 shrink-0" />
