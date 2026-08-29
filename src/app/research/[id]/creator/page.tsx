@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, Fragment } from "react";
+import { useRouter } from "next/navigation";
 import { ResearchTabNav } from "@/components/research/ResearchTabNav";
 import { 
  Sparkles, 
@@ -261,6 +262,7 @@ import { TabBar } from "@/components/ui/TabBar";
 import { CreatorTeleprompter } from "@/components/creator/CreatorTeleprompter";
 
 export default function CreatorWorkspacePage({ params }: { params: { id: string } }) {
+ const router = useRouter();
  const [report, setReport] = useState<CreatorStudioReport | null>(null);
  const [loading, setLoading] = useState(true);
  const [duration, setDuration] = useState<TargetVideoDuration>(12);
@@ -2131,17 +2133,17 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[14px] mb-[26px]">
           {[
-           { i: 1, title: "Research & Sources", status: "IN PROGRESS", score: "Status: Active Collection", badgeClass: "bg-citation-bg text-citation" },
-           { i: 2, title: "Evidence Health", status: "READY", score: "Score: 29%", badgeClass: "bg-verified-bg text-verified" },
-           { i: 3, title: "Health Decisions", status: "READY", score: "Status: Verified", badgeClass: "bg-verified-bg text-verified" },
-           { i: 4, title: "Script & Narration", status: "READY", score: "Status: Ready for Inspection", badgeClass: "bg-verified-bg text-verified" },
-           { i: 5, title: "Quality Review", status: "WARNING", score: "Score: 25%", badgeClass: "bg-warning-bg text-warning" },
-           { i: 6, title: "Production Assets", status: "READY", score: "Score: 95%", badgeClass: "bg-verified-bg text-verified" },
-           { i: 7, title: "Publishing Preflight", status: "READY", score: "Score: 100%", badgeClass: "bg-verified-bg text-verified" },
-           { i: 8, title: "Distribution & Release", status: "WARNING", score: "Score: 69%", badgeClass: "bg-warning-bg text-warning" },
-           { i: 9, title: "Video Editor Sync", status: "READY", score: "Status: Ready for Inspection", badgeClass: "bg-verified-bg text-verified" }
+           { i: 1, title: "Research & Sources", status: "IN PROGRESS", score: "Status: Active Collection", badgeClass: "bg-citation-bg text-citation", go: () => router.push(`/research/${params.id}/evidence`) },
+           { i: 2, title: "Evidence Health", status: "READY", score: "Score: 29%", badgeClass: "bg-verified-bg text-verified", go: () => router.push(`/research/${params.id}/provenance`) },
+           { i: 3, title: "Health Decisions", status: "READY", score: "Status: Verified", badgeClass: "bg-verified-bg text-verified", go: () => setActiveTab("decisions") },
+           { i: 4, title: "Script & Narration", status: "READY", score: "Status: Ready for Inspection", badgeClass: "bg-verified-bg text-verified", go: () => router.push(`/research/${params.id}/creator/script`) },
+           { i: 5, title: "Quality Review", status: "WARNING", score: "Score: 25%", badgeClass: "bg-warning-bg text-warning", go: () => router.push(`/research/${params.id}/creator/fact-check`) },
+           { i: 6, title: "Production Assets", status: "READY", score: "Score: 95%", badgeClass: "bg-verified-bg text-verified", go: () => setActiveTab("matrix") },
+           { i: 7, title: "Publishing Preflight", status: "READY", score: "Score: 100%", badgeClass: "bg-verified-bg text-verified", go: () => setActiveTab("publishingOrchestrator") },
+           { i: 8, title: "Distribution & Release", status: "WARNING", score: "Score: 69%", badgeClass: "bg-warning-bg text-warning", go: () => setActiveTab("exportWorkspace") },
+           { i: 9, title: "Video Editor Sync", status: "READY", score: "Status: Ready for Inspection", badgeClass: "bg-verified-bg text-verified", go: () => setActiveTab("workflow") }
           ].map(stage => (
-           <div key={stage.i} className="bg-card border border-line-soft rounded-[14px] p-[16px]">
+           <div key={stage.i} className="bg-card border border-line rounded-[14px] p-[16px]">
             <div className="flex justify-between items-start mb-[10px]">
               <span className="font-mono text-[10px] text-muted-2 uppercase tracking-wide">STAGE {stage.i}</span>
               <span className={`font-mono text-[10px] font-semibold px-[8px] py-[3px] rounded-[12px] ${stage.badgeClass}`}>
@@ -2150,7 +2152,10 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             </div>
             <div className="font-bold text-[13.5px] text-ink m-[4px_0]">{stage.title}</div>
             <div className="text-[11.5px] text-muted">{stage.score}</div>
-            <button className="w-full mt-[10px] bg-paper border border-line rounded-[8px] p-[8px] text-[12px] font-semibold cursor-pointer text-ink hover:bg-line-soft transition-colors">
+            <button
+              onClick={stage.go}
+              className="w-full mt-[10px] bg-paper border border-line rounded-[8px] p-[8px] text-[12px] font-semibold cursor-pointer text-ink hover:border-citation hover:text-citation transition-colors"
+            >
               Open Subsystem →
             </button>
            </div>
@@ -2252,8 +2257,60 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             {simulationError}
           </div>
         )}
+
+        {simulationPreview && (
+          <div className="mt-4 border border-line rounded-[12px] overflow-hidden">
+            <div className="px-4 py-2.5 bg-paper border-b border-line flex items-center justify-between">
+              <span className="font-mono text-[10px] uppercase tracking-wide text-muted-2">Read-only impact preview</span>
+              <button
+                onClick={() => setSimulationPreview(null)}
+                className="text-muted-2 hover:text-ink text-[15px] leading-none bg-transparent border-none cursor-pointer"
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-4 space-y-3">
+              <p className="text-[13px] text-ink m-0">{simulationPreview.summary}</p>
+
+              {([
+                { key: "willChange", label: "Will change", tone: "text-conflict", dot: "bg-conflict" },
+                { key: "mayChange", label: "May change", tone: "text-warning", dot: "bg-warning" },
+                { key: "blocked", label: "Blocked", tone: "text-conflict", dot: "bg-conflict" },
+                { key: "willRemainUnchanged", label: "Unaffected", tone: "text-verified", dot: "bg-verified" },
+              ] as const).map(({ key, label, tone, dot }) => {
+                const items = (simulationPreview as any)[key] as { assetId: string; label: string }[];
+                if (!items || items.length === 0) return null;
+                return (
+                  <div key={key}>
+                    <div className={`flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wide mb-1 ${tone}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
+                      {label} ({items.length})
+                    </div>
+                    <ul className="m-0 pl-4 space-y-0.5">
+                      {items.map((it) => (
+                        <li key={it.assetId} className="text-[12.5px] text-ink/80">{it.label}</li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+
+              {simulationPreview.expectedConsequences.length > 0 && (
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-wide text-muted-2 mb-1">Expected consequences</div>
+                  <ul className="m-0 pl-4 space-y-0.5">
+                    {simulationPreview.expectedConsequences.map((c, i) => (
+                      <li key={i} className="text-[12.5px] text-ink/80">{c}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-      
+
     </div>
    )}
    
@@ -2312,7 +2369,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={() => handleCreateExecutionPlan()}
          disabled={isPlanning}
-         className="flex items-center gap-1.5 bg-verified hover:bg-verified disabled:opacity-50 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-verified hover:opacity-90 disabled:opacity-50 text-white px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <Plus className="w-3.5 h-3.5" />
          {isPlanning ? "Planning..." : "Create Execution Plan"}
@@ -2373,7 +2430,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleApproveExecutionPlan}
           disabled={isApproving || selectedOpIds.length === 0}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-bold font-mono shadow-sm transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-citation hover:opacity-90 disabled:opacity-50 text-white text-xs font-bold font-mono shadow-sm transition"
          >
           <Check className="w-3.5 h-3.5" />
           {isApproving ? "Approving..." : `Approve Selected (${selectedOpIds.length})`}
@@ -2384,7 +2441,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleStageExecution}
           disabled={isStaging}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-bold font-mono shadow-sm transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-citation hover:opacity-90 disabled:opacity-50 text-white text-xs font-bold font-mono shadow-sm transition"
          >
           <Package className="w-3.5 h-3.5" />
           {isStaging ? "Staging..." : "Stage Execution in Workspace"}
@@ -2394,7 +2451,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         {executionPlan.executionStatus === 'VALIDATED' && (
          <button
           onClick={() => setShowCommitModal(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-verified hover:bg-verified text-ink text-xs font-bold font-mono shadow-sm transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-verified hover:opacity-90 text-white text-xs font-bold font-mono shadow-sm transition"
          >
           <CheckCircle className="w-3.5 h-3.5" />
           Commit to Active Project
@@ -2716,7 +2773,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleCommitExecution}
           disabled={isCommitting}
-          className="px-4 py-2 rounded-xl bg-verified hover:bg-verified disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-verified hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           {isCommitting ? "Committing..." : "Confirm & Commit"}
          </button>
@@ -2756,7 +2813,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleRollbackExecution}
           disabled={isRollingBack}
-          className="px-4 py-2 rounded-xl bg-conflict hover:bg-conflict disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-conflict hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           {isRollingBack ? "Rolling back..." : "Confirm Rollback"}
          </button>
@@ -2821,7 +2878,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleEvaluateCertification}
          disabled={isCertifying}
-         className="flex items-center gap-1.5 bg-warning hover:bg-warning disabled:opacity-50 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-warning hover:opacity-90 disabled:opacity-50 text-white px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <ShieldCheck className="w-3.5 h-3.5" />
          {isCertifying ? "Evaluating..." : "Evaluate Certification"}
@@ -2831,7 +2888,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={() => setShowLockModal(true)}
           disabled={certificate.status === 'BLOCKED'}
-          className="flex items-center gap-1.5 bg-verified hover:bg-verified disabled:opacity-40 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+          className="flex items-center gap-1.5 bg-verified hover:opacity-90 disabled:opacity-40 text-white px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
          >
           <Lock className="w-3.5 h-3.5" />
           Apply Release Lock
@@ -2851,7 +2908,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleGenerateHandoff}
          disabled={isGeneratingHandoff}
-         className="flex items-center gap-1.5 bg-citation hover:bg-citation disabled:opacity-50 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:opacity-90 disabled:opacity-50 text-white px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <Package className="w-3.5 h-3.5" />
          {isGeneratingHandoff ? "Generating..." : "Generate Handoff Manifest"}
@@ -3241,7 +3298,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleApplyReleaseLock}
           disabled={isLocking}
-          className="px-4 py-2 rounded-xl bg-warning hover:bg-warning disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-warning hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           {isLocking ? "Locking..." : "Confirm & Apply Lock"}
          </button>
@@ -3292,7 +3349,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleUnlockRelease}
           disabled={isUnlocking}
-          className="px-4 py-2 rounded-xl bg-conflict hover:bg-conflict disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-conflict hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           {isUnlocking ? "Unlocking..." : "Confirm Unlock"}
          </button>
@@ -3345,7 +3402,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="flex flex-wrap items-center gap-2 shrink-0">
         <button
          onClick={() => setShowRecordSnapshotModal(true)}
-         className="flex items-center gap-1.5 bg-citation hover:bg-citation text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:opacity-90 text-white px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <BarChart3 className="w-3.5 h-3.5" />
          Record Performance Data
@@ -3359,7 +3416,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         </button>
         <button
          onClick={() => setShowExperimentModal(true)}
-         className="flex items-center gap-1.5 bg-citation hover:bg-citation text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:opacity-90 text-white px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <FlaskConical className="w-3.5 h-3.5" />
          New A/B Experiment
@@ -3530,7 +3587,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              <button
               onClick={() => handleCreateResearchOpportunity(sig.signalId)}
               disabled={isCreatingResearchOpp || Boolean(sig.researchOpportunityId)}
-              className="px-2.5 py-1 rounded bg-citation hover:bg-citation disabled:opacity-40 text-ink text-[11px] font-bold transition"
+              className="px-2.5 py-1 rounded bg-citation hover:opacity-90 disabled:opacity-40 text-white text-[11px] font-bold transition"
              >
               {sig.researchOpportunityId ? "Queued" : "Create Research Task"}
              </button>
@@ -3736,7 +3793,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleRecordPerformanceSnapshot}
           disabled={isRecordingSnapshot}
-          className="px-4 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-citation hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           {isRecordingSnapshot ? "Saving..." : "Save Snapshot"}
          </button>
@@ -3784,7 +3841,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleLogAudienceComment}
           disabled={isLoggingAudience || !newAudienceComment.trim()}
-          className="px-4 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-citation hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           {isLoggingAudience ? "Processing..." : "Process Signal"}
          </button>
@@ -3854,7 +3911,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleCreateExperiment}
           disabled={isCreatingExperiment || !newExpHypothesis.trim()}
-          className="px-4 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-citation hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           {isCreatingExperiment ? "Creating..." : "Create Experiment"}
          </button>
@@ -3983,7 +4040,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="flex flex-wrap items-center gap-2 shrink-0">
         <button
          onClick={() => setShowImportModal(true)}
-         className="flex items-center gap-1.5 bg-citation hover:bg-citation text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:opacity-90 text-white px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <UploadCloud className="w-3.5 h-3.5" />
          Import Platform Data
@@ -3991,7 +4048,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleRunBenchmarkSynthesis}
          disabled={isSynthesizing}
-         className="flex items-center gap-1.5 bg-citation hover:bg-citation disabled:opacity-50 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:opacity-90 disabled:opacity-50 text-white px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isSynthesizing ? "animate-spin" : ""}`} />
          {isSynthesizing ? "Synthesizing..." : "Synthesize Benchmarks"}
@@ -4068,7 +4125,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleRunBenchmarkSynthesis}
          disabled={isSynthesizing}
-         className="px-3.5 py-1.5 rounded-xl bg-citation hover:bg-citation text-ink text-xs font-mono font-bold transition"
+         className="px-3.5 py-1.5 rounded-xl bg-citation hover:opacity-90 text-white text-xs font-mono font-bold transition"
         >
          Run Benchmark Synthesis
         </button>
@@ -4284,7 +4341,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleImportPlatformData}
           disabled={isIngesting}
-          className="px-4 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-citation hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           {isIngesting ? "Ingesting..." : "Validate & Ingest"}
          </button>
@@ -4337,7 +4394,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="flex flex-wrap items-center gap-2 shrink-0">
         <button
          onClick={() => setShowCreateVariantModal(true)}
-         className="flex items-center gap-1.5 bg-verified hover:bg-verified text-ink px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className="flex items-center gap-1.5 bg-verified hover:opacity-90 text-white px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
         >
          <Plus className="w-3.5 h-3.5" />
          Create Production Variant
@@ -4659,7 +4716,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleCreateVariant}
           disabled={isCreatingVariant || !newVariantName.trim()}
-          className="px-4 py-2 rounded-[10px] bg-verified hover:bg-verified disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-[10px] bg-verified hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           {isCreatingVariant ? "Creating..." : "Create Variant"}
          </button>
@@ -4675,7 +4732,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
      {/* Notifications */}
      {exportSuccessMsg && (
-      <div className="p-4 rounded-[10px] bg-blue-950/60 border border-citation/80 text-citation text-xs font-mono flex items-center gap-2">
+      <div className="p-4 rounded-[10px] bg-ink/60 border border-citation/80 text-citation text-xs font-mono flex items-center gap-2">
        <CheckCheck className="w-4 h-4 text-citation" />
        <span>{exportSuccessMsg}</span>
       </div>
@@ -4695,7 +4752,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <div className="flex items-center gap-2">
          <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
           exportPackage?.status === "EXPORTED" ? "bg-verified-bg text-verified border-verified-bg" :
-          exportPackage?.status === "READY" ? "bg-blue-950 text-citation border-citation" :
+          exportPackage?.status === "READY" ? "bg-ink text-citation border-citation" :
           exportPackage?.status === "BLOCKED" ? "bg-conflict-bg text-conflict border-conflict-bg" :
           "bg-paper text-ink border-line-soft"
          }`}>
@@ -4726,7 +4783,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleExecuteExport}
          disabled={isExporting || exportPackage?.status === "BLOCKED" || exportPackage?.status === "EXPORTED"}
-         className="flex items-center gap-1.5 bg-citation hover:bg-citation disabled:opacity-50 text-ink px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className="flex items-center gap-1.5 bg-citation hover:opacity-90 disabled:opacity-50 text-white px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
         >
          <Download className="w-3.5 h-3.5" />
          {isExporting ? "Exporting..." : exportPackage?.status === "EXPORTED" ? "Exported" : "Execute Export"}
@@ -4830,7 +4887,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           Deterministic manifest with honest capability reporting.
          </p>
         </div>
-        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-950 text-citation border border-citation">
+        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-ink text-citation border border-citation">
          {exportPackage?.renderManifest?.manifestHash}
         </span>
        </div>
@@ -4942,7 +4999,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
      {/* Notifications */}
      {publishingSuccessMsg && (
-      <div className="p-4 rounded-[10px] bg-violet-950/60 border border-citation/80 text-citation/60 text-xs font-mono flex items-center gap-2">
+      <div className="p-4 rounded-[10px] bg-ink/60 border border-citation/80 text-citation/60 text-xs font-mono flex items-center gap-2">
        <CheckCheck className="w-4 h-4 text-citation/60" />
        <span>{publishingSuccessMsg}</span>
       </div>
@@ -4962,7 +5019,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <div className="flex items-center gap-2">
          <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
           publishingPlan?.status === "PUBLISHED" ? "bg-verified-bg text-verified border-verified-bg" :
-          publishingPlan?.status === "PREFLIGHT_PASSED" || publishingPlan?.status === "APPROVED" ? "bg-violet-950 text-citation/60 border-citation" :
+          publishingPlan?.status === "PREFLIGHT_PASSED" || publishingPlan?.status === "APPROVED" ? "bg-ink text-citation/60 border-citation" :
           publishingPlan?.status === "PREFLIGHT_BLOCKED" ? "bg-conflict-bg text-conflict border-conflict-bg" :
           "bg-paper text-ink border-line-soft"
          }`}>
@@ -5041,8 +5098,8 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           </div>
           <span className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${
            tgt.status === "PUBLISHED" ? "bg-verified-bg text-verified border-verified-bg" :
-           tgt.status === "APPROVED" || tgt.status === "PREFLIGHT_PASSED" ? "bg-violet-950 text-citation/60 border-citation" :
-           tgt.status === "STAGING_ONLY" ? "bg-blue-950 text-citation border-citation" :
+           tgt.status === "APPROVED" || tgt.status === "PREFLIGHT_PASSED" ? "bg-ink text-citation/60 border-citation" :
+           tgt.status === "STAGING_ONLY" ? "bg-ink text-citation border-citation" :
            tgt.status === "PREFLIGHT_BLOCKED" ? "bg-conflict-bg text-conflict border-conflict-bg" :
            "bg-paper text-muted-2 border-line-soft"
           }`}>
@@ -5084,7 +5141,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              handleApprovePublishingTarget(tgt.targetId);
             }}
             disabled={isPublishingLoading || tgt.status === "PREFLIGHT_BLOCKED"}
-            className="flex-1 py-1.5 rounded-[8px] bg-verified hover:bg-verified disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+            className="flex-1 py-1.5 rounded-[8px] bg-verified hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
            >
             Approve
            </button>
@@ -5097,7 +5154,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              handleStagePublishingTarget(tgt.targetId);
             }}
             disabled={isPublishingLoading}
-            className="flex-1 py-1.5 rounded-[8px] bg-citation hover:bg-citation text-ink text-xs font-mono font-bold transition"
+            className="flex-1 py-1.5 rounded-[8px] bg-citation hover:opacity-90 text-white text-xs font-mono font-bold transition"
            >
             Stage
            </button>
@@ -5110,7 +5167,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              handlePublishTargetExecution(tgt.targetId);
             }}
             disabled={isPublishingLoading}
-            className="flex-1 py-1.5 rounded-[8px] bg-citation hover:bg-citation text-ink text-xs font-mono font-bold transition"
+            className="flex-1 py-1.5 rounded-[8px] bg-citation hover:opacity-90 text-white text-xs font-mono font-bold transition"
            >
             {tgt.connectionState === "NOT_CONFIGURED" ? "Stage Publish" : "Publish"}
            </button>
@@ -5256,7 +5313,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             <td className="p-2.5">
              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
               rec.status === "SUCCESS" ? "bg-verified-bg text-verified border-verified-bg" :
-              rec.status === "STAGING_ONLY" ? "bg-blue-950 text-citation border-citation" :
+              rec.status === "STAGING_ONLY" ? "bg-ink text-citation border-citation" :
               "bg-conflict-bg text-conflict border-conflict-bg"
              }`}>
               {rec.status}
@@ -5346,7 +5403,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={() => handleSchedulePublishingTarget(selectedPublishingTarget.targetId)}
           disabled={isPublishingLoading || !publishingScheduleTime}
-          className="px-4 py-2 rounded-[10px] bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-[10px] bg-citation hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
           Confirm Schedule
          </button>
@@ -5440,7 +5497,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleReconcilePublications}
          disabled={isReconciling}
-         className="flex items-center gap-1.5 bg-conflict hover:bg-conflict disabled:opacity-50 text-ink px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className="flex items-center gap-1.5 bg-conflict hover:opacity-90 disabled:opacity-50 text-white px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isReconciling ? "animate-spin" : ""}`} />
          {isReconciling ? "Reconciling..." : "Reconcile Publications"}
@@ -5613,7 +5670,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
               chg.severity === "CRITICAL" ? "bg-conflict-bg text-conflict border-conflict-bg" :
               chg.severity === "WARNING" ? "bg-warning-bg text-warning border-warning-bg" :
-              "bg-blue-950 text-citation border-citation"
+              "bg-ink text-citation border-citation"
              }`}>
               {chg.category}
              </span>
@@ -5803,7 +5860,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={loadCalibrationState}
          disabled={isCalibrating}
-         className="flex items-center gap-1.5 bg-warning hover:bg-warning disabled:opacity-50 text-ink px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className="flex items-center gap-1.5 bg-warning hover:opacity-90 disabled:opacity-50 text-white px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isCalibrating ? "animate-spin" : ""}`} />
          {isCalibrating ? "Ingesting..." : "Ingest & Re-evaluate"}
@@ -5871,7 +5928,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
              item.priority === "CRITICAL" ? "bg-conflict-bg text-conflict border-conflict-bg" :
              item.priority === "HIGH" ? "bg-warning-bg text-warning border-warning-bg" :
-             item.priority === "MEDIUM" ? "bg-blue-950 text-citation border-citation" :
+             item.priority === "MEDIUM" ? "bg-ink text-citation border-citation" :
              "bg-paper text-muted-2 border-line-soft"
             }`}>
              {item.priority}
@@ -5926,7 +5983,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          </div>
          <span className={`px-2.5 py-1 rounded text-xs font-mono font-bold border ${
           selectedCalibrationItem.attribution.state === "SUPPORTED_BY_MULTIPLE_SIGNALS" ? "bg-verified-bg text-verified border-verified-bg" :
-          selectedCalibrationItem.attribution.state === "CORRELATED" || selectedCalibrationItem.attribution.state === "POSSIBLE_CONTRIBUTOR" ? "bg-blue-950 text-citation border-citation" :
+          selectedCalibrationItem.attribution.state === "CORRELATED" || selectedCalibrationItem.attribution.state === "POSSIBLE_CONTRIBUTOR" ? "bg-ink text-citation border-citation" :
           "bg-warning-bg text-warning border-warning-bg"
          }`}>
           {selectedCalibrationItem.attribution.state}
@@ -5994,7 +6051,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <button
            onClick={() => handleValidateQueueItem(selectedCalibrationItem.queueItemId)}
            disabled={isCalibrating || selectedCalibrationItem.status === "BLOCKED"}
-           className="px-4 py-2 rounded-[10px] bg-warning hover:bg-warning disabled:opacity-50 text-ink font-bold text-xs transition"
+           className="px-4 py-2 rounded-[10px] bg-warning hover:opacity-90 disabled:opacity-50 text-white font-bold text-xs transition"
           >
            {isCalibrating ? "Validating..." : "Validate This"}
           </button>
@@ -6125,7 +6182,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={() => loadHypothesisState()}
          disabled={isReconcilingHypotheses}
-         className="flex items-center gap-1.5 bg-conflict hover:bg-conflict disabled:opacity-50 text-ink px-4 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-conflict hover:opacity-90 disabled:opacity-50 text-white px-4 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isReconcilingHypotheses ? "animate-spin" : ""}`} />
          {isReconcilingHypotheses ? "Reconciling..." : "Reconcile Hypotheses"}
@@ -6354,7 +6411,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <button
             onClick={() => handleBridgeHypothesisValidationTask(task.taskId)}
             disabled={task.validationStatus === "VALIDATION_PENDING" || task.validationStatus === "VALIDATED"}
-            className="px-3 py-1.5 rounded-lg bg-conflict hover:bg-conflict disabled:opacity-50 text-ink font-bold text-xs transition shrink-0"
+            className="px-3 py-1.5 rounded-lg bg-conflict hover:opacity-90 disabled:opacity-50 text-white font-bold text-xs transition shrink-0"
            >
             {task.validationStatus === "VALIDATION_PENDING" ? "Bridged to Phase 86" : "Bridge to Phase 86 Queue"}
            </button>
@@ -6575,7 +6632,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            {tgt.status !== 'APPROVED' && tgt.status !== 'SCHEDULED' && !tgt.isBlocked && (
             <button
              onClick={() => setTargetForApproval(tgt)}
-             className="flex-1 py-1.5 rounded-lg bg-verified hover:bg-verified text-ink text-xs font-bold shadow-sm transition"
+             className="flex-1 py-1.5 rounded-lg bg-verified hover:opacity-90 text-white text-xs font-bold shadow-sm transition"
             >
              Approve Target
             </button>
@@ -6584,7 +6641,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            {tgt.status === 'APPROVED' && (
             <button
              onClick={() => setTargetForSchedule(tgt)}
-             className="flex-1 py-1.5 rounded-lg bg-citation hover:bg-citation text-ink text-xs font-bold shadow-sm transition"
+             className="flex-1 py-1.5 rounded-lg bg-citation hover:opacity-90 text-white text-xs font-bold shadow-sm transition"
             >
              Schedule Release
             </button>

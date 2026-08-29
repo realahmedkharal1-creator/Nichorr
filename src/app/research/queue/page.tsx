@@ -71,7 +71,7 @@ export default function ResearchQueuePage() {
       ) : (
         <div className="space-y-4">
           {queue.map((item) => (
-            <div key={item.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 bg-white border-slate-200 space-y-4 hover:border-indigo-500/60 transition">
+            <div key={item.id} className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 bg-white border-slate-200 space-y-4 hover:border-citation/60 transition">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
                   <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${

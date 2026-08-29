@@ -41,7 +41,7 @@ export default function HistoryPage() {
             placeholder="Filter research runs..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition"
+            className="w-full bg-ink border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition"
           />
         </div>
       </div>
@@ -60,16 +60,16 @@ export default function HistoryPage() {
           </div>
         ) : (
           filteredRuns.map((r) => (
-            <div key={r.id} className="slate-card p-5 hover:border-indigo-500/60 hover:bg-slate-900/80 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
+            <div key={r.id} className="slate-card p-5 hover:border-citation/60 hover:bg-slate-900/80 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-mono text-indigo-400 font-semibold">{r.contentType || "Comparison"}</span>
                   <span className="text-slate-700">•</span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold ${
-                    r.status === 'COMPLETED' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/80' :
-                    r.status === 'CANCELLED' ? 'bg-red-950 text-red-400 border border-red-800/80' :
-                    r.status === 'FAILED' ? 'bg-red-950 text-red-400 border border-red-800/80' :
-                    'bg-amber-950 text-amber-400 border border-amber-800/80'
+                    r.status === 'COMPLETED' ? 'bg-verified text-emerald-400 border border-verified/80' :
+                    r.status === 'CANCELLED' ? 'bg-conflict text-red-400 border border-red-800/80' :
+                    r.status === 'FAILED' ? 'bg-conflict text-red-400 border border-red-800/80' :
+                    'bg-warning text-amber-400 border border-amber-800/80'
                   }`}>
                     {r.status}
                   </span>
