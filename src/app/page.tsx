@@ -151,14 +151,14 @@ export default function LandingPage() {
             <p className="text-[18px] text-muted max-w-[46ch] mb-8 leading-relaxed">
               Nichorr researches your next video the way a fact-checker would — every claim traced to a real source, every disagreement between sources flagged, every number confidence-scored. Nothing fabricated. Ever.
             </p>
-            <div className="flex flex-col items-start gap-3">
+            <div className="flex items-center gap-5 flex-wrap">
               <Link
                 href="/signup"
                 className="inline-flex items-center gap-2 bg-ink text-white font-semibold text-[15.5px] px-7 py-3.5 rounded-full hover:bg-ink/85 hover:-translate-y-0.5 transition-all"
               >
                 Get Started Free <ArrowRight className="w-4 h-4" />
               </Link>
-              <span className="text-[13.5px] text-muted-2 pl-1">
+              <span className="text-[13.5px] text-muted-2">
                 No waitlist. No card required to try it.
               </span>
             </div>
