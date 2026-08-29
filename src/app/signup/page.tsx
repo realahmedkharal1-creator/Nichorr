@@ -3,8 +3,8 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ShieldCheck, Mail, Lock, User, ArrowRight, Github } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { SocialAuthButtons, type OAuthProvider } from "@/components/auth/SocialAuthButtons";
 import Link from "next/link";
 
 export default function SignUpPage() {
@@ -65,7 +65,7 @@ function SignUpContent() {
     }
   };
 
-  const handleOAuthLogin = async (provider: 'google' | 'github') => {
+  const handleOAuthLogin = async (provider: OAuthProvider) => {
     if (!termsAccepted) {
       setMessage({ text: "You must accept the Terms and Privacy Policy before continuing.", type: "error" });
       return;
@@ -186,20 +186,7 @@ function SignUpContent() {
           </div>
         </div>
 
-        <div className="flex gap-3">
-          <button
-            onClick={() => handleOAuthLogin('google')}
-            className="flex-1 flex items-center justify-center bg-card border border-line hover:bg-paper text-ink py-2.5 rounded-[10px] text-[13px] font-bold transition-all"
-          >
-            Google
-          </button>
-          <button
-            onClick={() => handleOAuthLogin('github')}
-            className="flex-1 flex items-center justify-center bg-ink hover:bg-ink/90 text-white py-2.5 rounded-[10px] text-[13px] font-bold transition-all"
-          >
-            GitHub
-          </button>
-        </div>
+        <SocialAuthButtons onSelect={handleOAuthLogin} />
 
         <div className="flex items-center gap-2 justify-center mt-[26px] font-mono text-[10.5px] text-muted-2 tracking-[0.4px]">
           <span className="w-[5px] h-[5px] rounded-full bg-verified"></span>
