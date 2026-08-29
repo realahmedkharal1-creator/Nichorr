@@ -1,6 +1,6 @@
 "use client";
 
-export type OAuthProvider = "google" | "facebook";
+export type OAuthProvider = "google";
 
 function GoogleIcon() {
   return (
@@ -25,24 +25,8 @@ function GoogleIcon() {
   );
 }
 
-function FacebookIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-      <path
-        fill="#1877F2"
-        d="M18 9a9 9 0 1 0-10.41 8.89v-6.29H5.31V9h2.28V7.02c0-2.25 1.34-3.5 3.4-3.5.98 0 2.01.18 2.01.18v2.22h-1.13c-1.12 0-1.47.69-1.47 1.4V9h2.5l-.4 2.6h-2.1v6.29A9 9 0 0 0 18 9Z"
-      />
-      <path
-        fill="#fff"
-        d="m12.5 11.6.4-2.6h-2.5V7.32c0-.71.35-1.4 1.47-1.4H13V3.7s-1.03-.18-2.01-.18c-2.06 0-3.4 1.25-3.4 3.5V9H5.31v2.6h2.28v6.29a9.1 9.1 0 0 0 2.81 0V11.6h2.1Z"
-      />
-    </svg>
-  );
-}
-
 const PROVIDERS: { id: OAuthProvider; label: string; Icon: () => JSX.Element }[] = [
   { id: "google", label: "Continue with Google", Icon: GoogleIcon },
-  { id: "facebook", label: "Continue with Facebook", Icon: FacebookIcon },
 ];
 
 export function SocialAuthButtons({
