@@ -157,4 +157,11 @@ export interface YouTubeIntelligenceReport {
     hook: string;
     targetAudience: string;
   }>;
+  /** Honest summary of how many analysed videos yielded a usable transcript. */
+  transcriptCoverage: {
+    total: number;
+    available: number;
+    blocked: number;
+    unavailable: number;
+  };
 }

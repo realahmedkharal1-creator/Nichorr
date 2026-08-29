@@ -447,6 +447,22 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                 ))}
               </div>
 
+              {/* When no transcript could be retrieved, consensus / disagreements / gaps have
+                  nothing real to stand on. Say so once, up front, instead of leaving three
+                  sections mysteriously blank. */}
+              {youtubeReport.transcriptCoverage && youtubeReport.transcriptCoverage.available === 0 && (
+                <div className="bg-warning-bg border border-warning/25 rounded-2xl p-4 flex items-start gap-3 text-[12.5px] leading-[1.6] text-ink">
+                  <Info className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="block mb-0.5">Transcript analysis unavailable for this run</strong>
+                    {youtubeReport.transcriptCoverage.blocked > 0
+                      ? `${youtubeReport.transcriptCoverage.blocked} of ${youtubeReport.transcriptCoverage.total} videos have captions, but YouTube blocked automated transcript retrieval (a known restriction on server IPs). `
+                      : `None of the ${youtubeReport.transcriptCoverage.total} analysed videos had a retrievable transcript. `}
+                    Reviewer consensus, disagreements and coverage gaps are derived from transcripts, so they are empty here. Video metadata and viewer comments below are unaffected.
+                  </div>
+                </div>
+              )}
+
               {ytActiveTab === "consensus" && (
                 <>
                   <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
@@ -458,6 +474,9 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                           {con}
                         </div>
                       ))}
+                      {youtubeReport.reviewerConsensus.length === 0 && (
+                        <p className="text-[13px] text-muted py-1 m-0">No multi-channel agreement could be established from the available transcripts.</p>
+                      )}
                     </div>
                   </div>
 
@@ -470,9 +489,15 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                           <p className="m-0 text-[12.5px] leading-[1.5] text-ink">{gap}</p>
                         </div>
                       ))}
+                      {youtubeReport.coverageGaps.length === 0 && (
+                        <p className="text-[13px] text-muted m-0">No coverage gaps identified — this needs reviewer transcripts to compare audience questions against.</p>
+                      )}
                     </div>
 
                     <SectionLabel icon={Sparkles}>High-Impact Content Angles</SectionLabel>
+                    {youtubeReport.contentOpportunities.length === 0 && (
+                      <p className="text-[13px] text-muted m-0">No content angles yet — these are built from reviewer disagreements, recurring complaints and audience questions.</p>
+                    )}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
                       {youtubeReport.contentOpportunities.map((opp, idx) => (
                         <div key={idx} className="bg-paper border border-line-soft rounded-xl p-4 flex flex-col h-full hover:shadow-sm transition-shadow">
@@ -499,42 +524,60 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                       <div className="space-y-2 mb-2">
                         {dis.reviewers.map((rev, rIdx) => (
                           <div key={rIdx} className="bg-white rounded-[10px] p-3 text-[12.5px] text-ink border border-line-soft">
-                            <b>{rev.channel}</b> — {rev.claim} <span className="text-muted">({rev.methodologyNotes})</span>
+                            <b>{rev.channel}</b> — {rev.claim}
+                            {rev.methodologyNotes && <span className="text-muted"> ({rev.methodologyNotes})</span>}
                           </div>
                         ))}
                       </div>
                       <div className="text-[12px] text-muted italic mt-2 flex gap-1.5"><Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />{dis.explanation} — {dis.suggestedCreatorAngle}</div>
                     </div>
                   ))}
+                  {youtubeReport.reviewerDisagreements.length === 0 && (
+                    <EmptyState icon={CheckCircle2} title="No reviewer disagreements found" description="Either the analysed reviewers agree, or there were not enough transcripts to compare their measurements." />
+                  )}
                 </div>
               )}
               {ytActiveTab === "transcripts" && (
                 <div className="flex flex-col md:flex-row h-[500px] border border-line-soft rounded-2xl overflow-hidden shadow-sm">
                   <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-line-soft bg-paper overflow-y-auto">
-                    {youtubeReport.videos.map(vid => (
-                      <div
-                        key={vid.videoId}
-                        onClick={() => setSelectedVideo(vid)}
-                        className={`p-3.5 border-b border-line-soft cursor-pointer transition-colors flex items-center gap-2.5 ${
-                          selectedVideo?.videoId === vid.videoId ? "bg-white border-l-[3px] border-l-citation" : "hover:bg-white/60"
-                        }`}
-                      >
-                        <PlayCircle className={`w-4 h-4 shrink-0 ${selectedVideo?.videoId === vid.videoId ? "text-citation" : "text-muted-2"}`} />
-                        <div className={`text-[13px] font-semibold line-clamp-2 ${selectedVideo?.videoId === vid.videoId ? "text-ink" : "text-muted"}`}>{vid.title}</div>
-                      </div>
-                    ))}
+                    {youtubeReport.videos.map(vid => {
+                      const t = youtubeReport.transcripts[vid.videoId];
+                      const ok = t?.status === "AVAILABLE";
+                      return (
+                        <div
+                          key={vid.videoId}
+                          onClick={() => setSelectedVideo(vid)}
+                          className={`p-3.5 border-b border-line-soft cursor-pointer transition-colors flex items-center gap-2.5 ${
+                            selectedVideo?.videoId === vid.videoId ? "bg-white border-l-[3px] border-l-citation" : "hover:bg-white/60"
+                          }`}
+                        >
+                          <PlayCircle className={`w-4 h-4 shrink-0 ${selectedVideo?.videoId === vid.videoId ? "text-citation" : ok ? "text-verified" : "text-muted-2"}`} />
+                          <div className="min-w-0">
+                            <div className={`text-[13px] font-semibold line-clamp-2 ${selectedVideo?.videoId === vid.videoId ? "text-ink" : "text-muted"}`}>{vid.title}</div>
+                            {!ok && <span className="text-[10px] font-mono text-warning">{t?.status === "BLOCKED" ? "captions blocked" : "no transcript"}</span>}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                   <div className="w-full md:w-2/3 bg-card overflow-y-auto p-4 space-y-4">
-                    {selectedVideo && youtubeReport.transcripts[selectedVideo.videoId] ? (
-                      youtubeReport.transcripts[selectedVideo.videoId].segments.map((seg, i) => (
-                        <div key={i} className="flex gap-3 text-[13px]">
-                          <span className="shrink-0 font-mono text-[10.5px] text-citation bg-citation-bg px-2 py-0.5 rounded h-fit">{seg.formattedTime}</span>
-                          <span className="text-ink">{seg.text}</span>
+                    {(() => {
+                      const t = selectedVideo && youtubeReport.transcripts[selectedVideo.videoId];
+                      if (t && t.status === "AVAILABLE" && t.segments.length > 0) {
+                        return t.segments.map((seg, i) => (
+                          <div key={i} className="flex gap-3 text-[13px]">
+                            <span className="shrink-0 font-mono text-[10.5px] text-citation bg-citation-bg px-2 py-0.5 rounded h-fit">{seg.formattedTime}</span>
+                            <span className="text-ink">{seg.text}</span>
+                          </div>
+                        ));
+                      }
+                      return (
+                        <div className="text-muted text-[13px] leading-[1.6] flex items-start gap-2">
+                          <Info className="w-4 h-4 shrink-0 mt-0.5 text-muted-2" />
+                          <span>{t?.errorMessage || "Select a video to view its transcript."}</span>
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-muted text-[13px]">No transcript available.</div>
-                    )}
+                      );
+                    })()}
                   </div>
                 </div>
               )}

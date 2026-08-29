@@ -78,6 +78,14 @@ export class YouTubeTranscriptProvider {
 
   /**
    * Fetches timestamped transcript data for a YouTube video.
+   *
+   * YouTube's public timedtext endpoint now rejects unauthenticated requests from datacenter
+   * IPs: the caption baseUrl returns HTTP 200 with an EMPTY body unless a BotGuard-generated
+   * `pot` token is attached. So this tries, in order:
+   *   1. a direct watch-page scrape (still works from residential IPs / for some videos),
+   *   2. an external transcript API, if YT_TRANSCRIPT_API_URL is configured.
+   * If a caption track demonstrably exists but no body can be retrieved, the status is BLOCKED
+   * (not UNAVAILABLE) so the UI can explain the difference. Nothing is ever fabricated.
    */
   async getTranscript(videoId: string): Promise<YouTubeTranscriptResult> {
     const cleanId = videoId
@@ -87,82 +95,182 @@ export class YouTubeTranscriptProvider {
 
     const cacheKey = `yt_transcript_${cleanId}`;
     const cached = CentralCacheProvider.get<YouTubeTranscriptResult>(cacheKey);
-    if (cached) {
-      return cached;
-    }
+    if (cached) return cached;
 
-    // Check if real Data API captions are configured
-    const apiKey = process.env.YOUTUBE_API_KEY;
+    const UA =
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    let captionTrackExists = false;
 
-    if (apiKey && apiKey !== "your-youtube-api-key") {
-      try {
-        // Attempt timedtext caption retrieval
-        const response = await fetch(`https://www.youtube.com/watch?v=${cleanId}`, {
+    // --- Strategy 1: direct watch-page scrape --------------------------------------------
+    try {
+      const response = await fetch(
+        `https://www.youtube.com/watch?v=${cleanId}&bpctr=9999999999&has_verified=1`,
+        {
           headers: {
             "Accept-Language": "en-US,en;q=0.9",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "User-Agent": UA,
+            // Skip the EU consent interstitial that otherwise replaces the watch page.
+            Cookie: "CONSENT=YES+cb.20210328-17-p0.en+FX+678",
           },
-        });
+          signal: AbortSignal.timeout(8000),
+        }
+      );
 
-        if (response.ok) {
-          const html = await response.text();
-          // Check for captionTracks in ytInitialPlayerResponse
-          const match = html.match(/"captionTracks":\s*(\[.*?\])/);
-          if (match && match[1]) {
-            const tracks = JSON.parse(match[1]);
-            const englishTrack = tracks.find((t: any) => t.languageCode === "en" || t.vssId?.includes(".en")) || tracks[0];
+      if (response.ok) {
+        const html = await response.text();
+        const match = html.match(/"captionTracks":\s*(\[.*?\])/);
+        if (match && match[1]) {
+          const tracks = JSON.parse(match[1].replace(/\\u0026/g, "&"));
+          captionTrackExists = tracks.length > 0;
+          const englishTrack =
+            tracks.find((t: any) => t.languageCode === "en" || t.vssId?.includes(".en")) || tracks[0];
 
-            if (englishTrack?.baseUrl) {
-              const captionRes = await fetch(englishTrack.baseUrl, {
-                headers: {
-                  "Accept-Language": "en-US,en;q=0.9",
-                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                }
+          if (englishTrack?.baseUrl) {
+            const baseUrl = englishTrack.baseUrl.replace(/\\u0026/g, "&");
+            for (const fmt of ["&fmt=json3", ""]) {
+              const capRes = await fetch(baseUrl + fmt, {
+                headers: { "Accept-Language": "en-US,en;q=0.9", "User-Agent": UA, Referer: "https://www.youtube.com/" },
+                signal: AbortSignal.timeout(8000),
               });
-              if (captionRes.ok) {
-                const xmlText = await captionRes.text();
-                const parsedSegments = this.parseTimedTextXml(xmlText, cleanId);
+              if (!capRes.ok) continue;
+              const body = await capRes.text();
+              if (!body.trim()) continue; // the empty-body block described above
 
-                if (parsedSegments.length > 0) {
-                  const result: YouTubeTranscriptResult = {
-                    videoId: cleanId,
-                    status: "AVAILABLE",
-                    language: englishTrack.languageCode || "en",
-                    isGenerated: !!englishTrack.kind && englishTrack.kind === "asr",
-                    segments: parsedSegments,
-                    fullText: parsedSegments.map((s) => s.text).join(" "),
-                    retrievedAt: new Date().toISOString(),
-                  };
-                  CentralCacheProvider.set(cacheKey, result, YouTubeTranscriptProvider.CACHE_TTL_MS);
-                  return result;
-                }
+              const segments = fmt
+                ? this.parseJson3(body, cleanId)
+                : this.parseTimedTextXml(body, cleanId);
+              if (segments.length > 0) {
+                return this.cacheAndReturn(cacheKey, {
+                  videoId: cleanId,
+                  status: "AVAILABLE",
+                  language: englishTrack.languageCode || "en",
+                  isGenerated: englishTrack.kind === "asr",
+                  segments,
+                  fullText: segments.map((s) => s.text).join(" "),
+                  retrievedAt: new Date().toISOString(),
+                });
               }
             }
           }
         }
+      }
+    } catch (err: any) {
+      console.warn(`Direct transcript scrape failed for ${cleanId}:`, err.message);
+    }
+
+    // --- Strategy 2: external transcript API -------------------------------------------------
+    const apiUrl = process.env.YT_TRANSCRIPT_API_URL;
+    if (apiUrl) {
+      try {
+        const url = apiUrl.includes("{videoId}")
+          ? apiUrl.replace("{videoId}", cleanId)
+          : `${apiUrl}${apiUrl.includes("?") ? "&" : "?"}videoId=${cleanId}`;
+        const res = await fetch(url, {
+          headers: {
+            Accept: "application/json",
+            ...(process.env.YT_TRANSCRIPT_API_KEY
+              ? {
+                  Authorization: `Bearer ${process.env.YT_TRANSCRIPT_API_KEY}`,
+                  "x-api-key": process.env.YT_TRANSCRIPT_API_KEY,
+                }
+              : {}),
+          },
+          signal: AbortSignal.timeout(15000),
+        });
+        if (res.ok) {
+          const data: any = await res.json();
+          // Accept the common shapes: {content:[...]}, {transcript:[...]}, {segments:[...]}, [ ... ]
+          const rawSegs: any[] =
+            data.content || data.transcript || data.segments || (Array.isArray(data) ? data : []);
+          const segments: YouTubeTranscriptSegment[] = rawSegs
+            .map((s: any, i: number): YouTubeTranscriptSegment | null => {
+              const start = Number(s.start ?? s.offset ?? (s.startMs ? s.startMs / 1000 : 0)) || 0;
+              const duration = Number(s.dur ?? s.duration ?? (s.durationMs ? s.durationMs / 1000 : 0)) || 0;
+              const text = YouTubeTranscriptProvider.cleanTranscriptText(String(s.text ?? s.content ?? ""));
+              if (!text) return null;
+              return {
+                segmentId: `seg_${i + 1}`,
+                videoId: cleanId,
+                start,
+                duration,
+                end: Math.round((start + duration) * 100) / 100,
+                text,
+                formattedTime: YouTubeTranscriptProvider.formatTimestamp(start),
+                sequence: i + 1,
+              };
+            })
+            .filter((s): s is YouTubeTranscriptSegment => s !== null);
+
+          if (segments.length > 0) {
+            return this.cacheAndReturn(cacheKey, {
+              videoId: cleanId,
+              status: "AVAILABLE",
+              language: "en",
+              isGenerated: false,
+              segments,
+              fullText: segments.map((s) => s.text).join(" "),
+              retrievedAt: new Date().toISOString(),
+            });
+          }
+        } else {
+          console.warn(`External transcript API returned ${res.status} for ${cleanId}`);
+        }
       } catch (err: any) {
-        console.warn(`Live transcript retrieval error for video ${cleanId}:`, err.message);
+        console.warn(`External transcript API error for ${cleanId}:`, err.message);
       }
     }
 
-    // No fabricated fallback transcript. A previous `getDeterministicTranscript()` returned
-    // invented captions (fake fps figures, fake battery timings, fake thermal deltas) for
-    // hardcoded video ids, which downstream code then treated as real reviewer measurements.
-    // When captions genuinely cannot be retrieved the result below says so honestly.
-
-    // If video ID is valid format but transcript is not found:
-    const unavailableResult: YouTubeTranscriptResult = {
+    // --- Honest failure -------------------------------------------------------------------
+    return this.cacheAndReturn(cacheKey, {
       videoId: cleanId,
-      status: "TRANSCRIPT_UNAVAILABLE",
+      status: captionTrackExists ? "BLOCKED" : "TRANSCRIPT_UNAVAILABLE",
       language: "unknown",
       isGenerated: false,
       segments: [],
       fullText: "",
-      errorMessage: "No captions or transcripts were provided by creator or platform for this video.",
+      errorMessage: captionTrackExists
+        ? "This video has captions, but YouTube blocked automated retrieval of the transcript body (a known restriction on server IPs). Set YT_TRANSCRIPT_API_URL to enable transcript-derived analysis."
+        : "No captions or transcript were published for this video.",
       retrievedAt: new Date().toISOString(),
-    };
-    CentralCacheProvider.set(cacheKey, unavailableResult, YouTubeTranscriptProvider.CACHE_TTL_MS);
-    return unavailableResult;
+    });
+  }
+
+  private cacheAndReturn(key: string, result: YouTubeTranscriptResult): YouTubeTranscriptResult {
+    CentralCacheProvider.set(key, result, YouTubeTranscriptProvider.CACHE_TTL_MS);
+    return result;
+  }
+
+  /**
+   * Parses YouTube's json3 timedtext format into structured segments.
+   */
+  private parseJson3(body: string, videoId: string): YouTubeTranscriptSegment[] {
+    const segments: YouTubeTranscriptSegment[] = [];
+    try {
+      const data = JSON.parse(body);
+      let seq = 1;
+      for (const ev of data.events || []) {
+        if (!ev.segs) continue;
+        const text = YouTubeTranscriptProvider.cleanTranscriptText(
+          ev.segs.map((s: any) => s.utf8 || "").join("")
+        );
+        if (!text) continue;
+        const start = (ev.tStartMs || 0) / 1000;
+        const duration = (ev.dDurationMs || 0) / 1000;
+        segments.push({
+          segmentId: `seg_${seq}`,
+          videoId,
+          start,
+          duration,
+          end: Math.round((start + duration) * 100) / 100,
+          text,
+          formattedTime: YouTubeTranscriptProvider.formatTimestamp(start),
+          sequence: seq++,
+        });
+      }
+    } catch {
+      /* fall through to empty */
+    }
+    return segments;
   }
 
   /**

@@ -67,11 +67,22 @@ export class YouTubeIntelligenceEngine {
     // 6. Creator Content Opportunities
     const contentOpportunities = this.generateContentOpportunities(topic, disagreements, recurringProblems, audienceQuestions);
 
+    const analysed = videos.slice(0, 4);
+    const transcriptCoverage = {
+      total: analysed.length,
+      available: analysed.filter((v) => transcripts[v.videoId]?.status === "AVAILABLE").length,
+      blocked: analysed.filter((v) => transcripts[v.videoId]?.status === "BLOCKED").length,
+      unavailable: analysed.filter(
+        (v) => transcripts[v.videoId]?.status === "TRANSCRIPT_UNAVAILABLE"
+      ).length,
+    };
+
     const report: YouTubeIntelligenceReport = {
       topic,
       analyzedAt: new Date().toISOString(),
       videos,
       transcripts,
+      transcriptCoverage,
       claims,
       reviewerConsensus: consensus,
       reviewerDisagreements: disagreements,
