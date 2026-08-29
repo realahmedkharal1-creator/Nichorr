@@ -1995,9 +1995,9 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
    <div className="space-y-6">
     <ResearchTabNav runId={params.id} />
     <div className="p-12 text-center space-y-3">
-     <Sparkles className="w-12 h-12 text-slate-500 mx-auto" />
-     <h3 className="text-base font-bold text-slate-700">No Creator Studio Data Available</h3>
-     <p className="text-xs text-slate-500">Unable to generate script intelligence for this research run.</p>
+     <Sparkles className="w-12 h-12 text-muted mx-auto" />
+     <h3 className="text-base font-bold text-ink/80">No Creator Studio Data Available</h3>
+     <p className="text-xs text-muted">Unable to generate script intelligence for this research run.</p>
     </div>
    </div>
   );
@@ -2026,11 +2026,11 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        onClick={() => setActiveTab(tab.id as any)}
        className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all shrink-0 ${
         isActive 
-         ? "bg-indigo-600 text-white shadow-md shadow-indigo-200" 
-         : "bg-white text-slate-600 border border-slate-200/90 hover:bg-slate-50 hover:text-slate-900"
+         ? "bg-citation text-white shadow-card shadow-indigo-200" 
+         : "bg-card text-ink/80 border border-line/90 hover:bg-paper hover:text-ink"
        }`}
       >
-       <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-500"}`} />
+       <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-muted"}`} />
        {tab.label}
       </button>
      );
@@ -2085,7 +2085,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <span className="font-mono text-[10.5px] font-semibold px-[10px] py-[4px] rounded-[6px] bg-verified-bg text-verified uppercase">
             READY FOR PUBLISHING
           </span>
-          <span className="font-mono text-[10.5px] font-semibold px-[10px] py-[4px] rounded-[6px] bg-white/10 text-white/70 uppercase">
+          <span className="font-mono text-[10.5px] font-semibold px-[10px] py-[4px] rounded-[6px] bg-card/10 text-white/70 uppercase">
             SCRIPT V1.0
           </span>
         </div>
@@ -2262,48 +2262,48 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-6">
      {/* Notifications */}
      {executionSuccessMsg && (
-      <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-600/80 text-emerald-600 text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-emerald-600" />
+      <div className="p-4 rounded-xl bg-verified-bg/60 border border-verified/80 text-verified text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-verified" />
        <span>{executionSuccessMsg}</span>
       </div>
      )}
 
      {executionErrorMsg && (
-      <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200 text-rose-600 text-xs font-mono flex items-center gap-2">
-       <AlertOctagon className="w-4 h-4 text-rose-600" />
+      <div className="p-4 rounded-xl bg-conflict-bg/60 border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <AlertOctagon className="w-4 h-4 text-conflict" />
        <span>{executionErrorMsg}</span>
       </div>
      )}
 
      {/* Top Execution Status & Lifecycle Stepper */}
-     <div className="p-6 rounded-2xl bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+     <div className="p-6 rounded-2xl bg-card rounded-[24px] shadow-sm border border-line space-y-5 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
        <div className="space-y-1">
         <div className="flex items-center gap-2">
          <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
           executionPlan?.executionStatus === 'COMMITTED'
-           ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+           ? "bg-verified-bg text-verified border-verified/25"
            : executionPlan?.executionStatus === 'VALIDATED'
-           ? "bg-teal-50 text-teal-700 border-teal-800"
+           ? "bg-verified-bg text-verified border-verified"
            : executionPlan?.executionStatus === 'STAGED'
-           ? "bg-cyan-50 text-cyan-600 border-cyan-200"
+           ? "bg-citation-bg text-citation border-citation/20"
            : executionPlan?.executionStatus === 'APPROVED'
-           ? "bg-indigo-50 text-indigo-600 border-indigo-200"
+           ? "bg-citation-bg text-citation border-citation/20"
            : executionPlan?.executionStatus === 'BLOCKED'
-           ? "bg-rose-50 text-rose-600 border-rose-200"
-           : "bg-slate-50 text-slate-700 border-slate-200"
+           ? "bg-conflict-bg text-conflict border-conflict/25"
+           : "bg-paper text-ink/80 border-line"
          }`}>
           EXECUTION STATUS: {executionPlan?.executionStatus || "NO_ACTIVE_PLAN"}
          </span>
-         <span className="text-xs font-mono text-slate-500">
+         <span className="text-xs font-mono text-muted">
           Active Script v{report.scriptVersion || 1} â†’ Target v{(report.scriptVersion || 1) + 1}
          </span>
         </div>
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-         <PlayCircle className="w-5 h-5 text-emerald-600" />
+        <h2 className="text-lg font-bold text-ink flex items-center gap-2">
+         <PlayCircle className="w-5 h-5 text-verified" />
          Creator Change Execution & Safe Action Control Plane
         </h2>
-        <p className="text-xs text-slate-500 font-sans">
+        <p className="text-xs text-muted font-sans">
          Deterministic staged execution preventing silent mutations. Preview first â†’ Execute second â†’ Verify third â†’ Commit last.
         </p>
        </div>
@@ -2312,7 +2312,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={() => handleCreateExecutionPlan()}
          disabled={isPlanning}
-         className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-verified hover:bg-verified disabled:opacity-50 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <Plus className="w-3.5 h-3.5" />
          {isPlanning ? "Planning..." : "Create Execution Plan"}
@@ -2323,35 +2323,35 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
       {/* 5-Step Visual Lifecycle Stepper */}
       <div className="grid grid-cols-5 gap-2 text-center text-xs font-mono">
        <div className={`p-2.5 rounded-xl border ${
-        executionPlan ? "bg-emerald-50/40 border-emerald-600 text-emerald-600 font-bold" : "bg-slate-50 border-slate-200 text-slate-500"
+        executionPlan ? "bg-verified-bg/40 border-verified text-verified font-bold" : "bg-paper border-line text-muted"
        }`}>
         <span>1. PLAN</span>
        </div>
        <div className={`p-2.5 rounded-xl border ${
         executionPlan?.executionStatus === 'APPROVED' || executionPlan?.executionStatus === 'STAGED' || executionPlan?.executionStatus === 'VALIDATED' || executionPlan?.executionStatus === 'COMMITTED'
-         ? "bg-indigo-50 border-indigo-600 text-indigo-600 font-bold"
-         : "bg-slate-50 border-slate-200 text-slate-500"
+         ? "bg-citation-bg border-citation text-citation font-bold"
+         : "bg-paper border-line text-muted"
        }`}>
         <span>2. APPROVE</span>
        </div>
        <div className={`p-2.5 rounded-xl border ${
         executionPlan?.executionStatus === 'STAGED' || executionPlan?.executionStatus === 'VALIDATED' || executionPlan?.executionStatus === 'COMMITTED'
-         ? "bg-cyan-50/40 border-cyan-600 text-cyan-600 font-bold"
-         : "bg-slate-50 border-slate-200 text-slate-500"
+         ? "bg-citation-bg/40 border-citation text-citation font-bold"
+         : "bg-paper border-line text-muted"
        }`}>
         <span>3. STAGE</span>
        </div>
        <div className={`p-2.5 rounded-xl border ${
         executionPlan?.executionStatus === 'VALIDATED' || executionPlan?.executionStatus === 'COMMITTED'
-         ? "bg-teal-50 border-teal-600 text-teal-700 font-bold"
-         : "bg-slate-50 border-slate-200 text-slate-500"
+         ? "bg-verified-bg border-verified text-verified font-bold"
+         : "bg-paper border-line text-muted"
        }`}>
         <span>4. VALIDATE</span>
        </div>
        <div className={`p-2.5 rounded-xl border ${
         executionPlan?.executionStatus === 'COMMITTED'
-         ? "bg-emerald-50/60 border-emerald-500 text-emerald-200 font-bold"
-         : "bg-slate-50 border-slate-200 text-slate-500"
+         ? "bg-verified-bg/60 border-verified text-verified/25 font-bold"
+         : "bg-paper border-line text-muted"
        }`}>
         <span>5. COMMIT</span>
        </div>
@@ -2360,12 +2360,12 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
      {/* Action Toolbar */}
      {executionPlan && (
-      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3">
-       <div className="flex items-center gap-2 text-xs font-mono text-slate-700">
-        <span className="font-bold text-slate-900">Plan:</span>
+      <div className="p-4 rounded-2xl bg-paper border border-line flex flex-wrap items-center justify-between gap-3">
+       <div className="flex items-center gap-2 text-xs font-mono text-ink/80">
+        <span className="font-bold text-ink">Plan:</span>
         <span>{executionPlan.executionPlanId.slice(0, 24)}...</span>
-        <span className="text-slate-500">â€¢</span>
-        <span className="text-indigo-600">Trigger: {executionPlan.triggerType}</span>
+        <span className="text-muted">â€¢</span>
+        <span className="text-citation">Trigger: {executionPlan.triggerType}</span>
        </div>
 
        <div className="flex flex-wrap items-center gap-2">
@@ -2373,7 +2373,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleApproveExecutionPlan}
           disabled={isApproving || selectedOpIds.length === 0}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-slate-900 text-xs font-bold font-mono shadow-sm transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-bold font-mono shadow-sm transition"
          >
           <Check className="w-3.5 h-3.5" />
           {isApproving ? "Approving..." : `Approve Selected (${selectedOpIds.length})`}
@@ -2384,7 +2384,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={handleStageExecution}
           disabled={isStaging}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-slate-900 text-xs font-bold font-mono shadow-sm transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-bold font-mono shadow-sm transition"
          >
           <Package className="w-3.5 h-3.5" />
           {isStaging ? "Staging..." : "Stage Execution in Workspace"}
@@ -2394,7 +2394,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         {executionPlan.executionStatus === 'VALIDATED' && (
          <button
           onClick={() => setShowCommitModal(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-900 text-xs font-bold font-mono shadow-sm transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-verified hover:bg-verified text-ink text-xs font-bold font-mono shadow-sm transition"
          >
           <CheckCircle className="w-3.5 h-3.5" />
           Commit to Active Project
@@ -2404,7 +2404,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         {(executionPlan.executionStatus === 'STAGED' || executionPlan.executionStatus === 'VALIDATION_FAILED') && (
          <button
           onClick={() => setShowRollbackModal(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-900 border border-rose-200 text-rose-600 text-xs font-bold font-mono transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-conflict-bg hover:bg-rose-900 border border-conflict/25 text-conflict text-xs font-bold font-mono transition"
          >
           <Undo2 className="w-3.5 h-3.5" />
           Rollback Staged State
@@ -2417,42 +2417,42 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Change Matrix & Safety Gate Cards */}
      {executionPlan && (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-       <div className="p-4 rounded-xl bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-1">
-        <span className="text-[10px] font-mono text-emerald-600 font-bold uppercase block">WILL CHANGE</span>
-        <span className="text-xl font-extrabold text-slate-900">{executionPlan.expectedImpact.willChangeCount}</span>
-        <span className="text-[11px] text-slate-500 block">Proposed operations</span>
+       <div className="p-4 rounded-xl bg-card rounded-[24px] shadow-sm border border-line space-y-1">
+        <span className="text-[10px] font-mono text-verified font-bold uppercase block">WILL CHANGE</span>
+        <span className="text-xl font-extrabold text-ink">{executionPlan.expectedImpact.willChangeCount}</span>
+        <span className="text-[11px] text-muted block">Proposed operations</span>
        </div>
 
-       <div className="p-4 rounded-xl bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-1">
-        <span className="text-[10px] font-mono text-amber-600 font-bold uppercase block">MAY CHANGE</span>
-        <span className="text-xl font-extrabold text-slate-900">{executionPlan.expectedImpact.mayChangeCount}</span>
-        <span className="text-[11px] text-slate-500 block">Downstream candidates</span>
+       <div className="p-4 rounded-xl bg-card rounded-[24px] shadow-sm border border-line space-y-1">
+        <span className="text-[10px] font-mono text-warning font-bold uppercase block">MAY CHANGE</span>
+        <span className="text-xl font-extrabold text-ink">{executionPlan.expectedImpact.mayChangeCount}</span>
+        <span className="text-[11px] text-muted block">Downstream candidates</span>
        </div>
 
-       <div className="p-4 rounded-xl bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-1">
-        <span className="text-[10px] font-mono text-slate-500 font-bold uppercase block">UNCHANGED</span>
-        <span className="text-xl font-extrabold text-slate-900">{executionPlan.expectedImpact.unchangedCount}</span>
-        <span className="text-[11px] text-slate-500 block">Minimal change guarantee</span>
+       <div className="p-4 rounded-xl bg-card rounded-[24px] shadow-sm border border-line space-y-1">
+        <span className="text-[10px] font-mono text-muted font-bold uppercase block">UNCHANGED</span>
+        <span className="text-xl font-extrabold text-ink">{executionPlan.expectedImpact.unchangedCount}</span>
+        <span className="text-[11px] text-muted block">Minimal change guarantee</span>
        </div>
 
-       <div className="p-4 rounded-xl bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-1">
-        <span className="text-[10px] font-mono text-rose-600 font-bold uppercase block">HARD BLOCKERS</span>
-        <span className="text-xl font-extrabold text-slate-900">{executionPlan.expectedImpact.blockedCount}</span>
-        <span className="text-[11px] text-slate-500 block">Safety gate status</span>
+       <div className="p-4 rounded-xl bg-card rounded-[24px] shadow-sm border border-line space-y-1">
+        <span className="text-[10px] font-mono text-conflict font-bold uppercase block">HARD BLOCKERS</span>
+        <span className="text-xl font-extrabold text-ink">{executionPlan.expectedImpact.blockedCount}</span>
+        <span className="text-[11px] text-muted block">Safety gate status</span>
        </div>
       </div>
      )}
 
      {/* Proposed Operations Interactive Checklist */}
      {executionPlan && (
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
         <div>
-         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <CheckSquare className="w-4 h-4 text-emerald-600" />
+         <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+          <CheckSquare className="w-4 h-4 text-verified" />
           Proposed Execution Operations ({executionPlan.proposedOperations.length})
          </h3>
-         <p className="text-xs text-slate-500 mt-0.5">
+         <p className="text-xs text-muted mt-0.5">
           Select operations to authorize. Unselected operations will be skipped if dependencies permit.
          </p>
         </div>
@@ -2461,7 +2461,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5 w-10">SELECT</th>
            <th className="p-2.5">OPERATION TYPE</th>
            <th className="p-2.5">TARGET ASSET</th>
@@ -2470,9 +2470,9 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">LINEAGE</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {executionPlan.proposedOperations.map((op) => (
-           <tr key={op.id} className="hover:bg-slate-100">
+           <tr key={op.id} className="hover:bg-paper">
             <td className="p-2.5">
              <input
               type="checkbox"
@@ -2484,17 +2484,17 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
                 setSelectedOpIds(selectedOpIds.filter((id) => id !== op.id));
                }
               }}
-              className="rounded bg-slate-50 border-slate-300 text-indigo-600 focus:ring-0"
+              className="rounded bg-paper border-line text-citation focus:ring-0"
              />
             </td>
-            <td className="p-2.5 font-bold text-slate-700">{op.operationType}</td>
-            <td className="p-2.5 text-slate-700 font-sans">{op.targetLabel}</td>
-            <td className="p-2.5 text-indigo-600">{op.subsystem}</td>
+            <td className="p-2.5 font-bold text-ink/80">{op.operationType}</td>
+            <td className="p-2.5 text-ink/80 font-sans">{op.targetLabel}</td>
+            <td className="p-2.5 text-citation">{op.subsystem}</td>
             <td className="p-2.5">
              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-              op.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-              op.status === 'REJECTED' ? 'bg-rose-50 text-rose-600 border border-rose-200' :
-              'bg-slate-50 text-slate-500 border border-slate-200'
+              op.status === 'APPROVED' ? 'bg-verified-bg text-verified border border-verified/25' :
+              op.status === 'REJECTED' ? 'bg-conflict-bg text-conflict border border-conflict/25' :
+              'bg-paper text-muted border border-line'
              }`}>
               {op.status}
              </span>
@@ -2502,7 +2502,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             <td className="p-2.5">
              <button
               onClick={() => setInspectedOp(op)}
-              className="text-xs text-indigo-600 hover:text-indigo-600 hover:underline"
+              className="text-xs text-citation hover:text-citation hover:underline"
              >
               Why Will This Change?
              </button>
@@ -2517,58 +2517,58 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
      {/* Validation Dashboard (5-Dimension Re-Evaluation) */}
      {validationReport && (
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
         <div>
-         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-teal-600" />
+         <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-verified" />
           Post-Staging Validation Dashboard
          </h3>
-         <p className="text-xs text-slate-500 mt-0.5">
+         <p className="text-xs text-muted mt-0.5">
           Authoritative re-evaluation across all 5 dimensions on the isolated staged state.
          </p>
         </div>
         <span className={`px-2.5 py-1 rounded text-xs font-mono font-bold uppercase border ${
          validationReport.validationStatus === 'VALIDATED'
-          ? "bg-emerald-50 text-emerald-600 border-emerald-200"
-          : "bg-rose-50 text-rose-600 border-rose-200"
+          ? "bg-verified-bg text-verified border-verified/25"
+          : "bg-conflict-bg text-conflict border-conflict/25"
         }`}>
          {validationReport.validationStatus}
         </span>
        </div>
 
        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1 font-mono text-center">
-         <span className="text-[10px] text-teal-600 uppercase font-bold block">1. HEALTH</span>
-         <div className="text-sm font-bold text-slate-700">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1 font-mono text-center">
+         <span className="text-[10px] text-verified uppercase font-bold block">1. HEALTH</span>
+         <div className="text-sm font-bold text-ink/80">
           {validationReport.researchHealthBefore}% â†’ {validationReport.researchHealthAfter}%
          </div>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1 font-mono text-center">
-         <span className="text-[10px] text-emerald-600 uppercase font-bold block">2. QUALITY</span>
-         <div className="text-sm font-bold text-slate-700">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1 font-mono text-center">
+         <span className="text-[10px] text-verified uppercase font-bold block">2. QUALITY</span>
+         <div className="text-sm font-bold text-ink/80">
           {validationReport.contentQualityBefore}% â†’ {validationReport.contentQualityAfter}%
          </div>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1 font-mono text-center">
-         <span className="text-[10px] text-cyan-600 uppercase font-bold block">3. PRODUCTION</span>
-         <div className="text-sm font-bold text-slate-700">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1 font-mono text-center">
+         <span className="text-[10px] text-citation uppercase font-bold block">3. PRODUCTION</span>
+         <div className="text-sm font-bold text-ink/80">
           {validationReport.productionReadinessBefore}% â†’ {validationReport.productionReadinessAfter}%
          </div>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1 font-mono text-center">
-         <span className="text-[10px] text-purple-600 uppercase font-bold block">4. PUBLISHING</span>
-         <div className="text-sm font-bold text-slate-700">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1 font-mono text-center">
+         <span className="text-[10px] text-citation uppercase font-bold block">4. PUBLISHING</span>
+         <div className="text-sm font-bold text-ink/80">
           {validationReport.publishingReadinessBefore}% â†’ {validationReport.publishingReadinessAfter}%
          </div>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1 font-mono text-center">
-         <span className="text-[10px] text-rose-600 uppercase font-bold block">5. DISTRIBUTION</span>
-         <div className="text-sm font-bold text-slate-700">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1 font-mono text-center">
+         <span className="text-[10px] text-conflict uppercase font-bold block">5. DISTRIBUTION</span>
+         <div className="text-sm font-bold text-ink/80">
           {validationReport.distributionReadinessBefore}% â†’ {validationReport.distributionReadinessAfter}%
          </div>
         </div>
@@ -2577,39 +2577,39 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      )}
 
      {/* Execution History Ledger */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
        <div>
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <History className="w-4 h-4 text-indigo-600" />
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <History className="w-4 h-4 text-citation" />
          Immutable Execution Audit Ledger ({executionHistory.length} Events)
         </h3>
-        <p className="text-xs text-slate-500 mt-0.5">
+        <p className="text-xs text-muted mt-0.5">
          Append-only historical ledger recording plan creation, approvals, staging, validations, and commits.
         </p>
        </div>
       </div>
 
       {executionHistory.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No execution events recorded yet.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No execution events recorded yet.</p>
       ) : (
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">TIMESTAMP</th>
            <th className="p-2.5">ACTION</th>
            <th className="p-2.5">VERSIONS</th>
            <th className="p-2.5">RESULT</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {executionHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
-            <td className="p-2.5 text-slate-500">{new Date(ev.timestamp).toLocaleTimeString()}</td>
-            <td className="p-2.5 font-bold text-indigo-600">{ev.action}</td>
-            <td className="p-2.5 text-slate-700">v{ev.previousScriptVersion} â†’ v{ev.newScriptVersion}</td>
-            <td className="p-2.5 text-slate-700 font-sans">{ev.executionResult}</td>
+           <tr key={ev.auditId} className="hover:bg-paper">
+            <td className="p-2.5 text-muted">{new Date(ev.timestamp).toLocaleTimeString()}</td>
+            <td className="p-2.5 font-bold text-citation">{ev.action}</td>
+            <td className="p-2.5 text-ink/80">v{ev.previousScriptVersion} â†’ v{ev.newScriptVersion}</td>
+            <td className="p-2.5 text-ink/80 font-sans">{ev.executionResult}</td>
            </tr>
           ))}
          </tbody>
@@ -2621,51 +2621,51 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* "Why Will This Change?" Inspector Modal */}
      {inspectedOp && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-line rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <PlayCircle className="w-5 h-5 text-emerald-600" />
-          <h3 className="text-sm font-bold text-slate-900">
+          <PlayCircle className="w-5 h-5 text-verified" />
+          <h3 className="text-sm font-bold text-ink">
            "Why Will This Change?" Lineage Inspector
           </h3>
          </div>
          <button
           onClick={() => setInspectedOp(null)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5 font-mono text-xs">
-         <div className="flex justify-between text-slate-500">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1.5 font-mono text-xs">
+         <div className="flex justify-between text-muted">
           <span>OPERATION ID:</span>
-          <span className="font-bold text-slate-900">{inspectedOp.id}</span>
+          <span className="font-bold text-ink">{inspectedOp.id}</span>
          </div>
-         <div className="flex justify-between text-slate-500">
+         <div className="flex justify-between text-muted">
           <span>OPERATION TYPE:</span>
-          <span className="text-emerald-600 font-bold">{inspectedOp.operationType}</span>
+          <span className="text-verified font-bold">{inspectedOp.operationType}</span>
          </div>
-         <div className="flex justify-between text-slate-500">
+         <div className="flex justify-between text-muted">
           <span>SUBSYSTEM:</span>
-          <span className="text-indigo-600 font-bold">{inspectedOp.subsystem}</span>
+          <span className="text-citation font-bold">{inspectedOp.subsystem}</span>
          </div>
         </div>
 
         <div className="space-y-2 text-xs font-sans">
-         <span className="text-[10px] font-mono text-indigo-600 uppercase font-bold">REASON & UPSTREAM EVIDENCE</span>
-         <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-100 space-y-2 text-slate-700 leading-relaxed">
+         <span className="text-[10px] font-mono text-citation uppercase font-bold">REASON & UPSTREAM EVIDENCE</span>
+         <div className="bg-paper p-3.5 rounded-lg border border-line space-y-2 text-ink/80 leading-relaxed">
           <p><strong>Rationale:</strong> {inspectedOp.reason}</p>
-          <p className="text-[11px] font-mono text-teal-600">
+          <p className="text-[11px] font-mono text-verified">
            Upstream Evidence IDs: {inspectedOp.upstreamEvidenceIds.join(", ") || "Root Session"}
           </p>
          </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setInspectedOp(null)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Close
          </button>
@@ -2677,46 +2677,46 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Commit Confirmation Dialog */}
      {showCommitModal && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-emerald-200/80 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-verified/25/80 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <CheckCircle className="w-5 h-5 text-emerald-600" />
-          <h3 className="text-sm font-bold text-slate-900">Commit Staged Version to Active Project</h3>
+          <CheckCircle className="w-5 h-5 text-verified" />
+          <h3 className="text-sm font-bold text-ink">Commit Staged Version to Active Project</h3>
          </div>
          <button
           onClick={() => setShowCommitModal(false)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
         </div>
 
-        <p className="text-xs text-slate-700 font-sans leading-relaxed">
+        <p className="text-xs text-ink/80 font-sans leading-relaxed">
          You are about to make Staged Script Version {(report.scriptVersion || 1) + 1} the active project state. Previous versions will remain immutable in history.
         </p>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5 font-mono text-xs text-slate-700">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1.5 font-mono text-xs text-ink/80">
          <div className="flex justify-between">
           <span>Target Script Version:</span>
-          <span className="font-bold text-emerald-600">v{(report.scriptVersion || 1) + 1}</span>
+          <span className="font-bold text-verified">v{(report.scriptVersion || 1) + 1}</span>
          </div>
          <div className="flex justify-between">
           <span>Validation Status:</span>
-          <span className="font-bold text-teal-600">PASSED</span>
+          <span className="font-bold text-verified">PASSED</span>
          </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setShowCommitModal(false)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={handleCommitExecution}
           disabled={isCommitting}
-          className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-slate-900 text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-verified hover:bg-verified disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           {isCommitting ? "Committing..." : "Confirm & Commit"}
          </button>
@@ -2728,35 +2728,35 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Rollback Confirmation Dialog */}
      {showRollbackModal && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-rose-200/80 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-conflict/25/80 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <Undo2 className="w-5 h-5 text-rose-600" />
-          <h3 className="text-sm font-bold text-slate-900">Rollback Staged Execution</h3>
+          <Undo2 className="w-5 h-5 text-conflict" />
+          <h3 className="text-sm font-bold text-ink">Rollback Staged Execution</h3>
          </div>
          <button
           onClick={() => setShowRollbackModal(false)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
         </div>
 
-        <p className="text-xs text-slate-700 font-sans leading-relaxed">
+        <p className="text-xs text-ink/80 font-sans leading-relaxed">
          This will discard the uncommitted staged state and restore the active project reference to Script Version {report.scriptVersion || 1}. Historical version audit records are preserved.
         </p>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setShowRollbackModal(false)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={handleRollbackExecution}
           disabled={isRollingBack}
-          className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-slate-900 text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-conflict hover:bg-conflict disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           {isRollingBack ? "Rolling back..." : "Confirm Rollback"}
          </button>
@@ -2772,47 +2772,47 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-6">
      {/* Notifications */}
      {certSuccessMsg && (
-      <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-600/80 text-emerald-600 text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-emerald-600" />
+      <div className="p-4 rounded-xl bg-verified-bg/60 border border-verified/80 text-verified text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-verified" />
        <span>{certSuccessMsg}</span>
       </div>
      )}
 
      {certErrorMsg && (
-      <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200 text-rose-600 text-xs font-mono flex items-center gap-2">
-       <AlertOctagon className="w-4 h-4 text-rose-600" />
+      <div className="p-4 rounded-xl bg-conflict-bg/60 border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <AlertOctagon className="w-4 h-4 text-conflict" />
        <span>{certErrorMsg}</span>
       </div>
      )}
 
      {/* Top Status & Integrity Header */}
-     <div className="p-6 rounded-2xl bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+     <div className="p-6 rounded-2xl bg-card rounded-[24px] shadow-sm border border-line space-y-5 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
        <div className="space-y-1">
         <div className="flex items-center gap-2">
          <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
           certificate?.status === 'CERTIFIED'
-           ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+           ? "bg-verified-bg text-verified border-verified/25"
            : certificate?.status === 'CERTIFIED_WITH_WARNINGS'
-           ? "bg-amber-50 text-amber-600 border-amber-200"
+           ? "bg-warning-bg text-warning border-warning/25"
            : certificate?.status === 'BLOCKED'
-           ? "bg-rose-50 text-rose-600 border-rose-200"
-           : "bg-slate-50 text-slate-700 border-slate-200"
+           ? "bg-conflict-bg text-conflict border-conflict/25"
+           : "bg-paper text-ink/80 border-line"
          }`}>
           CERTIFICATION: {certificate?.status || "NOT_EVALUATED"}
          </span>
          {certificate?.isReleaseLocked && (
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-amber-50 text-amber-600 border border-amber-700 flex items-center gap-1">
-           <Lock className="w-3 h-3 text-amber-600" />
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-warning-bg text-warning border border-warning flex items-center gap-1">
+           <Lock className="w-3 h-3 text-warning" />
            RELEASE LOCKED
           </span>
          )}
         </div>
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-         <Award className="w-5 h-5 text-amber-600" />
+        <h2 className="text-lg font-bold text-ink flex items-center gap-2">
+         <Award className="w-5 h-5 text-warning" />
          Final Project Integrity Certification & Release Lock Control Plane
         </h2>
-        <p className="text-xs text-slate-500 font-sans">
+        <p className="text-xs text-muted font-sans">
          Deterministic exact-snapshot verification ensuring evidence safety, quality, production integrity, and release readiness.
         </p>
        </div>
@@ -2821,7 +2821,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleEvaluateCertification}
          disabled={isCertifying}
-         className="flex items-center gap-1.5 bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-warning hover:bg-warning disabled:opacity-50 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <ShieldCheck className="w-3.5 h-3.5" />
          {isCertifying ? "Evaluating..." : "Evaluate Certification"}
@@ -2831,7 +2831,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          <button
           onClick={() => setShowLockModal(true)}
           disabled={certificate.status === 'BLOCKED'}
-          className="flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 disabled:opacity-40 text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+          className="flex items-center gap-1.5 bg-verified hover:bg-verified disabled:opacity-40 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
          >
           <Lock className="w-3.5 h-3.5" />
           Apply Release Lock
@@ -2841,7 +2841,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         {certificate && certificate.isReleaseLocked && (
          <button
           onClick={() => setShowUnlockModal(true)}
-          className="flex items-center gap-1.5 bg-rose-50 hover:bg-rose-900 border border-rose-200 text-rose-600 px-3.5 py-2 rounded-xl text-xs font-bold font-mono transition"
+          className="flex items-center gap-1.5 bg-conflict-bg hover:bg-rose-900 border border-conflict/25 text-conflict px-3.5 py-2 rounded-xl text-xs font-bold font-mono transition"
          >
           <Unlock className="w-3.5 h-3.5" />
           Unlock Release
@@ -2851,7 +2851,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleGenerateHandoff}
          disabled={isGeneratingHandoff}
-         className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:bg-citation disabled:opacity-50 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <Package className="w-3.5 h-3.5" />
          {isGeneratingHandoff ? "Generating..." : "Generate Handoff Manifest"}
@@ -2861,133 +2861,133 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
       {/* Snapshot & Release Identity */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <span className="text-[10px] text-slate-500 uppercase block">PROJECT SNAPSHOT</span>
-        <span className="text-slate-700 font-bold truncate block">{certificate?.projectSnapshotHash || "N/A"}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line space-y-1">
+        <span className="text-[10px] text-muted uppercase block">PROJECT SNAPSHOT</span>
+        <span className="text-ink/80 font-bold truncate block">{certificate?.projectSnapshotHash || "N/A"}</span>
        </div>
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <span className="text-[10px] text-slate-500 uppercase block">EVIDENCE SNAPSHOT</span>
-        <span className="text-teal-600 font-bold truncate block">{certificate?.evidenceSnapshotHash || "N/A"}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line space-y-1">
+        <span className="text-[10px] text-muted uppercase block">EVIDENCE SNAPSHOT</span>
+        <span className="text-verified font-bold truncate block">{certificate?.evidenceSnapshotHash || "N/A"}</span>
        </div>
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <span className="text-[10px] text-slate-500 uppercase block">SCRIPT VERSION</span>
-        <span className="text-indigo-600 font-bold block">v{certificate?.scriptVersion || report.scriptVersion || 1}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line space-y-1">
+        <span className="text-[10px] text-muted uppercase block">SCRIPT VERSION</span>
+        <span className="text-citation font-bold block">v{certificate?.scriptVersion || report.scriptVersion || 1}</span>
        </div>
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <span className="text-[10px] text-slate-500 uppercase block">INTEGRITY SCORE</span>
-        <span className="text-amber-600 font-bold block">{certificate?.overallIntegrityScore || 0}%</span>
+       <div className="p-3 rounded-xl bg-paper border border-line space-y-1">
+        <span className="text-[10px] text-muted uppercase block">INTEGRITY SCORE</span>
+        <span className="text-warning font-bold block">{certificate?.overallIntegrityScore || 0}%</span>
        </div>
       </div>
      </div>
 
      {/* 8-Dimension Integrity Matrix */}
      {certificate && (
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <ShieldCheck className="w-4 h-4 text-amber-600" />
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <ShieldCheck className="w-4 h-4 text-warning" />
          8-Dimension Project Integrity Matrix
         </h3>
-        <span className="text-xs font-mono text-slate-500">
+        <span className="text-xs font-mono text-muted">
          Ready for Handoff: {certificate.readyForHandoff ? "YES" : "NO"}
         </span>
        </div>
 
        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
         {/* 1. Research */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
          <div className="flex justify-between items-center">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">1. RESEARCH</span>
-          <span className={`text-[10px] font-bold ${certificate.dimensions.researchIntegrity.status === 'PASS' ? 'text-emerald-600' : 'text-rose-600'}`}>
+          <span className="text-[10px] text-muted uppercase font-bold">1. RESEARCH</span>
+          <span className={`text-[10px] font-bold ${certificate.dimensions.researchIntegrity.status === 'PASS' ? 'text-verified' : 'text-conflict'}`}>
            {certificate.dimensions.researchIntegrity.status}
           </span>
          </div>
-         <div className="text-slate-700 font-bold">Score: {certificate.dimensions.researchIntegrity.score}%</div>
-         <span className="text-[11px] text-slate-500 block">Primary Sources: {certificate.dimensions.researchIntegrity.primaryEvidenceCount}</span>
+         <div className="text-ink/80 font-bold">Score: {certificate.dimensions.researchIntegrity.score}%</div>
+         <span className="text-[11px] text-muted block">Primary Sources: {certificate.dimensions.researchIntegrity.primaryEvidenceCount}</span>
         </div>
 
         {/* 2. Evidence */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
          <div className="flex justify-between items-center">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">2. EVIDENCE</span>
-          <span className={`text-[10px] font-bold ${certificate.dimensions.evidenceIntegrity.status === 'PASS' ? 'text-emerald-600' : 'text-amber-600'}`}>
+          <span className="text-[10px] text-muted uppercase font-bold">2. EVIDENCE</span>
+          <span className={`text-[10px] font-bold ${certificate.dimensions.evidenceIntegrity.status === 'PASS' ? 'text-verified' : 'text-warning'}`}>
            {certificate.dimensions.evidenceIntegrity.status}
           </span>
          </div>
-         <div className="text-slate-700 font-bold">Freshness: {certificate.dimensions.evidenceIntegrity.freshnessScore}%</div>
-         <span className="text-[11px] text-slate-500 block">Stale items: {certificate.dimensions.evidenceIntegrity.staleCount}</span>
+         <div className="text-ink/80 font-bold">Freshness: {certificate.dimensions.evidenceIntegrity.freshnessScore}%</div>
+         <span className="text-[11px] text-muted block">Stale items: {certificate.dimensions.evidenceIntegrity.staleCount}</span>
         </div>
 
         {/* 3. Claims */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
          <div className="flex justify-between items-center">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">3. CLAIM SAFETY</span>
-          <span className={`text-[10px] font-bold ${certificate.dimensions.claimSafety.status === 'PASS' ? 'text-emerald-600' : 'text-rose-600'}`}>
+          <span className="text-[10px] text-muted uppercase font-bold">3. CLAIM SAFETY</span>
+          <span className={`text-[10px] font-bold ${certificate.dimensions.claimSafety.status === 'PASS' ? 'text-verified' : 'text-conflict'}`}>
            {certificate.dimensions.claimSafety.status}
           </span>
          </div>
-         <div className="text-slate-700 font-bold">Verified: {certificate.dimensions.claimSafety.verifiedCount}</div>
-         <span className="text-[11px] text-slate-500 block">DO_NOT_SAY: {certificate.dimensions.claimSafety.doNotSayCount}</span>
+         <div className="text-ink/80 font-bold">Verified: {certificate.dimensions.claimSafety.verifiedCount}</div>
+         <span className="text-[11px] text-muted block">DO_NOT_SAY: {certificate.dimensions.claimSafety.doNotSayCount}</span>
         </div>
 
         {/* 4. Script */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
          <div className="flex justify-between items-center">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">4. SCRIPT</span>
-          <span className={`text-[10px] font-bold ${certificate.dimensions.scriptIntegrity.status === 'PASS' ? 'text-emerald-600' : 'text-amber-600'}`}>
+          <span className="text-[10px] text-muted uppercase font-bold">4. SCRIPT</span>
+          <span className={`text-[10px] font-bold ${certificate.dimensions.scriptIntegrity.status === 'PASS' ? 'text-verified' : 'text-warning'}`}>
            {certificate.dimensions.scriptIntegrity.status}
           </span>
          </div>
-         <div className="text-slate-700 font-bold">Quality: {certificate.dimensions.scriptIntegrity.qualityScore}% ({certificate.dimensions.scriptIntegrity.qualityGrade})</div>
-         <span className="text-[11px] text-slate-500 block">Duration: {certificate.dimensions.scriptIntegrity.targetDuration}m</span>
+         <div className="text-ink/80 font-bold">Quality: {certificate.dimensions.scriptIntegrity.qualityScore}% ({certificate.dimensions.scriptIntegrity.qualityGrade})</div>
+         <span className="text-[11px] text-muted block">Duration: {certificate.dimensions.scriptIntegrity.targetDuration}m</span>
         </div>
 
         {/* 5. Production */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
          <div className="flex justify-between items-center">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">5. PRODUCTION</span>
-          <span className={`text-[10px] font-bold ${certificate.dimensions.productionIntegrity.status === 'PASS' ? 'text-emerald-600' : 'text-amber-600'}`}>
+          <span className="text-[10px] text-muted uppercase font-bold">5. PRODUCTION</span>
+          <span className={`text-[10px] font-bold ${certificate.dimensions.productionIntegrity.status === 'PASS' ? 'text-verified' : 'text-warning'}`}>
            {certificate.dimensions.productionIntegrity.status}
           </span>
          </div>
-         <div className="text-slate-700 font-bold">Readiness: {certificate.dimensions.productionIntegrity.readinessScore}%</div>
-         <span className="text-[11px] text-slate-500 block">Enabled Assets: {certificate.dimensions.productionIntegrity.enabledAssetCount}</span>
+         <div className="text-ink/80 font-bold">Readiness: {certificate.dimensions.productionIntegrity.readinessScore}%</div>
+         <span className="text-[11px] text-muted block">Enabled Assets: {certificate.dimensions.productionIntegrity.enabledAssetCount}</span>
         </div>
 
         {/* 6. Publishing */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
          <div className="flex justify-between items-center">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">6. PUBLISHING</span>
-          <span className={`text-[10px] font-bold ${certificate.dimensions.publishingIntegrity.status === 'PASS' ? 'text-emerald-600' : 'text-rose-600'}`}>
+          <span className="text-[10px] text-muted uppercase font-bold">6. PUBLISHING</span>
+          <span className={`text-[10px] font-bold ${certificate.dimensions.publishingIntegrity.status === 'PASS' ? 'text-verified' : 'text-conflict'}`}>
            {certificate.dimensions.publishingIntegrity.status}
           </span>
          </div>
-         <div className="text-slate-700 font-bold">Score: {certificate.dimensions.publishingIntegrity.score}%</div>
-         <span className="text-[11px] text-slate-500 block">Platforms: {certificate.dimensions.publishingIntegrity.platformCount}</span>
+         <div className="text-ink/80 font-bold">Score: {certificate.dimensions.publishingIntegrity.score}%</div>
+         <span className="text-[11px] text-muted block">Platforms: {certificate.dimensions.publishingIntegrity.platformCount}</span>
         </div>
 
         {/* 7. Distribution */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
          <div className="flex justify-between items-center">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">7. DISTRIBUTION</span>
-          <span className={`text-[10px] font-bold ${certificate.dimensions.distributionIntegrity.status === 'PASS' ? 'text-emerald-600' : 'text-rose-600'}`}>
+          <span className="text-[10px] text-muted uppercase font-bold">7. DISTRIBUTION</span>
+          <span className={`text-[10px] font-bold ${certificate.dimensions.distributionIntegrity.status === 'PASS' ? 'text-verified' : 'text-conflict'}`}>
            {certificate.dimensions.distributionIntegrity.status}
           </span>
          </div>
-         <div className="text-slate-700 font-bold">Readiness: {certificate.dimensions.distributionIntegrity.readinessScore}%</div>
-         <span className="text-[11px] text-slate-500 block">Ready Targets: {certificate.dimensions.distributionIntegrity.readyCount}/{certificate.dimensions.distributionIntegrity.targetCount}</span>
+         <div className="text-ink/80 font-bold">Readiness: {certificate.dimensions.distributionIntegrity.readinessScore}%</div>
+         <span className="text-[11px] text-muted block">Ready Targets: {certificate.dimensions.distributionIntegrity.readyCount}/{certificate.dimensions.distributionIntegrity.targetCount}</span>
         </div>
 
         {/* 8. Execution */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
          <div className="flex justify-between items-center">
-          <span className="text-[10px] text-slate-500 uppercase font-bold">8. EXECUTION</span>
-          <span className={`text-[10px] font-bold ${certificate.dimensions.executionIntegrity.status === 'PASS' ? 'text-emerald-600' : 'text-amber-600'}`}>
+          <span className="text-[10px] text-muted uppercase font-bold">8. EXECUTION</span>
+          <span className={`text-[10px] font-bold ${certificate.dimensions.executionIntegrity.status === 'PASS' ? 'text-verified' : 'text-warning'}`}>
            {certificate.dimensions.executionIntegrity.status}
           </span>
          </div>
-         <div className="text-slate-700 font-bold">Plan: {certificate.dimensions.executionIntegrity.latestPlanStatus}</div>
-         <span className="text-[11px] text-slate-500 block">Concurrency: SAFE</span>
+         <div className="text-ink/80 font-bold">Plan: {certificate.dimensions.executionIntegrity.latestPlanStatus}</div>
+         <span className="text-[11px] text-muted block">Concurrency: SAFE</span>
         </div>
        </div>
       </div>
@@ -2995,30 +2995,30 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
      {/* "Why Isn't This Certified?" Blocker Panel */}
      {certificate && certificate.blockers.length > 0 && (
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <AlertOctagon className="w-4 h-4 text-rose-600" />
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <AlertOctagon className="w-4 h-4 text-conflict" />
          "Why Isn't This Certified?" Blocker Intelligence ({certificate.blockers.length})
         </h3>
        </div>
 
-       <div className="divide-y divide-slate-200">
+       <div className="divide-y divide-line">
         {certificate.blockers.map((blk) => (
          <div key={blk.id} className="py-3 flex items-start justify-between gap-4">
           <div className="space-y-1">
            <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-50 text-rose-600 border border-rose-200">
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-conflict-bg text-conflict border border-conflict/25">
              {blk.severity}
             </span>
-            <span className="text-xs font-bold text-slate-700 font-sans">{blk.reason}</span>
+            <span className="text-xs font-bold text-ink/80 font-sans">{blk.reason}</span>
            </div>
-           <p className="text-xs text-slate-500 font-sans">Cause: {blk.upstreamCause}</p>
-           <p className="text-[11px] font-mono text-amber-600">Required: {blk.requiredAction}</p>
+           <p className="text-xs text-muted font-sans">Cause: {blk.upstreamCause}</p>
+           <p className="text-[11px] font-mono text-warning">Required: {blk.requiredAction}</p>
           </div>
           <button
            onClick={() => setInspectedCertBlocker(blk)}
-           className="text-xs text-indigo-600 hover:text-indigo-600 shrink-0 font-mono"
+           className="text-xs text-citation hover:text-citation shrink-0 font-mono"
           >
            Inspect Lineage
           </button>
@@ -3030,18 +3030,18 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
      {/* "What Changed Since Certification?" Inspector */}
      {certChanges && (
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <History className="w-4 h-4 text-cyan-600" />
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <History className="w-4 h-4 text-citation" />
          "What Changed Since Certification?" Change Detection
         </h3>
         <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
          certChanges.impactLevel === 'NO_CHANGE'
-          ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+          ? 'bg-verified-bg text-verified border-verified/25'
           : certChanges.impactLevel === 'CRITICAL'
-          ? 'bg-rose-50 text-rose-600 border-rose-200'
-          : 'bg-amber-50 text-amber-600 border-amber-200'
+          ? 'bg-conflict-bg text-conflict border-conflict/25'
+          : 'bg-warning-bg text-warning border-warning/25'
         }`}>
          {certChanges.impactLevel}
         </span>
@@ -3049,8 +3049,8 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
        <div className="space-y-2 text-xs font-mono">
         {certChanges.details.map((d, idx) => (
-         <p key={idx} className="text-slate-700 flex items-center gap-2">
-          <span className="text-slate-500">â€¢</span>
+         <p key={idx} className="text-ink/80 flex items-center gap-2">
+          <span className="text-muted">â€¢</span>
           <span>{d}</span>
          </p>
         ))}
@@ -3060,18 +3060,18 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
      {/* Handoff Manifest View */}
      {handoffManifest && (
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
         <div>
-         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <Package className="w-4 h-4 text-indigo-600" />
+         <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+          <Package className="w-4 h-4 text-citation" />
           Final Evidence-Safe Handoff Package Manifest
          </h3>
-         <p className="text-xs text-slate-500 mt-0.5 font-sans">
+         <p className="text-xs text-muted mt-0.5 font-sans">
           Deterministic bundle referencing verified assets. No unavailable external integrations fabricated.
          </p>
         </div>
-        <span className="px-2.5 py-1 rounded text-xs font-mono font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
+        <span className="px-2.5 py-1 rounded text-xs font-mono font-bold bg-verified-bg text-verified border border-verified/25">
          {handoffManifest.includedAssets.length} ASSETS
         </span>
        </div>
@@ -3079,22 +3079,22 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">ASSET NAME</th>
            <th className="p-2.5">TYPE</th>
            <th className="p-2.5">SUBSYSTEM</th>
            <th className="p-2.5">STATUS</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {handoffManifest.includedAssets.map((asset, idx) => (
-           <tr key={idx} className="hover:bg-slate-100">
-            <td className="p-2.5 font-bold text-slate-700">{asset.name}</td>
-            <td className="p-2.5 text-indigo-600">{asset.type}</td>
-            <td className="p-2.5 text-slate-500">{asset.subsystem}</td>
+           <tr key={idx} className="hover:bg-paper">
+            <td className="p-2.5 font-bold text-ink/80">{asset.name}</td>
+            <td className="p-2.5 text-citation">{asset.type}</td>
+            <td className="p-2.5 text-muted">{asset.subsystem}</td>
             <td className="p-2.5">
              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-              asset.available ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-50 text-slate-500'
+              asset.available ? 'bg-verified-bg text-verified border border-verified/25' : 'bg-paper text-muted'
              }`}>
               {asset.available ? 'AVAILABLE' : 'DISABLED'}
              </span>
@@ -3108,34 +3108,34 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      )}
 
      {/* Immutable Certification Audit Ledger */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-       <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-        <History className="w-4 h-4 text-amber-600" />
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
+       <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+        <History className="w-4 h-4 text-warning" />
         Immutable Certification Audit Ledger ({certHistory.length} Events)
        </h3>
       </div>
 
       {certHistory.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No certification audit events recorded yet.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No certification audit events recorded yet.</p>
       ) : (
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">TIMESTAMP</th>
            <th className="p-2.5">ACTION</th>
            <th className="p-2.5">SCRIPT VERSION</th>
            <th className="p-2.5">DETAILS</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {certHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
-            <td className="p-2.5 text-slate-500">{new Date(ev.timestamp).toLocaleTimeString()}</td>
-            <td className="p-2.5 font-bold text-amber-600">{ev.action}</td>
-            <td className="p-2.5 text-slate-700">v{ev.scriptVersion}</td>
-            <td className="p-2.5 text-slate-700 font-sans">{ev.details}</td>
+           <tr key={ev.auditId} className="hover:bg-paper">
+            <td className="p-2.5 text-muted">{new Date(ev.timestamp).toLocaleTimeString()}</td>
+            <td className="p-2.5 font-bold text-warning">{ev.action}</td>
+            <td className="p-2.5 text-ink/80">v{ev.scriptVersion}</td>
+            <td className="p-2.5 text-ink/80 font-sans">{ev.details}</td>
            </tr>
           ))}
          </tbody>
@@ -3147,50 +3147,50 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Blocker Lineage Modal */}
      {inspectedCertBlocker && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-line rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <AlertOctagon className="w-5 h-5 text-rose-600" />
-          <h3 className="text-sm font-bold text-slate-900">Certification Blocker Lineage Inspector</h3>
+          <AlertOctagon className="w-5 h-5 text-conflict" />
+          <h3 className="text-sm font-bold text-ink">Certification Blocker Lineage Inspector</h3>
          </div>
          <button
           onClick={() => setInspectedCertBlocker(null)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5 font-mono text-xs">
-         <div className="flex justify-between text-slate-500">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1.5 font-mono text-xs">
+         <div className="flex justify-between text-muted">
           <span>BLOCKER ID:</span>
-          <span className="font-bold text-slate-900">{inspectedCertBlocker.id}</span>
+          <span className="font-bold text-ink">{inspectedCertBlocker.id}</span>
          </div>
-         <div className="flex justify-between text-slate-500">
+         <div className="flex justify-between text-muted">
           <span>SUBSYSTEM:</span>
-          <span className="text-amber-600 font-bold">{inspectedCertBlocker.subsystem}</span>
+          <span className="text-warning font-bold">{inspectedCertBlocker.subsystem}</span>
          </div>
-         <div className="flex justify-between text-slate-500">
+         <div className="flex justify-between text-muted">
           <span>AFFECTED NODE:</span>
-          <span className="text-indigo-600 font-bold">{inspectedCertBlocker.affectedNode}</span>
+          <span className="text-citation font-bold">{inspectedCertBlocker.affectedNode}</span>
          </div>
         </div>
 
         <div className="space-y-2 text-xs font-sans">
-         <span className="text-[10px] font-mono text-indigo-600 uppercase font-bold">REASON & UPSTREAM CAUSE</span>
-         <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-100 space-y-2 text-slate-700 leading-relaxed">
+         <span className="text-[10px] font-mono text-citation uppercase font-bold">REASON & UPSTREAM CAUSE</span>
+         <div className="bg-paper p-3.5 rounded-lg border border-line space-y-2 text-ink/80 leading-relaxed">
           <p><strong>Direct Reason:</strong> {inspectedCertBlocker.reason}</p>
           <p><strong>Upstream Cause:</strong> {inspectedCertBlocker.upstreamCause}</p>
-          <p className="text-[11px] font-mono text-teal-600">
+          <p className="text-[11px] font-mono text-verified">
            Evidence Ref: {inspectedCertBlocker.evidenceReference}
           </p>
          </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setInspectedCertBlocker(null)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Close
          </button>
@@ -3202,46 +3202,46 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Release Lock Modal */}
      {showLockModal && certificate && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-amber-200/80 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-warning/25/80 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <Lock className="w-5 h-5 text-amber-600" />
-          <h3 className="text-sm font-bold text-slate-900">Apply Release Lock</h3>
+          <Lock className="w-5 h-5 text-warning" />
+          <h3 className="text-sm font-bold text-ink">Apply Release Lock</h3>
          </div>
          <button
           onClick={() => setShowLockModal(false)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
         </div>
 
-        <p className="text-xs text-slate-700 font-sans leading-relaxed">
-         You are locking Script Version {certificate.scriptVersion} and Project Snapshot Hash <code className="text-amber-600 font-mono">{certificate.projectSnapshotHash}</code> as the certified handoff/release state. Any mutation to claims, evidence, or script will invalidate this lock.
+        <p className="text-xs text-ink/80 font-sans leading-relaxed">
+         You are locking Script Version {certificate.scriptVersion} and Project Snapshot Hash <code className="text-warning font-mono">{certificate.projectSnapshotHash}</code> as the certified handoff/release state. Any mutation to claims, evidence, or script will invalidate this lock.
         </p>
 
         <div className="space-y-1">
-         <label className="text-[11px] font-mono text-slate-500 block">Release Notes (Optional):</label>
+         <label className="text-[11px] font-mono text-muted block">Release Notes (Optional):</label>
          <input
           type="text"
           value={lockNotes}
           onChange={(e) => setLockNotes(e.target.value)}
           placeholder="e.g., Certified for YouTube publication and editor handoff."
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-amber-500 font-sans"
+          className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-xs text-ink/80 focus:outline-none focus:border-warning font-sans"
          />
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setShowLockModal(false)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={handleApplyReleaseLock}
           disabled={isLocking}
-          className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-slate-900 text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-warning hover:bg-warning disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           {isLocking ? "Locking..." : "Confirm & Apply Lock"}
          </button>
@@ -3253,46 +3253,46 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Unlock Modal */}
      {showUnlockModal && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-rose-200/80 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-conflict/25/80 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <Unlock className="w-5 h-5 text-rose-600" />
-          <h3 className="text-sm font-bold text-slate-900">Unlock Certified Release State</h3>
+          <Unlock className="w-5 h-5 text-conflict" />
+          <h3 className="text-sm font-bold text-ink">Unlock Certified Release State</h3>
          </div>
          <button
           onClick={() => setShowUnlockModal(false)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
         </div>
 
-        <p className="text-xs text-slate-700 font-sans leading-relaxed">
+        <p className="text-xs text-ink/80 font-sans leading-relaxed">
          Removing the Release Lock allows modifications and further staging. The unlock event will be recorded in the audit ledger.
         </p>
 
         <div className="space-y-1">
-         <label className="text-[11px] font-mono text-slate-500 block">Reason for Unlock (Optional):</label>
+         <label className="text-[11px] font-mono text-muted block">Reason for Unlock (Optional):</label>
          <input
           type="text"
           value={unlockReason}
           onChange={(e) => setUnlockReason(e.target.value)}
           placeholder="e.g., Updating benchmark numbers from latest retest."
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-rose-500 font-sans"
+          className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-xs text-ink/80 focus:outline-none focus:border-conflict font-sans"
          />
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setShowUnlockModal(false)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={handleUnlockRelease}
           disabled={isUnlocking}
-          className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-slate-900 text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-conflict hover:bg-conflict disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           {isUnlocking ? "Unlocking..." : "Confirm Unlock"}
          </button>
@@ -3308,36 +3308,36 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-6">
      {/* Notifications */}
      {perfSuccessMsg && (
-      <div className="p-4 rounded-xl bg-purple-50/60 border border-purple-600/80 text-purple-600 text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-purple-600" />
+      <div className="p-4 rounded-xl bg-citation-bg/60 border border-citation/80 text-citation text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-citation" />
        <span>{perfSuccessMsg}</span>
       </div>
      )}
 
      {perfErrorMsg && (
-      <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200 text-rose-600 text-xs font-mono flex items-center gap-2">
-       <AlertOctagon className="w-4 h-4 text-rose-600" />
+      <div className="p-4 rounded-xl bg-conflict-bg/60 border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <AlertOctagon className="w-4 h-4 text-conflict" />
        <span>{perfErrorMsg}</span>
       </div>
      )}
 
      {/* Top Performance Header & Snapshot */}
-     <div className="p-6 rounded-2xl bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+     <div className="p-6 rounded-2xl bg-card rounded-[24px] shadow-sm border border-line space-y-5 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
        <div className="space-y-1">
         <div className="flex items-center gap-2">
-         <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-purple-50 text-purple-600 border border-purple-200">
+         <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-citation-bg text-citation border border-citation/20">
           PLATFORM: {perfSnapshot?.platform || "YOUTUBE_LONG_FORM"}
          </span>
-         <span className="text-xs font-mono text-slate-500">
+         <span className="text-xs font-mono text-muted">
           Window: {perfSnapshot?.measurementWindow || "FIRST_48_HOURS"}
          </span>
         </div>
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-         <BarChart3 className="w-5 h-5 text-purple-600" />
+        <h2 className="text-lg font-bold text-ink flex items-center gap-2">
+         <BarChart3 className="w-5 h-5 text-citation" />
          Creator Performance Intelligence & Evidence-Safe Learning Loop
         </h2>
-        <p className="text-xs text-slate-500 font-sans">
+        <p className="text-xs text-muted font-sans">
          Outcome signals inform content presentation and future research prioritization. Performance never determines factual research truth.
         </p>
        </div>
@@ -3345,21 +3345,21 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="flex flex-wrap items-center gap-2 shrink-0">
         <button
          onClick={() => setShowRecordSnapshotModal(true)}
-         className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-500 text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:bg-citation text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <BarChart3 className="w-3.5 h-3.5" />
          Record Performance Data
         </button>
         <button
          onClick={() => setShowAudienceModal(true)}
-         className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-100 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold font-mono transition"
+         className="flex items-center gap-1.5 bg-paper hover:bg-paper text-ink/80 px-3.5 py-2 rounded-xl text-xs font-bold font-mono transition"
         >
          <MessageSquare className="w-3.5 h-3.5" />
          Log Audience Signal
         </button>
         <button
          onClick={() => setShowExperimentModal(true)}
-         className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:bg-citation text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <FlaskConical className="w-3.5 h-3.5" />
          New A/B Experiment
@@ -3369,117 +3369,117 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
       {/* Performance Overview Metric Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 font-mono text-xs">
-       <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <div className="flex justify-between text-slate-500 text-[10px] uppercase">
+       <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
+        <div className="flex justify-between text-muted text-[10px] uppercase">
          <span>VIEWS</span>
-         <span className="text-emerald-600 font-bold">{perfSnapshot?.metrics.views?.availability || "AVAILABLE"}</span>
+         <span className="text-verified font-bold">{perfSnapshot?.metrics.views?.availability || "AVAILABLE"}</span>
         </div>
-        <div className="text-lg font-extrabold text-slate-900">
+        <div className="text-lg font-extrabold text-ink">
          {perfSnapshot?.metrics.views?.value.toLocaleString() || "12,500"}
         </div>
-        <span className="text-[10px] text-slate-500 block">Measured release</span>
+        <span className="text-[10px] text-muted block">Measured release</span>
        </div>
 
-       <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <div className="flex justify-between text-slate-500 text-[10px] uppercase">
+       <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
+        <div className="flex justify-between text-muted text-[10px] uppercase">
          <span>RETENTION</span>
-         <span className="text-emerald-600 font-bold">{perfSnapshot?.metrics.averagePercentageViewed?.availability || "AVAILABLE"}</span>
+         <span className="text-verified font-bold">{perfSnapshot?.metrics.averagePercentageViewed?.availability || "AVAILABLE"}</span>
         </div>
-        <div className="text-lg font-extrabold text-teal-600">
+        <div className="text-lg font-extrabold text-verified">
          {perfSnapshot?.metrics.averagePercentageViewed?.value || 58}%
         </div>
-        <span className="text-[10px] text-slate-500 block">Avg % Viewed</span>
+        <span className="text-[10px] text-muted block">Avg % Viewed</span>
        </div>
 
-       <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <div className="flex justify-between text-slate-500 text-[10px] uppercase">
+       <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
+        <div className="flex justify-between text-muted text-[10px] uppercase">
          <span>CTR</span>
-         <span className="text-emerald-600 font-bold">{perfSnapshot?.metrics.ctr?.availability || "AVAILABLE"}</span>
+         <span className="text-verified font-bold">{perfSnapshot?.metrics.ctr?.availability || "AVAILABLE"}</span>
         </div>
-        <div className="text-lg font-extrabold text-indigo-600">
+        <div className="text-lg font-extrabold text-citation">
          {perfSnapshot?.metrics.ctr?.value || 7.2}%
         </div>
-        <span className="text-[10px] text-slate-500 block">Click-Through</span>
+        <span className="text-[10px] text-muted block">Click-Through</span>
        </div>
 
-       <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <div className="flex justify-between text-slate-500 text-[10px] uppercase">
+       <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
+        <div className="flex justify-between text-muted text-[10px] uppercase">
          <span>WATCH TIME</span>
-         <span className="text-emerald-600 font-bold">{perfSnapshot?.metrics.watchTimeHours?.availability || "AVAILABLE"}</span>
+         <span className="text-verified font-bold">{perfSnapshot?.metrics.watchTimeHours?.availability || "AVAILABLE"}</span>
         </div>
-        <div className="text-lg font-extrabold text-purple-600">
+        <div className="text-lg font-extrabold text-citation">
          {perfSnapshot?.metrics.watchTimeHours?.value.toLocaleString() || "1,450"}h
         </div>
-        <span className="text-[10px] text-slate-500 block">Total hours</span>
+        <span className="text-[10px] text-muted block">Total hours</span>
        </div>
 
-       <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <div className="flex justify-between text-slate-500 text-[10px] uppercase">
+       <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
+        <div className="flex justify-between text-muted text-[10px] uppercase">
          <span>LIKES</span>
-         <span className="text-emerald-600 font-bold">{perfSnapshot?.metrics.likes?.availability || "AVAILABLE"}</span>
+         <span className="text-verified font-bold">{perfSnapshot?.metrics.likes?.availability || "AVAILABLE"}</span>
         </div>
-        <div className="text-lg font-extrabold text-amber-600">
+        <div className="text-lg font-extrabold text-warning">
          {perfSnapshot?.metrics.likes?.value.toLocaleString() || "890"}
         </div>
-        <span className="text-[10px] text-slate-500 block">Positive signals</span>
+        <span className="text-[10px] text-muted block">Positive signals</span>
        </div>
 
-       <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-        <div className="flex justify-between text-slate-500 text-[10px] uppercase">
+       <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1">
+        <div className="flex justify-between text-muted text-[10px] uppercase">
          <span>COMMENTS</span>
-         <span className="text-emerald-600 font-bold">{perfSnapshot?.metrics.comments?.availability || "AVAILABLE"}</span>
+         <span className="text-verified font-bold">{perfSnapshot?.metrics.comments?.availability || "AVAILABLE"}</span>
         </div>
-        <div className="text-lg font-extrabold text-slate-700">
+        <div className="text-lg font-extrabold text-ink/80">
          {perfSnapshot?.metrics.comments?.value.toLocaleString() || "142"}
         </div>
-        <span className="text-[10px] text-slate-500 block">Audience inquiries</span>
+        <span className="text-[10px] text-muted block">Audience inquiries</span>
        </div>
       </div>
      </div>
 
      {/* Strategic Learning Insights Dashboard */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
        <div>
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <Lightbulb className="w-4 h-4 text-amber-600" />
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <Lightbulb className="w-4 h-4 text-warning" />
          Strategic Creator Learning Insights ({perfInsights.length})
         </h3>
-        <p className="text-xs text-slate-500 mt-0.5 font-sans">
+        <p className="text-xs text-muted mt-0.5 font-sans">
          Recurring patterns detected with strict confidence thresholds and alternative explanations.
         </p>
        </div>
       </div>
 
       {perfInsights.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No learning insights generated yet. Record performance data to detect recurring patterns.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No learning insights generated yet. Record performance data to detect recurring patterns.</p>
       ) : (
        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {perfInsights.map((ins) => (
-         <div key={ins.insightId} className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2.5">
+         <div key={ins.insightId} className="p-4 rounded-xl bg-paper border border-line space-y-2.5">
           <div className="flex items-center justify-between">
-           <span className="text-xs font-bold text-slate-700 font-sans">{ins.category}</span>
+           <span className="text-xs font-bold text-ink/80 font-sans">{ins.category}</span>
            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
-            ins.confidence === 'HIGH_CONFIDENCE' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
-            ins.confidence === 'MODERATE_CONFIDENCE' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' :
-            'bg-white rounded-[24px] shadow-sm text-slate-500 border-slate-200'
+            ins.confidence === 'HIGH_CONFIDENCE' ? 'bg-verified-bg text-verified border-verified/25' :
+            ins.confidence === 'MODERATE_CONFIDENCE' ? 'bg-citation-bg text-citation border-citation/20' :
+            'bg-card rounded-[24px] shadow-sm text-muted border-line'
            }`}>
             {ins.confidence}
            </span>
           </div>
 
-          <p className="text-xs text-slate-700 font-sans leading-relaxed">
+          <p className="text-xs text-ink/80 font-sans leading-relaxed">
            <strong>Signal:</strong> {ins.observedSignal}
           </p>
 
-          <div className="p-2.5 rounded-lg bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-1 text-xs text-slate-500 font-sans">
+          <div className="p-2.5 rounded-lg bg-card rounded-[24px] shadow-sm border border-line space-y-1 text-xs text-muted font-sans">
            <p><strong>Recommended Action:</strong> {ins.recommendedAction}</p>
-           <p className="text-[11px] font-mono text-purple-600">Causality: {ins.causalityType} (Sample: {ins.sampleSize.toLocaleString()} views)</p>
+           <p className="text-[11px] font-mono text-citation">Causality: {ins.causalityType} (Sample: {ins.sampleSize.toLocaleString()} views)</p>
           </div>
 
           <button
            onClick={() => setInspectedInsight(ins)}
-           className="text-xs text-indigo-600 hover:text-indigo-600 font-mono hover:underline"
+           className="text-xs text-citation hover:text-citation font-mono hover:underline"
           >
            Why Did This Perform This Way?
           </button>
@@ -3490,39 +3490,39 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* Audience Question & Objection Intelligence */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
        <div>
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <MessageSquare className="w-4 h-4 text-cyan-600" />
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <MessageSquare className="w-4 h-4 text-citation" />
          Audience Question & Objection Signals ({audienceSignals.length})
         </h3>
-        <p className="text-xs text-slate-500 mt-0.5 font-sans">
+        <p className="text-xs text-muted mt-0.5 font-sans">
          Viewer inquiries classified safely. Audience comments are signals requiring research, never facts by default.
         </p>
        </div>
       </div>
 
       {audienceSignals.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No audience signals logged yet.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No audience signals logged yet.</p>
       ) : (
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">CATEGORY</th>
            <th className="p-2.5">VIEWER COMMENT</th>
            <th className="p-2.5">VALIDATION STATE</th>
            <th className="p-2.5">RESEARCH ACTION</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {audienceSignals.map((sig) => (
-           <tr key={sig.signalId} className="hover:bg-slate-100">
-            <td className="p-2.5 font-bold text-indigo-600">{sig.category}</td>
-            <td className="p-2.5 text-slate-700 font-sans max-w-xs truncate">{sig.rawText}</td>
+           <tr key={sig.signalId} className="hover:bg-paper">
+            <td className="p-2.5 font-bold text-citation">{sig.category}</td>
+            <td className="p-2.5 text-ink/80 font-sans max-w-xs truncate">{sig.rawText}</td>
             <td className="p-2.5">
-             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200">
+             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-warning-bg text-warning border border-warning/25">
               REQUIRES VALIDATION
              </span>
             </td>
@@ -3530,7 +3530,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              <button
               onClick={() => handleCreateResearchOpportunity(sig.signalId)}
               disabled={isCreatingResearchOpp || Boolean(sig.researchOpportunityId)}
-              className="px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-slate-900 text-[11px] font-bold transition"
+              className="px-2.5 py-1 rounded bg-citation hover:bg-citation disabled:opacity-40 text-ink text-[11px] font-bold transition"
              >
               {sig.researchOpportunityId ? "Queued" : "Create Research Task"}
              </button>
@@ -3544,26 +3544,26 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* Creator Experiments Panel */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
        <div>
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <FlaskConical className="w-4 h-4 text-emerald-600" />
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <FlaskConical className="w-4 h-4 text-verified" />
          Creator Content Experiments ({experiments.length})
         </h3>
-        <p className="text-xs text-slate-500 mt-0.5 font-sans">
+        <p className="text-xs text-muted mt-0.5 font-sans">
          Structured A/B testing across hooks, packaging, and presentation pacing without fabricated statistical significance.
         </p>
        </div>
       </div>
 
       {experiments.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No content experiments active. Click "New A/B Experiment" to set up a test.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No content experiments active. Click "New A/B Experiment" to set up a test.</p>
       ) : (
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">VARIABLE</th>
            <th className="p-2.5">HYPOTHESIS</th>
            <th className="p-2.5">CONTROL VS VARIANT</th>
@@ -3571,25 +3571,25 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">CONCLUSION</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {experiments.map((exp) => (
-           <tr key={exp.experimentId} className="hover:bg-slate-100">
-            <td className="p-2.5 font-bold text-purple-600">{exp.variable}</td>
-            <td className="p-2.5 text-slate-700 font-sans max-w-xs truncate">{exp.hypothesis}</td>
-            <td className="p-2.5 text-slate-500 text-[11px]">
+           <tr key={exp.experimentId} className="hover:bg-paper">
+            <td className="p-2.5 font-bold text-citation">{exp.variable}</td>
+            <td className="p-2.5 text-ink/80 font-sans max-w-xs truncate">{exp.hypothesis}</td>
+            <td className="p-2.5 text-muted text-[11px]">
              <div>C: {exp.control}</div>
              <div>V: {exp.variant}</div>
             </td>
             <td className="p-2.5">
-             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-50 text-slate-700 border border-slate-200">
+             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-paper text-ink/80 border border-line">
               {exp.status}
              </span>
             </td>
             <td className="p-2.5">
              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-              exp.conclusionState === 'SUPPORTED' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
-              exp.conclusionState === 'PROMISING' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' :
-              'bg-slate-50 text-slate-500 border-slate-200'
+              exp.conclusionState === 'SUPPORTED' ? 'bg-verified-bg text-verified border-verified/25' :
+              exp.conclusionState === 'PROMISING' ? 'bg-citation-bg text-citation border-citation/20' :
+              'bg-paper text-muted border-line'
              }`}>
               {exp.conclusionState}
              </span>
@@ -3603,36 +3603,36 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* Research Feedback Opportunities Queue */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
        <div>
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <Compass className="w-4 h-4 text-teal-600" />
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <Compass className="w-4 h-4 text-verified" />
          Performance-Driven Research Opportunities ({researchOpportunities.length})
         </h3>
-        <p className="text-xs text-slate-500 mt-0.5 font-sans">
+        <p className="text-xs text-muted mt-0.5 font-sans">
          Bridges performance signals back into structured research investigation tasks.
         </p>
        </div>
       </div>
 
       {researchOpportunities.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No research opportunities queued.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No research opportunities queued.</p>
       ) : (
-       <div className="divide-y divide-slate-200">
+       <div className="divide-y divide-line">
         {researchOpportunities.map((opp) => (
          <div key={opp.opportunityId} className="py-3 flex items-start justify-between gap-4 font-sans text-xs">
           <div className="space-y-1">
            <div className="flex items-center gap-2 font-mono">
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-800">
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-verified-bg text-verified border border-verified">
              {opp.triggeredBy}
             </span>
-            <span className="font-bold text-slate-700">{opp.title}</span>
+            <span className="font-bold text-ink/80">{opp.title}</span>
            </div>
-           <p className="text-slate-500">{opp.description}</p>
-           <p className="text-[11px] font-mono text-amber-600">Action: {opp.actionRequired}</p>
+           <p className="text-muted">{opp.description}</p>
+           <p className="text-[11px] font-mono text-warning">Action: {opp.actionRequired}</p>
           </div>
-          <span className="px-2.5 py-1 rounded text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0">
+          <span className="px-2.5 py-1 rounded text-xs font-mono font-bold bg-paper text-ink/80 border border-line shrink-0">
            {opp.status}
           </span>
          </div>
@@ -3642,32 +3642,32 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* Immutable Performance Audit Ledger */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-       <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-        <History className="w-4 h-4 text-purple-600" />
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
+       <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+        <History className="w-4 h-4 text-citation" />
         Immutable Performance Audit Ledger ({perfHistory.length} Events)
        </h3>
       </div>
 
       {perfHistory.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No performance audit events recorded yet.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No performance audit events recorded yet.</p>
       ) : (
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">TIMESTAMP</th>
            <th className="p-2.5">ACTION</th>
            <th className="p-2.5">DETAILS</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {perfHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
-            <td className="p-2.5 text-slate-500">{new Date(ev.timestamp).toLocaleTimeString()}</td>
-            <td className="p-2.5 font-bold text-purple-600">{ev.action}</td>
-            <td className="p-2.5 text-slate-700 font-sans">{ev.details}</td>
+           <tr key={ev.auditId} className="hover:bg-paper">
+            <td className="p-2.5 text-muted">{new Date(ev.timestamp).toLocaleTimeString()}</td>
+            <td className="p-2.5 font-bold text-citation">{ev.action}</td>
+            <td className="p-2.5 text-ink/80 font-sans">{ev.details}</td>
            </tr>
           ))}
          </tbody>
@@ -3679,15 +3679,15 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Record Snapshot Modal */}
      {showRecordSnapshotModal && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-purple-200/80 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-citation/20/80 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-purple-600" />
-          <h3 className="text-sm font-bold text-slate-900">Record Post-Release Performance</h3>
+          <BarChart3 className="w-5 h-5 text-citation" />
+          <h3 className="text-sm font-bold text-ink">Record Post-Release Performance</h3>
          </div>
          <button
           onClick={() => setShowRecordSnapshotModal(false)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
@@ -3695,48 +3695,48 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
         <div className="space-y-3 font-sans text-xs">
          <div>
-          <label className="text-[11px] font-mono text-slate-500 block mb-1">Views:</label>
+          <label className="text-[11px] font-mono text-muted block mb-1">Views:</label>
           <input
            type="number"
            value={newViews}
            onChange={(e) => setNewViews(Number(e.target.value))}
-           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-purple-500 font-mono"
+           className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-mono"
           />
          </div>
 
          <div>
-          <label className="text-[11px] font-mono text-slate-500 block mb-1">Average % Viewed (Retention):</label>
+          <label className="text-[11px] font-mono text-muted block mb-1">Average % Viewed (Retention):</label>
           <input
            type="number"
            value={newRetention}
            onChange={(e) => setNewRetention(Number(e.target.value))}
-           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-purple-500 font-mono"
+           className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-mono"
           />
          </div>
 
          <div>
-          <label className="text-[11px] font-mono text-slate-500 block mb-1">Click-Through Rate (CTR %):</label>
+          <label className="text-[11px] font-mono text-muted block mb-1">Click-Through Rate (CTR %):</label>
           <input
            type="number"
            step="0.1"
            value={newCtr}
            onChange={(e) => setNewCtr(Number(e.target.value))}
-           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-purple-500 font-mono"
+           className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-mono"
           />
          </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setShowRecordSnapshotModal(false)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={handleRecordPerformanceSnapshot}
           disabled={isRecordingSnapshot}
-          className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-slate-900 text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           {isRecordingSnapshot ? "Saving..." : "Save Snapshot"}
          </button>
@@ -3748,21 +3748,21 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Log Audience Modal */}
      {showAudienceModal && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-line rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-cyan-600" />
-          <h3 className="text-sm font-bold text-slate-900">Log Audience Comment / Inquiry</h3>
+          <MessageSquare className="w-5 h-5 text-citation" />
+          <h3 className="text-sm font-bold text-ink">Log Audience Comment / Inquiry</h3>
          </div>
          <button
           onClick={() => setShowAudienceModal(false)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
         </div>
 
-        <p className="text-xs text-slate-500 font-sans">
+        <p className="text-xs text-muted font-sans">
          The system will automatically classify this inquiry and flag whether it requires empirical research validation.
         </p>
 
@@ -3771,20 +3771,20 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          value={newAudienceComment}
          onChange={(e) => setNewAudienceComment(e.target.value)}
          placeholder="Paste viewer question or feedback here..."
-         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700 focus:outline-none focus:border-cyan-500 font-sans"
+         className="w-full bg-paper border border-line rounded-xl p-3 text-xs text-ink/80 focus:outline-none focus:border-citation font-sans"
         />
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setShowAudienceModal(false)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={handleLogAudienceComment}
           disabled={isLoggingAudience || !newAudienceComment.trim()}
-          className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-slate-900 text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           {isLoggingAudience ? "Processing..." : "Process Signal"}
          </button>
@@ -3796,15 +3796,15 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Create Experiment Modal */}
      {showExperimentModal && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-indigo-200 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-citation/20 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <FlaskConical className="w-5 h-5 text-indigo-600" />
-          <h3 className="text-sm font-bold text-slate-900">Set Up Content A/B Experiment</h3>
+          <FlaskConical className="w-5 h-5 text-citation" />
+          <h3 className="text-sm font-bold text-ink">Set Up Content A/B Experiment</h3>
          </div>
          <button
           onClick={() => setShowExperimentModal(false)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
@@ -3812,49 +3812,49 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
         <div className="space-y-3 font-sans text-xs">
          <div>
-          <label className="text-[11px] font-mono text-slate-500 block mb-1">Hypothesis:</label>
+          <label className="text-[11px] font-mono text-muted block mb-1">Hypothesis:</label>
           <input
            type="text"
            value={newExpHypothesis}
            onChange={(e) => setNewExpHypothesis(e.target.value)}
            placeholder="e.g. An efficiency-focused hook will improve 30s retention."
-           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-indigo-500 font-sans"
+           className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-sans"
           />
          </div>
 
          <div className="grid grid-cols-2 gap-2">
           <div>
-           <label className="text-[11px] font-mono text-slate-500 block mb-1">Control (A):</label>
+           <label className="text-[11px] font-mono text-muted block mb-1">Control (A):</label>
            <input
             type="text"
             value={newExpControl}
             onChange={(e) => setNewExpControl(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-indigo-500 font-sans"
+            className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-sans"
            />
           </div>
           <div>
-           <label className="text-[11px] font-mono text-slate-500 block mb-1">Variant (B):</label>
+           <label className="text-[11px] font-mono text-muted block mb-1">Variant (B):</label>
            <input
             type="text"
             value={newExpVariant}
             onChange={(e) => setNewExpVariant(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-indigo-500 font-sans"
+            className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-sans"
            />
           </div>
          </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setShowExperimentModal(false)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={handleCreateExperiment}
           disabled={isCreatingExperiment || !newExpHypothesis.trim()}
-          className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-slate-900 text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           {isCreatingExperiment ? "Creating..." : "Create Experiment"}
          </button>
@@ -3866,53 +3866,53 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* "Why Did This Perform This Way?" Inspector Modal */}
      {inspectedInsight && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-line rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <Lightbulb className="w-5 h-5 text-amber-600" />
-          <h3 className="text-sm font-bold text-slate-900">Performance Inference Inspector</h3>
+          <Lightbulb className="w-5 h-5 text-warning" />
+          <h3 className="text-sm font-bold text-ink">Performance Inference Inspector</h3>
          </div>
          <button
           onClick={() => setInspectedInsight(null)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5 font-mono text-xs">
-         <div className="flex justify-between text-slate-500">
+        <div className="p-3.5 rounded-xl bg-paper border border-line space-y-1.5 font-mono text-xs">
+         <div className="flex justify-between text-muted">
           <span>INSIGHT ID:</span>
-          <span className="font-bold text-slate-900">{inspectedInsight.insightId}</span>
+          <span className="font-bold text-ink">{inspectedInsight.insightId}</span>
          </div>
-         <div className="flex justify-between text-slate-500">
+         <div className="flex justify-between text-muted">
           <span>CATEGORY:</span>
-          <span className="text-purple-600 font-bold">{inspectedInsight.category}</span>
+          <span className="text-citation font-bold">{inspectedInsight.category}</span>
          </div>
-         <div className="flex justify-between text-slate-500">
+         <div className="flex justify-between text-muted">
           <span>CONFIDENCE:</span>
-          <span className="text-emerald-600 font-bold">{inspectedInsight.confidence}</span>
+          <span className="text-verified font-bold">{inspectedInsight.confidence}</span>
          </div>
-         <div className="flex justify-between text-slate-500">
+         <div className="flex justify-between text-muted">
           <span>CAUSALITY LEVEL:</span>
-          <span className="text-amber-600 font-bold">{inspectedInsight.causalityType}</span>
+          <span className="text-warning font-bold">{inspectedInsight.causalityType}</span>
          </div>
         </div>
 
         <div className="space-y-3 text-xs font-sans">
          <div>
-          <span className="text-[10px] font-mono text-slate-500 uppercase font-bold block mb-1">OBSERVED SIGNAL</span>
-          <p className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-slate-700 leading-relaxed">
+          <span className="text-[10px] font-mono text-muted uppercase font-bold block mb-1">OBSERVED SIGNAL</span>
+          <p className="bg-paper p-3 rounded-lg border border-line text-ink/80 leading-relaxed">
            {inspectedInsight.observedSignal}
           </p>
          </div>
 
          <div>
-          <span className="text-[10px] font-mono text-indigo-600 uppercase font-bold block mb-1">ALTERNATIVE EXPLANATIONS</span>
-          <ul className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-slate-700 space-y-1">
+          <span className="text-[10px] font-mono text-citation uppercase font-bold block mb-1">ALTERNATIVE EXPLANATIONS</span>
+          <ul className="bg-paper p-3 rounded-lg border border-line text-ink/80 space-y-1">
            {inspectedInsight.alternativeExplanations.map((alt, idx) => (
             <li key={idx} className="flex items-start gap-2">
-             <span className="text-slate-500">â€¢</span>
+             <span className="text-muted">â€¢</span>
              <span>{alt}</span>
             </li>
            ))}
@@ -3920,17 +3920,17 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          </div>
 
          <div>
-          <span className="text-[10px] font-mono text-emerald-600 uppercase font-bold block mb-1">RECOMMENDED ACTION</span>
-          <p className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-emerald-600">
+          <span className="text-[10px] font-mono text-verified uppercase font-bold block mb-1">RECOMMENDED ACTION</span>
+          <p className="bg-paper p-3 rounded-lg border border-line text-verified">
            {inspectedInsight.recommendedAction}
           </p>
          </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setInspectedInsight(null)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Close
          </button>
@@ -3946,36 +3946,36 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-6">
      {/* Notifications */}
      {intelSuccessMsg && (
-      <div className="p-4 rounded-xl bg-cyan-50/60 border border-cyan-600/80 text-cyan-600 text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-cyan-600" />
+      <div className="p-4 rounded-xl bg-citation-bg/60 border border-citation/80 text-citation text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-citation" />
        <span>{intelSuccessMsg}</span>
       </div>
      )}
 
      {intelErrorMsg && (
-      <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200 text-rose-600 text-xs font-mono flex items-center gap-2">
-       <AlertOctagon className="w-4 h-4 text-rose-600" />
+      <div className="p-4 rounded-xl bg-conflict-bg/60 border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <AlertOctagon className="w-4 h-4 text-conflict" />
        <span>{intelErrorMsg}</span>
       </div>
      )}
 
      {/* Top Ecosystem Overview Header */}
-     <div className="p-6 rounded-2xl bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+     <div className="p-6 rounded-2xl bg-card rounded-[24px] shadow-sm border border-line space-y-5 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
        <div className="space-y-1">
         <div className="flex items-center gap-2">
-         <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-cyan-50 text-cyan-600 border border-cyan-200">
+         <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-citation-bg text-citation border border-citation/20">
           ECOSYSTEM HARDENING ACTIVE
          </span>
-         <span className="text-xs font-mono text-slate-500">
+         <span className="text-xs font-mono text-muted">
           Snapshots: {ingestionSnapshots.length} | Aligned Pairs: {synthesisReport?.alignedMethodologiesCount || 0}
          </span>
         </div>
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-         <Cpu className="w-5 h-5 text-cyan-600" />
+        <h2 className="text-lg font-bold text-ink flex items-center gap-2">
+         <Cpu className="w-5 h-5 text-citation" />
          Creator Intelligence Ecosystem & Cross-Project Benchmark Synthesizer
         </h2>
-        <p className="text-xs text-slate-500 font-sans">
+        <p className="text-xs text-muted font-sans">
          Multi-platform honest ingestion adapters and evidence-grounded cross-project benchmark comparability.
         </p>
        </div>
@@ -3983,7 +3983,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="flex flex-wrap items-center gap-2 shrink-0">
         <button
          onClick={() => setShowImportModal(true)}
-         className="flex items-center gap-1.5 bg-cyan-600 hover:bg-cyan-500 text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:bg-citation text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <UploadCloud className="w-3.5 h-3.5" />
          Import Platform Data
@@ -3991,7 +3991,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleRunBenchmarkSynthesis}
          disabled={isSynthesizing}
-         className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-citation hover:bg-citation disabled:opacity-50 text-ink px-3.5 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isSynthesizing ? "animate-spin" : ""}`} />
          {isSynthesizing ? "Synthesizing..." : "Synthesize Benchmarks"}
@@ -4001,47 +4001,47 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
       {/* Platform Ingestion Adapters Overview Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
-       <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
-        <div className="flex justify-between items-center text-slate-500">
-         <span className="font-bold text-slate-700">YouTube Ingestion Adapter</span>
-         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
+       <div className="p-4 rounded-xl bg-paper border border-line space-y-2">
+        <div className="flex justify-between items-center text-muted">
+         <span className="font-bold text-ink/80">YouTube Ingestion Adapter</span>
+         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-verified-bg text-verified border border-verified/25">
           IMPORT_AVAILABLE
          </span>
         </div>
-        <p className="text-[11px] text-slate-500 font-sans">
+        <p className="text-[11px] text-muted font-sans">
          Honest ingestion of video performance, CTR, and audience retention metrics.
         </p>
-        <div className="text-[10px] text-slate-500 font-mono">
+        <div className="text-[10px] text-muted font-mono">
          State: Local structured import ready
         </div>
        </div>
 
-       <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
-        <div className="flex justify-between items-center text-slate-500">
-         <span className="font-bold text-slate-700">Podcast Ingestion Adapter</span>
-         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white rounded-[24px] shadow-sm text-slate-500 border border-slate-200">
+       <div className="p-4 rounded-xl bg-paper border border-line space-y-2">
+        <div className="flex justify-between items-center text-muted">
+         <span className="font-bold text-ink/80">Podcast Ingestion Adapter</span>
+         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-card rounded-[24px] shadow-sm text-muted border border-line">
           NOT_CONFIGURED
          </span>
         </div>
-        <p className="text-[11px] text-slate-500 font-sans">
+        <p className="text-[11px] text-muted font-sans">
          RSS audio stream telemetry and completion metrics import.
         </p>
-        <div className="text-[10px] text-slate-500 font-mono">
+        <div className="text-[10px] text-muted font-mono">
          State: Awaiting feed credentials
         </div>
        </div>
 
-       <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
-        <div className="flex justify-between items-center text-slate-500">
-         <span className="font-bold text-slate-700">Creator Manual Import</span>
-         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-200">
+       <div className="p-4 rounded-xl bg-paper border border-line space-y-2">
+        <div className="flex justify-between items-center text-muted">
+         <span className="font-bold text-ink/80">Creator Manual Import</span>
+         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-citation-bg text-citation border border-citation/20">
           LOCAL_ONLY
          </span>
         </div>
-        <p className="text-[11px] text-slate-500 font-sans">
+        <p className="text-[11px] text-muted font-sans">
          Structured direct import of reviewer lab benchmarks and audience feedback.
         </p>
-        <div className="text-[10px] text-slate-500 font-mono">
+        <div className="text-[10px] text-muted font-mono">
          State: Ready for direct payloads
         </div>
        </div>
@@ -4049,26 +4049,26 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* Cross-Project Benchmark Synthesizer Panel */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
        <div>
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <Cpu className="w-4 h-4 text-cyan-600" />
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <Cpu className="w-4 h-4 text-citation" />
          Cross-Project Benchmark Comparability Matrix ({synthesisReport?.comparisonPairs?.length || 0} Pairs)
         </h3>
-        <p className="text-xs text-slate-500 mt-0.5 font-sans">
+        <p className="text-xs text-muted mt-0.5 font-sans">
          Rigorous methodology matching across resolution, presets, APIs, and test conditions before comparing scores.
         </p>
        </div>
       </div>
 
       {!synthesisReport || synthesisReport.comparisonPairs.length === 0 ? (
-       <div className="p-6 rounded-xl bg-slate-50 border border-slate-100 text-center space-y-2">
-        <p className="text-xs font-mono text-slate-500">No benchmark synthesis generated yet.</p>
+       <div className="p-6 rounded-xl bg-paper border border-line text-center space-y-2">
+        <p className="text-xs font-mono text-muted">No benchmark synthesis generated yet.</p>
         <button
          onClick={handleRunBenchmarkSynthesis}
          disabled={isSynthesizing}
-         className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-slate-900 text-xs font-mono font-bold transition"
+         className="px-3.5 py-1.5 rounded-xl bg-citation hover:bg-citation text-ink text-xs font-mono font-bold transition"
         >
          Run Benchmark Synthesis
         </button>
@@ -4077,7 +4077,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">BENCHMARK</th>
            <th className="p-2.5">PRIMARY ENTITY (A)</th>
            <th className="p-2.5">COMPARED ENTITY (B)</th>
@@ -4086,43 +4086,43 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">METHODOLOGY DIFFERENCES</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {synthesisReport.comparisonPairs.map((pair) => (
-           <tr key={pair.pairId} className="hover:bg-slate-100">
-            <td className="p-2.5 font-bold text-slate-700">{pair.benchmarkA.benchmarkName}</td>
-            <td className="p-2.5 text-cyan-600">
+           <tr key={pair.pairId} className="hover:bg-paper">
+            <td className="p-2.5 font-bold text-ink/80">{pair.benchmarkA.benchmarkName}</td>
+            <td className="p-2.5 text-citation">
              <div>{pair.benchmarkA.entityName}</div>
-             <div className="text-[11px] text-slate-500 font-bold">{pair.benchmarkA.score} {pair.benchmarkA.metricUnit}</div>
+             <div className="text-[11px] text-muted font-bold">{pair.benchmarkA.score} {pair.benchmarkA.metricUnit}</div>
             </td>
-            <td className="p-2.5 text-purple-600">
+            <td className="p-2.5 text-citation">
              <div>{pair.benchmarkB.entityName}</div>
-             <div className="text-[11px] text-slate-500 font-bold">{pair.benchmarkB.score} {pair.benchmarkB.metricUnit}</div>
+             <div className="text-[11px] text-muted font-bold">{pair.benchmarkB.score} {pair.benchmarkB.metricUnit}</div>
             </td>
             <td className="p-2.5">
              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-              pair.comparabilityState === "DIRECTLY_COMPARABLE" ? "bg-emerald-50 text-emerald-600 border-emerald-200" :
-              pair.comparabilityState === "COMPARABLE_WITH_CAVEATS" ? "bg-indigo-50 text-indigo-600 border-indigo-200" :
-              pair.comparabilityState === "PARTIALLY_COMPARABLE" ? "bg-amber-50 text-amber-600 border-amber-200" :
-              pair.comparabilityState === "CONFLICTED" ? "bg-rose-50 text-rose-600 border-rose-200" :
-              "bg-slate-50 text-slate-500 border-slate-200"
+              pair.comparabilityState === "DIRECTLY_COMPARABLE" ? "bg-verified-bg text-verified border-verified/25" :
+              pair.comparabilityState === "COMPARABLE_WITH_CAVEATS" ? "bg-citation-bg text-citation border-citation/20" :
+              pair.comparabilityState === "PARTIALLY_COMPARABLE" ? "bg-warning-bg text-warning border-warning/25" :
+              pair.comparabilityState === "CONFLICTED" ? "bg-conflict-bg text-conflict border-conflict/25" :
+              "bg-paper text-muted border-line"
              }`}>
               {pair.comparabilityState}
              </span>
             </td>
             <td className="p-2.5">
-             <span className={`font-bold ${pair.scoreDeltaPercent >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+             <span className={`font-bold ${pair.scoreDeltaPercent >= 0 ? "text-verified" : "text-conflict"}`}>
               {pair.scoreDeltaPercent >= 0 ? `+${pair.scoreDeltaPercent}%` : `${pair.scoreDeltaPercent}%`}
              </span>
             </td>
-            <td className="p-2.5 text-[11px] text-slate-500 font-sans">
+            <td className="p-2.5 text-[11px] text-muted font-sans">
              {pair.methodologyDifferences.length > 0 ? (
-              <ul className="list-disc list-inside space-y-0.5 text-amber-600/90">
+              <ul className="list-disc list-inside space-y-0.5 text-warning/90">
                {pair.methodologyDifferences.map((diff, idx) => (
                 <li key={idx}>{diff}</li>
                ))}
               </ul>
              ) : (
-              <span className="text-emerald-600 font-mono">Full alignment across presets & resolution</span>
+              <span className="text-verified font-mono">Full alignment across presets & resolution</span>
              )}
             </td>
            </tr>
@@ -4134,21 +4134,21 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* Ingestion Snapshots Table */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-       <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-        <UploadCloud className="w-4 h-4 text-cyan-600" />
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
+       <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+        <UploadCloud className="w-4 h-4 text-citation" />
         Ingestion Snapshot History ({ingestionSnapshots.length})
        </h3>
       </div>
 
       {ingestionSnapshots.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No platform ingestion snapshots recorded yet.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No platform ingestion snapshots recorded yet.</p>
       ) : (
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">PLATFORM</th>
            <th className="p-2.5">ITEMS INGESTED</th>
            <th className="p-2.5">STATUS</th>
@@ -4156,18 +4156,18 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">TIMESTAMP</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {ingestionSnapshots.map((snap) => (
-           <tr key={snap.snapshotId} className="hover:bg-slate-100">
-            <td className="p-2.5 font-bold text-cyan-600">{snap.platform}</td>
-            <td className="p-2.5 text-slate-700">{snap.observations.length} items</td>
+           <tr key={snap.snapshotId} className="hover:bg-paper">
+            <td className="p-2.5 font-bold text-citation">{snap.platform}</td>
+            <td className="p-2.5 text-ink/80">{snap.observations.length} items</td>
             <td className="p-2.5">
-             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
+             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-verified-bg text-verified border border-verified/25">
               {snap.validationStatus}
              </span>
             </td>
-            <td className="p-2.5 text-slate-500">{snap.snapshotHash}</td>
-            <td className="p-2.5 text-slate-500">{new Date(snap.ingestedAt).toLocaleTimeString()}</td>
+            <td className="p-2.5 text-muted">{snap.snapshotHash}</td>
+            <td className="p-2.5 text-muted">{new Date(snap.ingestedAt).toLocaleTimeString()}</td>
            </tr>
           ))}
          </tbody>
@@ -4177,32 +4177,32 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* Immutable Ingestion & Synthesis Audit Ledger */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-       <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-        <History className="w-4 h-4 text-cyan-600" />
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
+       <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+        <History className="w-4 h-4 text-citation" />
         Immutable Ingestion & Synthesis Audit Ledger ({intelHistory.length} Events)
        </h3>
       </div>
 
       {intelHistory.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No audit events recorded yet.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No audit events recorded yet.</p>
       ) : (
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">TIMESTAMP</th>
            <th className="p-2.5">ACTION</th>
            <th className="p-2.5">DETAILS</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {intelHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
-            <td className="p-2.5 text-slate-500">{new Date(ev.timestamp).toLocaleTimeString()}</td>
-            <td className="p-2.5 font-bold text-cyan-600">{ev.action}</td>
-            <td className="p-2.5 text-slate-700 font-sans">{ev.details}</td>
+           <tr key={ev.auditId} className="hover:bg-paper">
+            <td className="p-2.5 text-muted">{new Date(ev.timestamp).toLocaleTimeString()}</td>
+            <td className="p-2.5 font-bold text-citation">{ev.action}</td>
+            <td className="p-2.5 text-ink/80 font-sans">{ev.details}</td>
            </tr>
           ))}
          </tbody>
@@ -4214,15 +4214,15 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Import Platform Data Modal */}
      {showImportModal && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-white rounded-[24px] shadow-sm border border-cyan-200/80 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+       <div className="bg-card rounded-[24px] shadow-sm border border-citation/20/80 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div className="flex items-center justify-between border-b border-line pb-3">
          <div className="flex items-center gap-2">
-          <UploadCloud className="w-5 h-5 text-cyan-600" />
-          <h3 className="text-sm font-bold text-slate-900">Import Platform Ingestion Batch</h3>
+          <UploadCloud className="w-5 h-5 text-citation" />
+          <h3 className="text-sm font-bold text-ink">Import Platform Ingestion Batch</h3>
          </div>
          <button
           onClick={() => setShowImportModal(false)}
-          className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
+          className="text-muted hover:text-ink/80 p-1 rounded-lg hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
@@ -4230,11 +4230,11 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
         <div className="space-y-3 font-sans text-xs">
          <div>
-          <label className="text-[11px] font-mono text-slate-500 block mb-1">Platform Adapter:</label>
+          <label className="text-[11px] font-mono text-muted block mb-1">Platform Adapter:</label>
           <select
            value={importPlatform}
            onChange={(e) => setImportPlatform(e.target.value as AdapterPlatform)}
-           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-cyan-500 font-mono"
+           className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-mono"
           >
            <option value="YOUTUBE">YouTube (IMPORT_AVAILABLE)</option>
            <option value="PODCAST">Podcast (NOT_CONFIGURED)</option>
@@ -4243,48 +4243,48 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          </div>
 
          <div>
-          <label className="text-[11px] font-mono text-slate-500 block mb-1">Views / Downloads:</label>
+          <label className="text-[11px] font-mono text-muted block mb-1">Views / Downloads:</label>
           <input
            type="number"
            value={importViews}
            onChange={(e) => setImportViews(Number(e.target.value))}
-           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-cyan-500 font-mono"
+           className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-mono"
           />
          </div>
 
          <div>
-          <label className="text-[11px] font-mono text-slate-500 block mb-1">Average Retention (%):</label>
+          <label className="text-[11px] font-mono text-muted block mb-1">Average Retention (%):</label>
           <input
            type="number"
            value={importRetention}
            onChange={(e) => setImportRetention(Number(e.target.value))}
-           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-cyan-500 font-mono"
+           className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-mono"
           />
          </div>
 
          <div>
-          <label className="text-[11px] font-mono text-slate-500 block mb-1">Click-Through Rate (%):</label>
+          <label className="text-[11px] font-mono text-muted block mb-1">Click-Through Rate (%):</label>
           <input
            type="number"
            step="0.1"
            value={importCtr}
            onChange={(e) => setImportCtr(Number(e.target.value))}
-           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-cyan-500 font-mono"
+           className="w-full bg-paper border border-line rounded-xl px-3 py-2 text-ink/80 focus:outline-none focus:border-citation font-mono"
           />
          </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
          <button
           onClick={() => setShowImportModal(false)}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-100 text-slate-700 text-xs font-mono transition"
+          className="px-4 py-2 rounded-xl bg-paper hover:bg-paper text-ink/80 text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={handleImportPlatformData}
           disabled={isIngesting}
-          className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-slate-900 text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-xl bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           {isIngesting ? "Ingesting..." : "Validate & Ingest"}
          </button>
@@ -4300,7 +4300,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
      {/* Notifications */}
      {matrixSuccessMsg && (
-      <div className="p-4 rounded-[10px] bg-verified-bg border border-teal-600/80 text-verified text-xs font-mono flex items-center gap-2">
+      <div className="p-4 rounded-[10px] bg-verified-bg border border-verified/80 text-verified text-xs font-mono flex items-center gap-2">
        <CheckCheck className="w-4 h-4 text-verified" />
        <span>{matrixSuccessMsg}</span>
       </div>
@@ -4337,7 +4337,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="flex flex-wrap items-center gap-2 shrink-0">
         <button
          onClick={() => setShowCreateVariantModal(true)}
-         className="flex items-center gap-1.5 bg-teal-600 hover:bg-teal-500 text-ink px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className="flex items-center gap-1.5 bg-verified hover:bg-verified text-ink px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
         >
          <Plus className="w-3.5 h-3.5" />
          Create Production Variant
@@ -4391,12 +4391,12 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">ACTION</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {productionMatrix.variants.map((v) => (
            <tr
             key={v.variantId}
-            className={`hover:bg-slate-100 cursor-pointer ${
-             selectedVariant?.variantId === v.variantId ? "bg-verified-bg border-l-2 border-teal-500" : ""
+            className={`hover:bg-paper cursor-pointer ${
+             selectedVariant?.variantId === v.variantId ? "bg-verified-bg border-l-2 border-verified" : ""
             }`}
             onClick={() => setSelectedVariant(v)}
            >
@@ -4427,7 +4427,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
                e.stopPropagation();
                setSelectedVariant(v);
               }}
-              className="px-2.5 py-1 rounded bg-paper hover:bg-slate-100 text-verified text-[11px] font-mono transition"
+              className="px-2.5 py-1 rounded bg-paper hover:bg-paper text-verified text-[11px] font-mono transition"
              >
               Inspect
              </button>
@@ -4581,9 +4581,9 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">DETAILS</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {matrixHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
+           <tr key={ev.auditId} className="hover:bg-paper">
             <td className="p-2.5 text-muted-2">{new Date(ev.timestamp).toLocaleTimeString()}</td>
             <td className="p-2.5 font-bold text-verified">{ev.action}</td>
             <td className="p-2.5 text-ink font-sans">{ev.details}</td>
@@ -4598,7 +4598,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Create Variant Modal */}
      {showCreateVariantModal && (
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-       <div className="bg-card rounded-[24px]  border border-teal-800/80 rounded-[14px] max-w-md w-full p-6 space-y-4  animate-in fade-in zoom-in duration-150">
+       <div className="bg-card rounded-[24px]  border border-verified/80 rounded-[14px] max-w-md w-full p-6 space-y-4  animate-in fade-in zoom-in duration-150">
         <div className="flex items-center justify-between border-b border-line-soft pb-3">
          <div className="flex items-center gap-2">
           <Layers className="w-5 h-5 text-verified" />
@@ -4606,7 +4606,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          </div>
          <button
           onClick={() => setShowCreateVariantModal(false)}
-          className="text-muted-2 hover:text-slate-700 p-1 rounded-[8px] hover:bg-slate-100"
+          className="text-muted-2 hover:text-ink/80 p-1 rounded-[8px] hover:bg-paper"
          >
           <X className="w-5 h-5" />
          </button>
@@ -4620,7 +4620,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            value={newVariantName}
            onChange={(e) => setNewVariantName(e.target.value)}
            placeholder="e.g. YouTube Short: GPU Power Efficiency"
-           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-teal-500 font-sans"
+           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-verified font-sans"
           />
          </div>
 
@@ -4629,7 +4629,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <select
            value={newVariantType}
            onChange={(e) => setNewVariantType(e.target.value as ProductionVariantType)}
-           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-teal-500 font-mono"
+           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-verified font-mono"
           >
            <option value="YOUTUBE_LONG_FORM">YouTube Long Form (10-20 min)</option>
            <option value="YOUTUBE_SHORT">YouTube Short (1 min)</option>
@@ -4644,7 +4644,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            type="number"
            value={newVariantDuration}
            onChange={(e) => setNewVariantDuration(Number(e.target.value))}
-           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-teal-500 font-mono"
+           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-verified font-mono"
           />
          </div>
         </div>
@@ -4652,14 +4652,14 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <div className="flex justify-end gap-2 pt-2 border-t border-line-soft">
          <button
           onClick={() => setShowCreateVariantModal(false)}
-          className="px-4 py-2 rounded-[10px] bg-paper hover:bg-slate-100 text-ink text-xs font-mono transition"
+          className="px-4 py-2 rounded-[10px] bg-paper hover:bg-paper text-ink text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={handleCreateVariant}
           disabled={isCreatingVariant || !newVariantName.trim()}
-          className="px-4 py-2 rounded-[10px] bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-[10px] bg-verified hover:bg-verified disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           {isCreatingVariant ? "Creating..." : "Create Variant"}
          </button>
@@ -4675,8 +4675,8 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
      {/* Notifications */}
      {exportSuccessMsg && (
-      <div className="p-4 rounded-[10px] bg-blue-950/60 border border-blue-600/80 text-citation text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-blue-600" />
+      <div className="p-4 rounded-[10px] bg-blue-950/60 border border-citation/80 text-citation text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-citation" />
        <span>{exportSuccessMsg}</span>
       </div>
      )}
@@ -4695,7 +4695,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <div className="flex items-center gap-2">
          <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
           exportPackage?.status === "EXPORTED" ? "bg-verified-bg text-verified border-verified-bg" :
-          exportPackage?.status === "READY" ? "bg-blue-950 text-citation border-blue-800" :
+          exportPackage?.status === "READY" ? "bg-blue-950 text-citation border-citation" :
           exportPackage?.status === "BLOCKED" ? "bg-conflict-bg text-conflict border-conflict-bg" :
           "bg-paper text-ink border-line-soft"
          }`}>
@@ -4706,7 +4706,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          </span>
         </div>
         <h2 className="text-lg font-bold text-ink flex items-center gap-2">
-         <FileArchive className="w-5 h-5 text-blue-600" />
+         <FileArchive className="w-5 h-5 text-citation" />
          Creator Production Asset Package Export & Render Manifest Generator
         </h2>
         <p className="text-xs text-muted-2 font-sans">
@@ -4718,7 +4718,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleValidateExportPackage}
          disabled={isValidatingPackage}
-         className="flex items-center gap-1.5 bg-paper hover:bg-slate-100 text-ink px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono border border-line transition"
+         className="flex items-center gap-1.5 bg-paper hover:bg-paper text-ink px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono border border-line transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isValidatingPackage ? "animate-spin" : ""}`} />
          Validate Package
@@ -4726,7 +4726,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleExecuteExport}
          disabled={isExporting || exportPackage?.status === "BLOCKED" || exportPackage?.status === "EXPORTED"}
-         className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-ink px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className="flex items-center gap-1.5 bg-citation hover:bg-citation disabled:opacity-50 text-ink px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
         >
          <Download className="w-3.5 h-3.5" />
          {isExporting ? "Exporting..." : exportPackage?.status === "EXPORTED" ? "Exported" : "Execute Export"}
@@ -4742,7 +4742,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        </div>
        <div className="p-3 rounded-[10px] bg-paper border border-line-soft">
         <span className="text-muted-2 block text-[10px]">EVIDENCE SNAPSHOT</span>
-        <span className="text-blue-600 font-bold truncate block">{exportPackage?.evidenceSnapshotHash || "esnap-default"}</span>
+        <span className="text-citation font-bold truncate block">{exportPackage?.evidenceSnapshotHash || "esnap-default"}</span>
        </div>
        <div className="p-3 rounded-[10px] bg-paper border border-line-soft">
         <span className="text-muted-2 block text-[10px]">PROJECT SNAPSHOT</span>
@@ -4759,7 +4759,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      <div className="p-6 bg-card rounded-[24px]  border-line-soft space-y-4">
       <div className="flex items-center justify-between border-b border-line-soft pb-3">
        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-        <Globe className="w-4 h-4 text-blue-600" />
+        <Globe className="w-4 h-4 text-citation" />
         Target Readiness Matrix ({exportPackage?.targets?.length || 0} Targets)
        </h3>
       </div>
@@ -4793,7 +4793,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
       <div className="p-6 bg-card rounded-[24px]  border-line-soft space-y-4">
        <div className="flex items-center justify-between border-b border-line-soft pb-3">
         <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-         <Boxes className="w-4 h-4 text-blue-600" />
+         <Boxes className="w-4 h-4 text-citation" />
          Asset Package Inventory ({exportPackage?.assets?.length || 0})
         </h3>
        </div>
@@ -4823,14 +4823,14 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="flex items-center justify-between border-b border-line-soft pb-3">
         <div>
          <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-          <Tv className="w-4 h-4 text-blue-600" />
+          <Tv className="w-4 h-4 text-citation" />
           Automated Render Manifest ({exportPackage?.renderManifest?.entries?.length || 0} Entries)
          </h3>
          <p className="text-[11px] text-muted-2 font-sans">
           Deterministic manifest with honest capability reporting.
          </p>
         </div>
-        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-950 text-citation border border-blue-800">
+        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-950 text-citation border border-citation">
          {exportPackage?.renderManifest?.manifestHash}
         </span>
        </div>
@@ -4843,7 +4843,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
             rme.renderCapabilityState === "AVAILABLE" ? "bg-verified-bg text-verified border-verified-bg" :
             rme.renderCapabilityState === "BLOCKED" ? "bg-conflict-bg text-conflict border-conflict-bg" :
-            "bg-card rounded-[24px]  text-warning border-amber-200/50"
+            "bg-card rounded-[24px]  text-warning border-warning/25/50"
            }`}>
             {rme.renderCapabilityState}
            </span>
@@ -4864,7 +4864,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      <div className="p-6 bg-card rounded-[24px]  border-line-soft space-y-4">
       <div className="flex items-center justify-between border-b border-line-soft pb-3">
        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-        <ShieldCheck className="w-4 h-4 text-blue-600" />
+        <ShieldCheck className="w-4 h-4 text-citation" />
         Package Validation Report ({exportPackage?.validationReport?.issues?.length || 0} Issues)
        </h3>
        <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
@@ -4904,7 +4904,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      <div className="p-6 bg-card rounded-[24px]  border-line-soft space-y-4">
       <div className="flex items-center justify-between border-b border-line-soft pb-3">
        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-        <History className="w-4 h-4 text-blue-600" />
+        <History className="w-4 h-4 text-citation" />
         Immutable Production Export Audit Ledger ({exportHistory.length} Events)
        </h3>
       </div>
@@ -4921,9 +4921,9 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">DETAILS</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {exportHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
+           <tr key={ev.auditId} className="hover:bg-paper">
             <td className="p-2.5 text-muted-2">{new Date(ev.timestamp).toLocaleTimeString()}</td>
             <td className="p-2.5 font-bold text-citation">{ev.action}</td>
             <td className="p-2.5 text-ink font-sans">{ev.details}</td>
@@ -4942,8 +4942,8 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
      {/* Notifications */}
      {publishingSuccessMsg && (
-      <div className="p-4 rounded-[10px] bg-violet-950/60 border border-violet-600/80 text-violet-300 text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-violet-400" />
+      <div className="p-4 rounded-[10px] bg-violet-950/60 border border-citation/80 text-citation/60 text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-citation/60" />
        <span>{publishingSuccessMsg}</span>
       </div>
      )}
@@ -4962,7 +4962,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <div className="flex items-center gap-2">
          <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
           publishingPlan?.status === "PUBLISHED" ? "bg-verified-bg text-verified border-verified-bg" :
-          publishingPlan?.status === "PREFLIGHT_PASSED" || publishingPlan?.status === "APPROVED" ? "bg-violet-950 text-violet-300 border-violet-800" :
+          publishingPlan?.status === "PREFLIGHT_PASSED" || publishingPlan?.status === "APPROVED" ? "bg-violet-950 text-citation/60 border-citation" :
           publishingPlan?.status === "PREFLIGHT_BLOCKED" ? "bg-conflict-bg text-conflict border-conflict-bg" :
           "bg-paper text-ink border-line-soft"
          }`}>
@@ -4973,7 +4973,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          </span>
         </div>
         <h2 className="text-lg font-bold text-ink flex items-center gap-2">
-         <SendHorizontal className="w-5 h-5 text-violet-400" />
+         <SendHorizontal className="w-5 h-5 text-citation/60" />
          Creator Multi-Channel Publishing Orchestrator & Preflight Gatekeeper
         </h2>
         <p className="text-xs text-muted-2 font-sans">
@@ -4985,7 +4985,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={loadPublishingState}
          disabled={isPublishingLoading}
-         className="flex items-center gap-1.5 bg-paper hover:bg-slate-100 text-ink px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono border border-line transition"
+         className="flex items-center gap-1.5 bg-paper hover:bg-paper text-ink px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono border border-line transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isPublishingLoading ? "animate-spin" : ""}`} />
          Refresh Plan
@@ -5001,7 +5001,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        </div>
        <div className="p-3 rounded-[10px] bg-paper border border-line-soft">
         <span className="text-muted-2 block text-[10px]">EXPORT PACKAGE HASH</span>
-        <span className="text-blue-600 font-bold truncate block">{publishingPlan?.exportPackageSnapshotHash || "pkg-snap-default"}</span>
+        <span className="text-citation font-bold truncate block">{publishingPlan?.exportPackageSnapshotHash || "pkg-snap-default"}</span>
        </div>
        <div className="p-3 rounded-[10px] bg-paper border border-line-soft">
         <span className="text-muted-2 block text-[10px]">EVIDENCE SNAPSHOT</span>
@@ -5018,7 +5018,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      <div className="space-y-4">
       <div className="flex items-center justify-between">
        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-        <Globe className="w-4 h-4 text-violet-400" />
+        <Globe className="w-4 h-4 text-citation/60" />
         Multi-Channel Publishing Targets ({publishingPlan?.targets?.length || 0})
        </h3>
       </div>
@@ -5030,8 +5030,8 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          onClick={() => setSelectedPublishingTarget(tgt)}
          className={`p-5 rounded-[14px] border transition cursor-pointer space-y-4 ${
           selectedPublishingTarget?.targetId === tgt.targetId
-           ? "bg-card rounded-[24px]  border-violet-500 ring-1 ring-violet-500/40 "
-           : "bg-card rounded-[24px] shadow-sm/80 border-line-soft hover:border-slate-300"
+           ? "bg-card rounded-[24px]  border-citation ring-1 ring-citation/40 "
+           : "bg-card rounded-[24px] shadow-sm/80 border-line-soft hover:border-line"
          }`}
         >
          <div className="flex justify-between items-start">
@@ -5041,8 +5041,8 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           </div>
           <span className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${
            tgt.status === "PUBLISHED" ? "bg-verified-bg text-verified border-verified-bg" :
-           tgt.status === "APPROVED" || tgt.status === "PREFLIGHT_PASSED" ? "bg-violet-950 text-violet-300 border-violet-800" :
-           tgt.status === "STAGING_ONLY" ? "bg-blue-950 text-citation border-blue-800" :
+           tgt.status === "APPROVED" || tgt.status === "PREFLIGHT_PASSED" ? "bg-violet-950 text-citation/60 border-citation" :
+           tgt.status === "STAGING_ONLY" ? "bg-blue-950 text-citation border-citation" :
            tgt.status === "PREFLIGHT_BLOCKED" ? "bg-conflict-bg text-conflict border-conflict-bg" :
            "bg-paper text-muted-2 border-line-soft"
           }`}>
@@ -5084,7 +5084,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              handleApprovePublishingTarget(tgt.targetId);
             }}
             disabled={isPublishingLoading || tgt.status === "PREFLIGHT_BLOCKED"}
-            className="flex-1 py-1.5 rounded-[8px] bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+            className="flex-1 py-1.5 rounded-[8px] bg-verified hover:bg-verified disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
            >
             Approve
            </button>
@@ -5097,7 +5097,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              handleStagePublishingTarget(tgt.targetId);
             }}
             disabled={isPublishingLoading}
-            className="flex-1 py-1.5 rounded-[8px] bg-blue-600 hover:bg-blue-500 text-ink text-xs font-mono font-bold transition"
+            className="flex-1 py-1.5 rounded-[8px] bg-citation hover:bg-citation text-ink text-xs font-mono font-bold transition"
            >
             Stage
            </button>
@@ -5110,7 +5110,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              handlePublishTargetExecution(tgt.targetId);
             }}
             disabled={isPublishingLoading}
-            className="flex-1 py-1.5 rounded-[8px] bg-violet-600 hover:bg-violet-500 text-ink text-xs font-mono font-bold transition"
+            className="flex-1 py-1.5 rounded-[8px] bg-citation hover:bg-citation text-ink text-xs font-mono font-bold transition"
            >
             {tgt.connectionState === "NOT_CONFIGURED" ? "Stage Publish" : "Publish"}
            </button>
@@ -5122,7 +5122,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             setSelectedPublishingTarget(tgt);
             setShowPublishingScheduleModal(true);
            }}
-           className="px-2.5 py-1.5 rounded-[8px] bg-paper hover:bg-slate-100 text-ink text-xs font-mono transition"
+           className="px-2.5 py-1.5 rounded-[8px] bg-paper hover:bg-paper text-ink text-xs font-mono transition"
           >
            Schedule
           </button>
@@ -5140,7 +5140,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <div className="flex items-center justify-between border-b border-line-soft pb-3">
          <div>
           <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-           <ShieldCheck className="w-4 h-4 text-violet-400" />
+           <ShieldCheck className="w-4 h-4 text-citation/60" />
            Preflight Gatekeeper ({selectedPublishingTarget.platform})
           </h3>
           <p className="text-[11px] text-muted-2 font-sans">
@@ -5169,7 +5169,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            </div>
            <div className="text-ink font-sans">{chk.reason}</div>
            <div className="text-[10px] text-muted-2">Upstream: {chk.upstreamDependency} ({chk.originalCause})</div>
-           <div className="text-[11px] text-violet-300">Action: {chk.requiredAction}</div>
+           <div className="text-[11px] text-citation/60">Action: {chk.requiredAction}</div>
           </div>
          ))}
         </div>
@@ -5180,7 +5180,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <div className="flex items-center justify-between border-b border-line-soft pb-3">
          <div>
           <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-           <FileText className="w-4 h-4 text-violet-400" />
+           <FileText className="w-4 h-4 text-citation/60" />
            Publishing Plan Inspector ({selectedPublishingTarget.platform})
           </h3>
           <p className="text-[11px] text-muted-2 font-sans">
@@ -5227,7 +5227,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      <div className="p-6 bg-card rounded-[24px]  border-line-soft space-y-4">
       <div className="flex items-center justify-between border-b border-line-soft pb-3">
        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-        <Receipt className="w-4 h-4 text-violet-400" />
+        <Receipt className="w-4 h-4 text-citation/60" />
         Immutable Distribution Receipt Ledger ({publishingReceipts.length} Receipts)
        </h3>
       </div>
@@ -5247,16 +5247,16 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5 text-right">ACTION</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {publishingReceipts.map((rec) => (
-           <tr key={rec.receiptId} className="hover:bg-slate-100">
+           <tr key={rec.receiptId} className="hover:bg-paper">
             <td className="p-2.5 text-muted-2">{new Date(rec.timestamp).toLocaleTimeString()}</td>
-            <td className="p-2.5 font-bold text-violet-300">{rec.eventType}</td>
+            <td className="p-2.5 font-bold text-citation/60">{rec.eventType}</td>
             <td className="p-2.5 text-ink">{rec.platform}</td>
             <td className="p-2.5">
              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
               rec.status === "SUCCESS" ? "bg-verified-bg text-verified border-verified-bg" :
-              rec.status === "STAGING_ONLY" ? "bg-blue-950 text-citation border-blue-800" :
+              rec.status === "STAGING_ONLY" ? "bg-blue-950 text-citation border-citation" :
               "bg-conflict-bg text-conflict border-conflict-bg"
              }`}>
               {rec.status}
@@ -5266,7 +5266,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             <td className="p-2.5 text-right">
              <button
               onClick={() => handleVerifyDistributionReceipt(rec.receiptId)}
-              className="px-2 py-1 rounded bg-paper hover:bg-slate-100 text-ink text-[10px] transition"
+              className="px-2 py-1 rounded bg-paper hover:bg-paper text-ink text-[10px] transition"
              >
               Verify
              </button>
@@ -5304,9 +5304,9 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Scheduling Dialog Modal */}
      {showPublishingScheduleModal && selectedPublishingTarget && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-       <div className="bg-card rounded-[24px]  border border-line-soft rounded-[14px] p-6 max-w-md w-full space-y-4 shadow-xl">
+       <div className="bg-card rounded-[24px]  border border-line-soft rounded-[14px] p-6 max-w-md w-full space-y-4 shadow-card-hover">
         <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-         <Calendar className="w-4 h-4 text-violet-400" />
+         <Calendar className="w-4 h-4 text-citation/60" />
          Schedule {selectedPublishingTarget.platform} Release
         </h3>
 
@@ -5317,7 +5317,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            type="datetime-local"
            value={publishingScheduleTime}
            onChange={(e) => setPublishingScheduleTime(e.target.value)}
-           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-violet-500 font-mono"
+           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-citation font-mono"
           />
          </div>
 
@@ -5326,7 +5326,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <select
            value={publishingScheduleTimezone}
            onChange={(e) => setPublishingScheduleTimezone(e.target.value)}
-           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-violet-500 font-mono"
+           className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-citation font-mono"
           >
            <option value="UTC">UTC</option>
            <option value="America/New_York">America/New_York (EST/EDT)</option>
@@ -5339,14 +5339,14 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <div className="flex justify-end gap-2 pt-2 border-t border-line-soft">
          <button
           onClick={() => setShowPublishingScheduleModal(false)}
-          className="px-4 py-2 rounded-[10px] bg-paper hover:bg-slate-100 text-ink text-xs font-mono transition"
+          className="px-4 py-2 rounded-[10px] bg-paper hover:bg-paper text-ink text-xs font-mono transition"
          >
           Cancel
          </button>
          <button
           onClick={() => handleSchedulePublishingTarget(selectedPublishingTarget.targetId)}
           disabled={isPublishingLoading || !publishingScheduleTime}
-          className="px-4 py-2 rounded-[10px] bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
+          className="px-4 py-2 rounded-[10px] bg-citation hover:bg-citation disabled:opacity-50 text-ink text-xs font-mono font-bold transition"
          >
           Confirm Schedule
          </button>
@@ -5359,7 +5359,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      <div className="p-6 bg-card rounded-[24px]  border-line-soft space-y-4">
       <div className="flex items-center justify-between border-b border-line-soft pb-3">
        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-        <History className="w-4 h-4 text-violet-400" />
+        <History className="w-4 h-4 text-citation/60" />
         Immutable Publishing Audit Ledger ({publishingHistory.length} Events)
        </h3>
       </div>
@@ -5376,11 +5376,11 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">DETAILS</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {publishingHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
+           <tr key={ev.auditId} className="hover:bg-paper">
             <td className="p-2.5 text-muted-2">{new Date(ev.timestamp).toLocaleTimeString()}</td>
-            <td className="p-2.5 font-bold text-violet-300">{ev.action}</td>
+            <td className="p-2.5 font-bold text-citation/60">{ev.action}</td>
             <td className="p-2.5 text-ink font-sans">{ev.details}</td>
            </tr>
           ))}
@@ -5440,7 +5440,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={handleReconcilePublications}
          disabled={isReconciling}
-         className="flex items-center gap-1.5 bg-conflict hover:bg-rose-500 disabled:opacity-50 text-ink px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className="flex items-center gap-1.5 bg-conflict hover:bg-conflict disabled:opacity-50 text-ink px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isReconciling ? "animate-spin" : ""}`} />
          {isReconciling ? "Reconciling..." : "Reconcile Publications"}
@@ -5527,7 +5527,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <th className="p-2.5 text-right">INSPECT</th>
          </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200">
+        <tbody className="divide-y divide-line">
          {pubReconciliations.map((pub) => (
           <tr
            key={pub.publicationId}
@@ -5536,8 +5536,8 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             setInspectedPubChanges(pub.changes);
             setInspectedPubLineage(pub.lineage);
            }}
-           className={`hover:bg-slate-100 cursor-pointer ${
-            selectedPublication?.publicationId === pub.publicationId ? "bg-slate-100/60" : ""
+           className={`hover:bg-paper cursor-pointer ${
+            selectedPublication?.publicationId === pub.publicationId ? "bg-paper/60" : ""
            }`}
           >
            <td className="p-2.5 font-bold text-ink">{pub.platform}</td>
@@ -5571,7 +5571,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
               setInspectedPubChanges(pub.changes);
               setInspectedPubLineage(pub.lineage);
              }}
-             className="px-2 py-1 rounded bg-paper hover:bg-slate-100 text-ink text-[10px] transition"
+             className="px-2 py-1 rounded bg-paper hover:bg-paper text-ink text-[10px] transition"
             >
              View Details
             </button>
@@ -5613,7 +5613,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
               chg.severity === "CRITICAL" ? "bg-conflict-bg text-conflict border-conflict-bg" :
               chg.severity === "WARNING" ? "bg-warning-bg text-warning border-warning-bg" :
-              "bg-blue-950 text-citation border-blue-800"
+              "bg-blue-950 text-citation border-citation"
              }`}>
               {chg.category}
              </span>
@@ -5722,9 +5722,9 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">REASON</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {pubIntegrityHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
+           <tr key={ev.auditId} className="hover:bg-paper">
             <td className="p-2.5 text-muted-2">{new Date(ev.timestamp).toLocaleTimeString()}</td>
             <td className="p-2.5 font-bold text-conflict">{ev.eventType}</td>
             <td className="p-2.5 text-ink">{ev.publicationId}</td>
@@ -5753,7 +5753,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
      {/* Notifications */}
      {calibrationSuccessMsg && (
-      <div className="p-4 rounded-[10px] bg-amber-50/60 border border-amber-600/80 text-warning text-xs font-mono flex items-center gap-2">
+      <div className="p-4 rounded-[10px] bg-warning-bg/60 border border-warning/80 text-warning text-xs font-mono flex items-center gap-2">
        <CheckCheck className="w-4 h-4 text-warning" />
        <span>{calibrationSuccessMsg}</span>
       </div>
@@ -5767,13 +5767,13 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      )}
 
      {/* Evidence Boundary Principle Banner (Requirement 20) */}
-     <div className="p-4 rounded-[14px] bg-paper border border-amber-200/60 text-warning text-xs font-mono flex flex-col md:flex-row items-center justify-between gap-3 ">
+     <div className="p-4 rounded-[14px] bg-paper border border-warning/25/60 text-warning text-xs font-mono flex flex-col md:flex-row items-center justify-between gap-3 ">
       <div className="flex items-center gap-2">
        <Scale className="w-4 h-4 text-warning shrink-0" />
        <span className="font-bold">EVIDENCE BOUNDARY:</span>
        <span className="text-ink">Audience Signal â‰  Evidence &nbsp;|&nbsp; Performance â‰  Truth &nbsp;|&nbsp; Correlation â‰  Causation</span>
       </div>
-      <span className="px-2.5 py-1 rounded bg-amber-50/80 text-warning border border-amber-700/80 text-[10px] uppercase font-bold shrink-0">
+      <span className="px-2.5 py-1 rounded bg-warning-bg/80 text-warning border border-warning/80 text-[10px] uppercase font-bold shrink-0">
        Formal Research Validation Required
       </span>
      </div>
@@ -5803,7 +5803,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={loadCalibrationState}
          disabled={isCalibrating}
-         className="flex items-center gap-1.5 bg-warning hover:bg-amber-500 disabled:opacity-50 text-ink px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className="flex items-center gap-1.5 bg-warning hover:bg-warning disabled:opacity-50 text-ink px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isCalibrating ? "animate-spin" : ""}`} />
          {isCalibrating ? "Ingesting..." : "Ingest & Re-evaluate"}
@@ -5858,20 +5858,20 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <th className="p-2.5 text-right">ACTION</th>
          </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200">
+        <tbody className="divide-y divide-line">
          {calibrationQueue.map((item) => (
           <tr
            key={item.queueItemId}
            onClick={() => setSelectedCalibrationItem(item)}
-           className={`hover:bg-slate-100 cursor-pointer ${
-            selectedCalibrationItem?.queueItemId === item.queueItemId ? "bg-slate-100/60" : ""
+           className={`hover:bg-paper cursor-pointer ${
+            selectedCalibrationItem?.queueItemId === item.queueItemId ? "bg-paper/60" : ""
            }`}
           >
            <td className="p-2.5">
             <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
              item.priority === "CRITICAL" ? "bg-conflict-bg text-conflict border-conflict-bg" :
              item.priority === "HIGH" ? "bg-warning-bg text-warning border-warning-bg" :
-             item.priority === "MEDIUM" ? "bg-blue-950 text-citation border-blue-800" :
+             item.priority === "MEDIUM" ? "bg-blue-950 text-citation border-citation" :
              "bg-paper text-muted-2 border-line-soft"
             }`}>
              {item.priority}
@@ -5897,7 +5897,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
               e.stopPropagation();
               setSelectedCalibrationItem(item);
              }}
-             className="px-2.5 py-1 rounded bg-paper hover:bg-slate-100 text-ink text-[10px] transition"
+             className="px-2.5 py-1 rounded bg-paper hover:bg-paper text-ink text-[10px] transition"
             >
              Inspect
             </button>
@@ -5926,7 +5926,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          </div>
          <span className={`px-2.5 py-1 rounded text-xs font-mono font-bold border ${
           selectedCalibrationItem.attribution.state === "SUPPORTED_BY_MULTIPLE_SIGNALS" ? "bg-verified-bg text-verified border-verified-bg" :
-          selectedCalibrationItem.attribution.state === "CORRELATED" || selectedCalibrationItem.attribution.state === "POSSIBLE_CONTRIBUTOR" ? "bg-blue-950 text-citation border-blue-800" :
+          selectedCalibrationItem.attribution.state === "CORRELATED" || selectedCalibrationItem.attribution.state === "POSSIBLE_CONTRIBUTOR" ? "bg-blue-950 text-citation border-citation" :
           "bg-warning-bg text-warning border-warning-bg"
          }`}>
           {selectedCalibrationItem.attribution.state}
@@ -5994,14 +5994,14 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <button
            onClick={() => handleValidateQueueItem(selectedCalibrationItem.queueItemId)}
            disabled={isCalibrating || selectedCalibrationItem.status === "BLOCKED"}
-           className="px-4 py-2 rounded-[10px] bg-warning hover:bg-amber-500 disabled:opacity-50 text-ink font-bold text-xs transition"
+           className="px-4 py-2 rounded-[10px] bg-warning hover:bg-warning disabled:opacity-50 text-ink font-bold text-xs transition"
           >
            {isCalibrating ? "Validating..." : "Validate This"}
           </button>
          </div>
 
          {validationResult && (
-          <div className="p-3 rounded-[10px] bg-emerald-50/40 border border-verified-bg space-y-1 text-verified">
+          <div className="p-3 rounded-[10px] bg-verified-bg/40 border border-verified-bg space-y-1 text-verified">
            <span className="font-bold block">Validation Outcome: {validationResult.outcome}</span>
            <p className="text-ink font-sans text-[11px]">{validationResult.findings}</p>
            {validationResult.requiredSafeExecutionPlan && (
@@ -6049,9 +6049,9 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">REASON</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {calibrationHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
+           <tr key={ev.auditId} className="hover:bg-paper">
             <td className="p-2.5 text-muted-2">{new Date(ev.timestamp).toLocaleTimeString()}</td>
             <td className="p-2.5 font-bold text-warning">{ev.eventType}</td>
             <td className="p-2.5 text-ink">{ev.calibrationId}</td>
@@ -6075,48 +6075,48 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
    {activeTab === "hypotheses" && (
     <div className="space-y-6">
      {hypothesisSuccessMsg && (
-      <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200 text-rose-600 text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-rose-600" />
+      <div className="p-4 rounded-xl bg-conflict-bg/60 border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-conflict" />
        <span>{hypothesisSuccessMsg}</span>
       </div>
      )}
 
      {hypothesisErrorMsg && (
-      <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200 text-rose-600 text-xs font-mono flex items-center gap-2">
-       <AlertOctagon className="w-4 h-4 text-rose-600" />
+      <div className="p-4 rounded-xl bg-conflict-bg/60 border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <AlertOctagon className="w-4 h-4 text-conflict" />
        <span>{hypothesisErrorMsg}</span>
       </div>
      )}
 
      {/* Epistemic Boundary Principle Banner */}
-     <div className="p-4 rounded-2xl bg-slate-50 border border-rose-200/60 text-rose-600 text-xs font-mono flex flex-col md:flex-row items-center justify-between gap-3 shadow-sm">
+     <div className="p-4 rounded-2xl bg-paper border border-conflict/25/60 text-conflict text-xs font-mono flex flex-col md:flex-row items-center justify-between gap-3 shadow-sm">
       <div className="flex items-center gap-2">
-       <Compass className="w-4 h-4 text-rose-600 shrink-0" />
+       <Compass className="w-4 h-4 text-conflict shrink-0" />
        <span className="font-bold">EPISTEMIC BOUNDARY:</span>
-       <span className="text-slate-700">OBSERVED EVIDENCE &nbsp;â‰ &nbsp; PHYSICAL MEASUREMENT &nbsp;â‰ &nbsp; EXECUTION TRACE &nbsp;â‰ &nbsp; HARDWARE COUNTER &nbsp;â‰ &nbsp; SIMULATION &nbsp;â‰ &nbsp; FORECAST &nbsp;â‰ &nbsp; CORRELATION &nbsp;â‰ &nbsp; EMPIRICAL SYNTHESIS &nbsp;â‰ &nbsp; MICROARCHITECTURAL ATTRIBUTION &nbsp;â‰ &nbsp; CO-DESIGN SIMULATION &nbsp;â‰ &nbsp; HYPOTHESIS &nbsp;â‰ &nbsp; VALIDATION RESULT &nbsp;â‰ &nbsp; VERIFIED RESEARCH EVIDENCE</span>
+       <span className="text-ink/80">OBSERVED EVIDENCE &nbsp;â‰ &nbsp; PHYSICAL MEASUREMENT &nbsp;â‰ &nbsp; EXECUTION TRACE &nbsp;â‰ &nbsp; HARDWARE COUNTER &nbsp;â‰ &nbsp; SIMULATION &nbsp;â‰ &nbsp; FORECAST &nbsp;â‰ &nbsp; CORRELATION &nbsp;â‰ &nbsp; EMPIRICAL SYNTHESIS &nbsp;â‰ &nbsp; MICROARCHITECTURAL ATTRIBUTION &nbsp;â‰ &nbsp; CO-DESIGN SIMULATION &nbsp;â‰ &nbsp; HYPOTHESIS &nbsp;â‰ &nbsp; VALIDATION RESULT &nbsp;â‰ &nbsp; VERIFIED RESEARCH EVIDENCE</span>
       </div>
-      <span className="px-2.5 py-1 rounded bg-rose-50/80 text-rose-600 border border-rose-700/80 text-[10px] uppercase font-bold shrink-0">
+      <span className="px-2.5 py-1 rounded bg-conflict-bg/80 text-conflict border border-conflict/80 text-[10px] uppercase font-bold shrink-0">
        Hypothesis Layer
       </span>
      </div>
 
      {/* Hypothesis Control Center Header */}
-     <div className="p-6 rounded-2xl bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+     <div className="p-6 rounded-2xl bg-card rounded-[24px] shadow-sm border border-line space-y-5 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
        <div className="space-y-1">
         <div className="flex items-center gap-2">
-         <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border bg-rose-50 text-rose-600 border-rose-200">
+         <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border bg-conflict-bg text-conflict border-conflict/25">
           FORMAL SCIENTIFIC CONTROL LAYER
          </span>
-         <span className="text-xs font-mono text-slate-500">
+         <span className="text-xs font-mono text-muted">
           Snapshot: {hypothesisSnapshot?.snapshotId || "hyss-default"}
          </span>
         </div>
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-         <Compass className="w-5 h-5 text-rose-600" />
+        <h2 className="text-lg font-bold text-ink flex items-center gap-2">
+         <Compass className="w-5 h-5 text-conflict" />
          Automated Competing Hypothesis, Falsification &amp; Empirical Calibration Reconciliation
         </h2>
-        <p className="text-xs text-slate-500 font-sans">
+        <p className="text-xs text-muted font-sans">
          Evaluate competing explanations, quantify disconfirming evidence, isolate confounders, track empirical predictions, and bridge validated findings to the Phase 86 Calibration Queue without manufacturing scientific certainty.
         </p>
        </div>
@@ -6125,7 +6125,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={() => loadHypothesisState()}
          disabled={isReconcilingHypotheses}
-         className="flex items-center gap-1.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-slate-900 px-4 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
+         className="flex items-center gap-1.5 bg-conflict hover:bg-conflict disabled:opacity-50 text-ink px-4 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isReconcilingHypotheses ? "animate-spin" : ""}`} />
          {isReconcilingHypotheses ? "Reconciling..." : "Reconcile Hypotheses"}
@@ -6135,100 +6135,100 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
       {/* Metrics Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-7 gap-3 font-mono text-xs">
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-        <span className="text-slate-500 block text-[10px]">HYPOTHESES</span>
-        <span className="text-slate-700 font-bold block">{hypothesesList.length}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line">
+        <span className="text-muted block text-[10px]">HYPOTHESES</span>
+        <span className="text-ink/80 font-bold block">{hypothesesList.length}</span>
        </div>
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-        <span className="text-slate-500 block text-[10px]">COMPETING SETS</span>
-        <span className="text-rose-600 font-bold block">{competingGroups.length}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line">
+        <span className="text-muted block text-[10px]">COMPETING SETS</span>
+        <span className="text-conflict font-bold block">{competingGroups.length}</span>
        </div>
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-        <span className="text-slate-500 block text-[10px]">EVIDENCE ITEMS</span>
-        <span className="text-cyan-600 font-bold block">{evidenceAttachments.length}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line">
+        <span className="text-muted block text-[10px]">EVIDENCE ITEMS</span>
+        <span className="text-citation font-bold block">{evidenceAttachments.length}</span>
        </div>
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-        <span className="text-slate-500 block text-[10px]">PREDICTIONS</span>
-        <span className="text-emerald-600 font-bold block">{hypothesisPredictions.length}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line">
+        <span className="text-muted block text-[10px]">PREDICTIONS</span>
+        <span className="text-verified font-bold block">{hypothesisPredictions.length}</span>
        </div>
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-        <span className="text-slate-500 block text-[10px]">VALIDATION TASKS</span>
-        <span className="text-amber-600 font-bold block">{hypothesisValidationTasks.length}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line">
+        <span className="text-muted block text-[10px]">VALIDATION TASKS</span>
+        <span className="text-warning font-bold block">{hypothesisValidationTasks.length}</span>
        </div>
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-        <span className="text-slate-500 block text-[10px]">RECONCILIATIONS</span>
-        <span className="text-indigo-600 font-bold block">{hypothesisReconciliations.length}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line">
+        <span className="text-muted block text-[10px]">RECONCILIATIONS</span>
+        <span className="text-citation font-bold block">{hypothesisReconciliations.length}</span>
        </div>
-       <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-        <span className="text-slate-500 block text-[10px]">OPPORTUNITIES</span>
-        <span className="text-fuchsia-600 font-bold block">{hypothesisOpportunities.length}</span>
+       <div className="p-3 rounded-xl bg-paper border border-line">
+        <span className="text-muted block text-[10px]">OPPORTUNITIES</span>
+        <span className="text-citation font-bold block">{hypothesisOpportunities.length}</span>
        </div>
       </div>
      </div>
 
      {/* Hypothesis Registry Table */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-       <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-        <FileText className="w-4 h-4 text-rose-600" />
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
+       <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+        <FileText className="w-4 h-4 text-conflict" />
         Formal Hypothesis Registry ({hypothesesList.length} Active Formulations)
        </h3>
       </div>
 
       <div className="space-y-3">
        {hypothesesList.map((hyp) => (
-        <div key={hyp.hypothesisId} className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-3 font-mono text-xs">
-         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+        <div key={hyp.hypothesisId} className="p-4 rounded-xl bg-paper border border-line space-y-3 font-mono text-xs">
+         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-line pb-2">
           <div className="flex items-center gap-2 flex-wrap">
-           <span className="font-bold text-slate-700 text-sm font-sans">{hyp.title}</span>
-           <span className="px-2 py-0.5 rounded text-[10px] font-bold border bg-white rounded-[24px] shadow-sm text-slate-500 border-slate-200">
+           <span className="font-bold text-ink/80 text-sm font-sans">{hyp.title}</span>
+           <span className="px-2 py-0.5 rounded text-[10px] font-bold border bg-card rounded-[24px] shadow-sm text-muted border-line">
             {hyp.domain}
            </span>
            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
             hyp.status === "SUPPORTED"
-             ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+             ? "bg-verified-bg text-verified border-verified/25"
              : hyp.status === "FALSIFIED"
-             ? "bg-rose-50 text-rose-600 border-rose-200"
+             ? "bg-conflict-bg text-conflict border-conflict/25"
              : hyp.status === "WEAKENED"
-             ? "bg-amber-50 text-amber-600 border-amber-200"
-             : "bg-white rounded-[24px] shadow-sm text-slate-500 border-slate-200"
+             ? "bg-warning-bg text-warning border-warning/25"
+             : "bg-card rounded-[24px] shadow-sm text-muted border-line"
            }`}>
             {hyp.status}
            </span>
           </div>
 
           <div className="flex items-center gap-2 shrink-0 text-[10px]">
-           <span className="px-2 py-0.5 rounded border bg-white rounded-[24px] shadow-sm text-slate-500 border-slate-200">
+           <span className="px-2 py-0.5 rounded border bg-card rounded-[24px] shadow-sm text-muted border-line">
             isCausallyEstablished: {hyp.causalStatus ? "true" : "false"}
            </span>
            <button
             onClick={() => loadHypothesisLineage(hyp.hypothesisId)}
-            className="px-2.5 py-1 rounded bg-rose-50/60 hover:bg-rose-50 text-rose-600 border border-rose-200 font-bold transition"
+            className="px-2.5 py-1 rounded bg-conflict-bg/60 hover:bg-conflict-bg text-conflict border border-conflict/25 font-bold transition"
            >
             Inspect Lineage
            </button>
           </div>
          </div>
 
-         <p className="text-slate-700 font-sans text-xs">{hyp.statement}</p>
+         <p className="text-ink/80 font-sans text-xs">{hyp.statement}</p>
 
          <div className="grid sm:grid-cols-3 gap-2 text-[11px] pt-1">
-          <div className="p-2.5 rounded-lg bg-white rounded-[24px] shadow-sm/70 border border-slate-200 space-y-1">
-           <span className="text-slate-500 block text-[10px]">CONFIDENCE SCORE</span>
-           <span className="text-rose-600 font-bold">{hyp.currentConfidence}% ({hyp.confidenceBand})</span>
-           <span className="text-slate-500 block text-[10px]">Prior: {hyp.priorConfidence}%</span>
+          <div className="p-2.5 rounded-lg bg-card rounded-[24px] shadow-sm/70 border border-line space-y-1">
+           <span className="text-muted block text-[10px]">CONFIDENCE SCORE</span>
+           <span className="text-conflict font-bold">{hyp.currentConfidence}% ({hyp.confidenceBand})</span>
+           <span className="text-muted block text-[10px]">Prior: {hyp.priorConfidence}%</span>
           </div>
 
-          <div className="p-2.5 rounded-lg bg-white rounded-[24px] shadow-sm/70 border border-slate-200 space-y-1">
-           <span className="text-slate-500 block text-[10px]">FALSIFICATION STRENGTH</span>
-           <span className="text-amber-600 font-bold">{hyp.falsificationStrength}</span>
-           <span className="text-slate-500 block text-[10px]">Contradictions: {hyp.contradictoryEvidenceIds.length}</span>
+          <div className="p-2.5 rounded-lg bg-card rounded-[24px] shadow-sm/70 border border-line space-y-1">
+           <span className="text-muted block text-[10px]">FALSIFICATION STRENGTH</span>
+           <span className="text-warning font-bold">{hyp.falsificationStrength}</span>
+           <span className="text-muted block text-[10px]">Contradictions: {hyp.contradictoryEvidenceIds.length}</span>
           </div>
 
-          <div className="p-2.5 rounded-lg bg-white rounded-[24px] shadow-sm/70 border border-slate-200 space-y-1">
-           <span className="text-slate-500 block text-[10px]">ACTIVE CONFOUNDERS</span>
-           <span className="text-slate-700 font-bold">{hyp.activeConfounders.length > 0 ? hyp.activeConfounders.join(", ") : "None Identified"}</span>
-           <span className="text-slate-500 block text-[10px]">Validation Tasks: {hyp.requiredValidationTasks.length}</span>
+          <div className="p-2.5 rounded-lg bg-card rounded-[24px] shadow-sm/70 border border-line space-y-1">
+           <span className="text-muted block text-[10px]">ACTIVE CONFOUNDERS</span>
+           <span className="text-ink/80 font-bold">{hyp.activeConfounders.length > 0 ? hyp.activeConfounders.join(", ") : "None Identified"}</span>
+           <span className="text-muted block text-[10px]">Validation Tasks: {hyp.requiredValidationTasks.length}</span>
           </div>
          </div>
         </div>
@@ -6240,38 +6240,38 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      <div className="grid sm:grid-cols-2 gap-6">
       {/* Competing Hypotheses Matrix */}
       {competingGroups[0] && (
-       <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <GitMerge className="w-4 h-4 text-rose-600" />
+       <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+        <div className="flex items-center justify-between border-b border-line pb-3">
+         <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+          <GitMerge className="w-4 h-4 text-conflict" />
           Competing Hypothesis Matrix
          </h3>
-         <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border bg-rose-50 text-rose-600 border-rose-200">
+         <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border bg-conflict-bg text-conflict border-conflict/25">
           {competingGroups[0].unresolvedAlternativesCount} Unresolved
          </span>
         </div>
 
         <div className="space-y-1 font-mono text-xs">
-         <span className="text-[10px] text-slate-500 uppercase">Target Observation:</span>
-         <p className="text-slate-700 font-bold font-sans text-xs">{competingGroups[0].targetObservation}</p>
+         <span className="text-[10px] text-muted uppercase">Target Observation:</span>
+         <p className="text-ink/80 font-bold font-sans text-xs">{competingGroups[0].targetObservation}</p>
         </div>
 
         <div className="space-y-2.5 font-mono text-xs">
          {competingGroups[0].hypotheses.map((hItem) => (
-          <div key={hItem.hypothesisId} className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+          <div key={hItem.hypothesisId} className="p-3 rounded-xl bg-paper border border-line space-y-1.5">
            <div className="flex items-center justify-between">
-            <span className="font-bold text-slate-700 truncate pr-2 font-sans">{hItem.title}</span>
+            <span className="font-bold text-ink/80 truncate pr-2 font-sans">{hItem.title}</span>
             <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
              hItem.status === "SUPPORTED"
-              ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+              ? "bg-verified-bg text-verified border-verified/25"
               : hItem.status === "FALSIFIED"
-              ? "bg-rose-50 text-rose-600 border-rose-200"
-              : "bg-white rounded-[24px] shadow-sm text-slate-500 border-slate-200"
+              ? "bg-conflict-bg text-conflict border-conflict/25"
+              : "bg-card rounded-[24px] shadow-sm text-muted border-line"
             }`}>
              {hItem.status}
             </span>
            </div>
-           <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-200">
+           <div className="flex items-center justify-between text-[11px] text-muted pt-1 border-t border-line">
             <span>Supporting: {hItem.supportingCount}</span>
             <span>Contradicting: {hItem.contradictingCount}</span>
             <span>Confidence: {hItem.confidenceBand}</span>
@@ -6280,46 +6280,46 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          ))}
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs font-mono space-y-1">
-         <span className="text-[10px] text-slate-500 uppercase font-bold">Diagnostic Differentiator:</span>
-         <p className="text-rose-600 font-sans text-xs">{competingGroups[0].primaryDiagnosticDifferentiator}</p>
+        <div className="p-3 rounded-xl bg-paper border border-line text-xs font-mono space-y-1">
+         <span className="text-[10px] text-muted uppercase font-bold">Diagnostic Differentiator:</span>
+         <p className="text-conflict font-sans text-xs">{competingGroups[0].primaryDiagnosticDifferentiator}</p>
         </div>
        </div>
       )}
 
       {/* Empirical Predictions Panel */}
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <Crosshair className="w-4 h-4 text-emerald-600" />
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <Crosshair className="w-4 h-4 text-verified" />
          Deterministic Empirical Predictions ({hypothesisPredictions.length})
         </h3>
        </div>
 
        <div className="space-y-3 font-mono text-xs">
         {hypothesisPredictions.map((pred) => (
-         <div key={pred.predictionId} className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2.5">
+         <div key={pred.predictionId} className="p-4 rounded-xl bg-paper border border-line space-y-2.5">
           <div className="flex items-center justify-between">
-           <span className="font-bold text-slate-700">{pred.expectedMetric}</span>
+           <span className="font-bold text-ink/80">{pred.expectedMetric}</span>
            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
             pred.result === "MATCHED"
-             ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+             ? "bg-verified-bg text-verified border-verified/25"
              : pred.result === "PARTIALLY_MATCHED"
-             ? "bg-amber-50 text-amber-600 border-amber-200"
+             ? "bg-warning-bg text-warning border-warning/25"
              : pred.result === "MISSED"
-             ? "bg-rose-50 text-rose-600 border-rose-200"
-             : "bg-white rounded-[24px] shadow-sm text-slate-500 border-slate-200"
+             ? "bg-conflict-bg text-conflict border-conflict/25"
+             : "bg-card rounded-[24px] shadow-sm text-muted border-line"
            }`}>
             {pred.result}
            </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-[11px]">
-           <div>Expected: <strong className="text-emerald-600">{pred.expectedRange ? `${pred.expectedRange[0]} - ${pred.expectedRange[1]}` : "N/A"}</strong></div>
-           <div>Tolerance: <strong className="text-slate-700">Â±{pred.tolerancePercentage}%</strong></div>
+           <div>Expected: <strong className="text-verified">{pred.expectedRange ? `${pred.expectedRange[0]} - ${pred.expectedRange[1]}` : "N/A"}</strong></div>
+           <div>Tolerance: <strong className="text-ink/80">Â±{pred.tolerancePercentage}%</strong></div>
           </div>
 
-          <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-200">
+          <div className="text-[10px] text-muted pt-1 border-t border-line">
            Method: {pred.validationMethod}
           </div>
          </div>
@@ -6331,38 +6331,38 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      {/* Validation Queue & Research Health Reconciliation Grid */}
      <div className="grid sm:grid-cols-2 gap-6">
       {/* Validation Queue */}
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <FlaskConical className="w-4 h-4 text-amber-600" />
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <FlaskConical className="w-4 h-4 text-warning" />
          Hypothesis Validation Queue ({hypothesisValidationTasks.length} Tasks)
         </h3>
        </div>
 
        <div className="space-y-3 font-mono text-xs">
         {hypothesisValidationTasks.map((task) => (
-         <div key={task.taskId} className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2.5">
+         <div key={task.taskId} className="p-4 rounded-xl bg-paper border border-line space-y-2.5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
            <div className="flex items-center gap-2">
             <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-             task.priority === "CRITICAL" ? "bg-rose-50 text-rose-600 border-rose-200" : "bg-amber-50 text-amber-600 border-amber-200"
+             task.priority === "CRITICAL" ? "bg-conflict-bg text-conflict border-conflict/25" : "bg-warning-bg text-warning border-warning/25"
             }`}>
              {task.priority}
             </span>
-            <span className="font-bold text-slate-700 font-sans text-xs">{task.objective}</span>
+            <span className="font-bold text-ink/80 font-sans text-xs">{task.objective}</span>
            </div>
            <button
             onClick={() => handleBridgeHypothesisValidationTask(task.taskId)}
             disabled={task.validationStatus === "VALIDATION_PENDING" || task.validationStatus === "VALIDATED"}
-            className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-slate-900 font-bold text-xs transition shrink-0"
+            className="px-3 py-1.5 rounded-lg bg-conflict hover:bg-conflict disabled:opacity-50 text-ink font-bold text-xs transition shrink-0"
            >
             {task.validationStatus === "VALIDATION_PENDING" ? "Bridged to Phase 86" : "Bridge to Phase 86 Queue"}
            </button>
           </div>
 
-          <p className="text-slate-500 font-sans text-xs">{task.validationQuestion}</p>
+          <p className="text-muted font-sans text-xs">{task.validationQuestion}</p>
 
-          <div className="flex flex-wrap items-center gap-3 text-[10px] text-slate-500 pt-1 border-t border-slate-200">
+          <div className="flex flex-wrap items-center gap-3 text-[10px] text-muted pt-1 border-t border-line">
            <span>Hardware: {task.requiredHardware}</span>
            <span>Replications: {task.requiredReplications}</span>
           </div>
@@ -6372,32 +6372,32 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
       </div>
 
       {/* Research Health Reconciliation Panel */}
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <ShieldCheck className="w-4 h-4 text-emerald-600" />
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <ShieldCheck className="w-4 h-4 text-verified" />
          Research Health Reconciliation
         </h3>
        </div>
 
        <div className="space-y-3 font-mono text-xs">
         {hypothesisReconciliations.map((rec) => (
-         <div key={rec.reconciliationId} className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+         <div key={rec.reconciliationId} className="p-4 rounded-xl bg-paper border border-line space-y-2">
           <div className="flex items-center justify-between">
-           <span className="font-bold text-slate-700">Health Impact:</span>
+           <span className="font-bold text-ink/80">Health Impact:</span>
            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
             rec.newHealthImpact === "INCREASE_CONFIDENCE"
-             ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+             ? "bg-verified-bg text-verified border-verified/25"
              : rec.newHealthImpact === "FALSIFICATION_DETECTED"
-             ? "bg-rose-50 text-rose-600 border-rose-200"
-             : "bg-white rounded-[24px] shadow-sm text-slate-500 border-slate-200"
+             ? "bg-conflict-bg text-conflict border-conflict/25"
+             : "bg-card rounded-[24px] shadow-sm text-muted border-line"
            }`}>
             {rec.newHealthImpact}
            </span>
           </div>
-          <p className="text-[11px] text-slate-700 font-sans">{rec.reasoning}</p>
-          <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-200 font-sans">
-           <strong className="text-slate-500">Action:</strong> {rec.recommendedAction}
+          <p className="text-[11px] text-ink/80 font-sans">{rec.reasoning}</p>
+          <div className="text-[10px] text-muted pt-1 border-t border-line font-sans">
+           <strong className="text-muted">Action:</strong> {rec.recommendedAction}
           </div>
          </div>
         ))}
@@ -6407,25 +6407,25 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
      {/* 6-Stage Deterministic Lineage Inspector */}
      {selectedHypothesisLineage && (
-      <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-         <HelpCircle className="w-4 h-4 text-rose-600" />
+      <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+       <div className="flex items-center justify-between border-b border-line pb-3">
+        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+         <HelpCircle className="w-4 h-4 text-conflict" />
          "Why Did Nichorr Support, Weaken, or Falsify This Hypothesis?" 6-Stage Deterministic Lineage
         </h3>
        </div>
 
        <div className="space-y-3">
         {selectedHypothesisLineage.stages.map((stage) => (
-         <div key={stage.stage} className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start justify-between gap-4 font-mono text-xs">
+         <div key={stage.stage} className="p-3.5 rounded-xl bg-paper border border-line flex items-start justify-between gap-4 font-mono text-xs">
           <div className="space-y-1">
            <div className="flex items-center gap-2">
-            <span className="font-bold text-rose-600">{stage.title}</span>
-            <span className="text-slate-500 text-[10px]">[{stage.stage}]</span>
+            <span className="font-bold text-conflict">{stage.title}</span>
+            <span className="text-muted text-[10px]">[{stage.stage}]</span>
            </div>
-           <p className="text-slate-700 font-sans text-xs">{stage.output}</p>
+           <p className="text-ink/80 font-sans text-xs">{stage.output}</p>
           </div>
-          <span className="px-2 py-0.5 rounded text-[10px] font-bold border bg-white rounded-[24px] shadow-sm text-slate-700 border-slate-200 shrink-0">
+          <span className="px-2 py-0.5 rounded text-[10px] font-bold border bg-card rounded-[24px] shadow-sm text-ink/80 border-line shrink-0">
            {stage.status}
           </span>
          </div>
@@ -6435,21 +6435,21 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      )}
 
      {/* Immutable Hypothesis Audit Ledger */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-       <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-        <History className="w-4 h-4 text-rose-600" />
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
+      <div className="flex items-center justify-between border-b border-line pb-3">
+       <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+        <History className="w-4 h-4 text-conflict" />
         Immutable Hypothesis Audit Ledger ({hypothesisHistory.length} Events)
        </h3>
       </div>
 
       {hypothesisHistory.length === 0 ? (
-       <p className="text-xs font-mono text-slate-500 text-center py-4">No hypothesis audit events recorded yet.</p>
+       <p className="text-xs font-mono text-muted text-center py-4">No hypothesis audit events recorded yet.</p>
       ) : (
        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-mono">
          <thead>
-          <tr className="border-b border-slate-200 text-slate-500 bg-slate-50/50">
+          <tr className="border-b border-line text-muted bg-paper/50">
            <th className="p-2.5">TIMESTAMP</th>
            <th className="p-2.5">EVENT</th>
            <th className="p-2.5">TARGET</th>
@@ -6457,14 +6457,14 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            <th className="p-2.5">REASON</th>
           </tr>
          </thead>
-         <tbody className="divide-y divide-slate-200">
+         <tbody className="divide-y divide-line">
           {hypothesisHistory.map((ev) => (
-           <tr key={ev.auditId} className="hover:bg-slate-100">
-            <td className="p-2.5 text-slate-500">{new Date(ev.timestamp).toLocaleTimeString()}</td>
-            <td className="p-2.5 font-bold text-rose-600">{ev.eventType}</td>
-            <td className="p-2.5 text-slate-700">{ev.targetId}</td>
-            <td className="p-2.5 text-slate-500">{ev.actor}</td>
-            <td className="p-2.5 text-slate-700 font-sans truncate max-w-xs">{ev.reason}</td>
+           <tr key={ev.auditId} className="hover:bg-paper">
+            <td className="p-2.5 text-muted">{new Date(ev.timestamp).toLocaleTimeString()}</td>
+            <td className="p-2.5 font-bold text-conflict">{ev.eventType}</td>
+            <td className="p-2.5 text-ink/80">{ev.targetId}</td>
+            <td className="p-2.5 text-muted">{ev.actor}</td>
+            <td className="p-2.5 text-ink/80 font-sans truncate max-w-xs">{ev.reason}</td>
            </tr>
           ))}
          </tbody>
@@ -6479,40 +6479,40 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
    {activeTab === "distribution" && distPackage && (
     <div className="space-y-6">
      {distActionSuccessMsg && (
-      <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200 text-rose-600 text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-rose-600" />
+      <div className="p-4 rounded-xl bg-conflict-bg/60 border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-conflict" />
        <span>{distActionSuccessMsg}</span>
       </div>
      )}
 
      <div className={`p-6 rounded-2xl border transition shadow-sm ${
       distPackage.readinessReport.overallStatus === 'BLOCKED'
-       ? "bg-rose-50/40 border-rose-700/70"
+       ? "bg-conflict-bg/40 border-conflict/70"
        : distPackage.readinessReport.readyForRelease
-       ? "bg-emerald-50/40 border-emerald-600/70"
-       : "bg-white rounded-[24px] shadow-sm border-slate-200"
+       ? "bg-verified-bg/40 border-verified/70"
+       : "bg-card rounded-[24px] shadow-sm border-line"
      }`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
        <div className="space-y-1.5">
         <div className="flex items-center gap-2.5">
          <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
           distPackage.readinessReport.overallStatus === 'BLOCKED'
-           ? "bg-rose-50 text-rose-600 border-rose-200"
+           ? "bg-conflict-bg text-conflict border-conflict/25"
            : distPackage.readinessReport.readyForRelease
-           ? "bg-emerald-50 text-emerald-600 border-emerald-200"
-           : "bg-cyan-50 text-cyan-600 border-cyan-200"
+           ? "bg-verified-bg text-verified border-verified/25"
+           : "bg-citation-bg text-citation border-citation/20"
          }`}>
           {distPackage.readinessReport.overallStatus}
          </span>
-         <span className="text-xs font-mono text-slate-500">
+         <span className="text-xs font-mono text-muted">
           Package v{distPackage.distributionPackageVersion} | Script v{distPackage.scriptVersion}
          </span>
         </div>
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-         <Globe className="w-5 h-5 text-rose-600" />
+        <h2 className="text-lg font-bold text-ink flex items-center gap-2">
+         <Globe className="w-5 h-5 text-conflict" />
          Multi-Platform Distribution Readiness: {distPackage.distributionReadinessScore}%
         </h2>
-        <p className="text-xs text-slate-700 leading-relaxed font-sans">
+        <p className="text-xs text-ink/80 leading-relaxed font-sans">
          {distPackage.readinessReport.summaryMessage}
         </p>
        </div>
@@ -6520,7 +6520,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        <div className="flex items-center gap-2 shrink-0">
         <button
          onClick={loadDistribution}
-         className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-100 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition font-mono"
+         className="flex items-center gap-1.5 bg-paper hover:bg-paper text-ink/80 px-3 py-2 rounded-xl text-xs font-bold transition font-mono"
         >
          <RefreshCw className="w-3.5 h-3.5" /> Recheck Staging
         </button>
@@ -6529,53 +6529,53 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      </div>
 
      {/* Platform Staging Cards */}
-     <div className="p-6 bg-white rounded-[24px] shadow-sm border-slate-200 space-y-4">
+     <div className="p-6 bg-card rounded-[24px] shadow-sm border-line space-y-4">
       <div className="grid sm:grid-cols-3 gap-4">
        {distPackage.targets.map((tgt) => (
         <div
          key={tgt.platform}
-         className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-3 flex flex-col justify-between"
+         className="p-4 rounded-xl bg-paper border border-line space-y-3 flex flex-col justify-between"
         >
          <div className="space-y-2">
           <div className="flex items-center justify-between">
            <div className="flex items-center gap-2">
-            {tgt.platform === 'YOUTUBE_LONG_FORM' ? <Tv className="w-4 h-4 text-rose-600" /> :
-             tgt.platform === 'YOUTUBE_SHORTS' ? <Smartphone className="w-4 h-4 text-rose-600" /> :
-             <Radio className="w-4 h-4 text-purple-600" />}
-            <span className="text-xs font-bold text-slate-700">{tgt.platform}</span>
+            {tgt.platform === 'YOUTUBE_LONG_FORM' ? <Tv className="w-4 h-4 text-conflict" /> :
+             tgt.platform === 'YOUTUBE_SHORTS' ? <Smartphone className="w-4 h-4 text-conflict" /> :
+             <Radio className="w-4 h-4 text-citation" />}
+            <span className="text-xs font-bold text-ink/80">{tgt.platform}</span>
            </div>
            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
-            tgt.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-            tgt.status === 'SCHEDULED' ? 'bg-indigo-50 text-indigo-600 border border-indigo-200' :
-            tgt.status === 'BLOCKED' ? 'bg-rose-50 text-rose-600 border border-rose-200' :
-            'bg-slate-100 text-slate-700'
+            tgt.status === 'APPROVED' ? 'bg-verified-bg text-verified border border-verified/25' :
+            tgt.status === 'SCHEDULED' ? 'bg-citation-bg text-citation border border-citation/20' :
+            tgt.status === 'BLOCKED' ? 'bg-conflict-bg text-conflict border border-conflict/25' :
+            'bg-paper text-ink/80'
            }`}>
             {tgt.status}
            </span>
           </div>
 
-          <div className="p-2.5 rounded-lg bg-white rounded-[24px] shadow-sm border border-slate-200 space-y-1 font-mono text-[11px]">
-           <div className="flex justify-between text-slate-500">
+          <div className="p-2.5 rounded-lg bg-card rounded-[24px] shadow-sm border border-line space-y-1 font-mono text-[11px]">
+           <div className="flex justify-between text-muted">
             <span>Connection:</span>
-            <span className="text-cyan-600 font-bold">{tgt.connectionState}</span>
+            <span className="text-citation font-bold">{tgt.connectionState}</span>
            </div>
-           <div className="flex justify-between text-slate-500">
+           <div className="flex justify-between text-muted">
             <span>Readiness:</span>
-            <span className="text-slate-700 font-bold">{tgt.readinessScore}%</span>
+            <span className="text-ink/80 font-bold">{tgt.readinessScore}%</span>
            </div>
           </div>
 
-          <p className="text-xs text-slate-700 font-sans line-clamp-2">
+          <p className="text-xs text-ink/80 font-sans line-clamp-2">
            Title: "{(tgt.stagingData as any).approvedTitle || (tgt.stagingData as any).episodeTitle}"
           </p>
          </div>
 
-         <div className="space-y-2 pt-2 border-t border-slate-200">
+         <div className="space-y-2 pt-2 border-t border-line">
           <div className="flex items-center gap-2">
            {tgt.status !== 'APPROVED' && tgt.status !== 'SCHEDULED' && !tgt.isBlocked && (
             <button
              onClick={() => setTargetForApproval(tgt)}
-             className="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-900 text-xs font-bold shadow-sm transition"
+             className="flex-1 py-1.5 rounded-lg bg-verified hover:bg-verified text-ink text-xs font-bold shadow-sm transition"
             >
              Approve Target
             </button>
@@ -6584,7 +6584,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            {tgt.status === 'APPROVED' && (
             <button
              onClick={() => setTargetForSchedule(tgt)}
-             className="flex-1 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-slate-900 text-xs font-bold shadow-sm transition"
+             className="flex-1 py-1.5 rounded-lg bg-citation hover:bg-citation text-ink text-xs font-bold shadow-sm transition"
             >
              Schedule Release
             </button>
@@ -6593,7 +6593,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            {tgt.status === 'SCHEDULED' && (
             <button
              onClick={() => handleCancelDistributionSchedule(tgt.platform)}
-             className="flex-1 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-900 text-amber-600 text-xs font-mono font-bold border border-amber-200 transition"
+             className="flex-1 py-1.5 rounded-lg bg-warning-bg hover:bg-amber-900 text-warning text-xs font-mono font-bold border border-warning/25 transition"
             >
              Cancel Schedule
             </button>

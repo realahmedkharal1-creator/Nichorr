@@ -300,7 +300,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
   ];
 
   return (
-    <div className="max-w-[1200px] mx-auto py-7 px-5 pb-24 font-sans">
+    <div className="font-sans pb-6">
       {/* Hero header */}
       <div className="relative rounded-3xl overflow-hidden bg-card border border-line p-6 sm:p-8 mb-6 shadow-card">
         <div className="absolute -top-24 -right-16 w-72 h-72 rounded-full bg-citation/[0.07] blur-3xl pointer-events-none" />

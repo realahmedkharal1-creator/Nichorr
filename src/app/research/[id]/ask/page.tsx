@@ -87,8 +87,8 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
   if (notFound) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-6 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-slate-800">Run Not Found</h2>
-        <p className="text-slate-600">This research run could not be recovered. Please start a new one.</p>
+        <h2 className="text-2xl font-bold text-ink">Run Not Found</h2>
+        <p className="text-ink/80">This research run could not be recovered. Please start a new one.</p>
       </div>
     );
   }
@@ -103,26 +103,26 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-slate-200 pb-4 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-line pb-4 gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <Bot className="w-8 h-8 text-indigo-600" /> Grounded Q&A Assistant
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight flex items-center gap-2">
+            <Bot className="w-8 h-8 text-citation" /> Grounded Q&A Assistant
           </h1>
-          <p className="text-sm text-slate-500 mt-1 font-medium">Ask questions strictly constrained to the verified evidence in this research session.</p>
+          <p className="text-sm text-muted mt-1 font-medium">Ask questions strictly constrained to the verified evidence in this research session.</p>
         </div>
       </div>
 
       <ResearchTabNav runId={run.id} />
 
-      <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-[500px]">
+      <div className="bg-card rounded-[24px] shadow-sm border border-line overflow-hidden flex flex-col min-h-[500px]">
         {/* Starter Prompts */}
-        <div className="bg-slate-50 border-b border-slate-100 p-4 flex flex-wrap gap-2 items-center">
-          <span className="text-xs font-bold text-slate-500 font-mono tracking-widest uppercase mr-2 flex items-center gap-1"><Sparkles className="w-3.5 h-3.5 text-indigo-600" /> STARTER PROMPTS:</span>
+        <div className="bg-paper border-b border-line p-4 flex flex-wrap gap-2 items-center">
+          <span className="text-xs font-bold text-muted font-mono tracking-widest uppercase mr-2 flex items-center gap-1"><Sparkles className="w-3.5 h-3.5 text-citation" /> STARTER PROMPTS:</span>
           {starterPrompts.map((prompt, idx) => (
             <button
               key={idx}
               onClick={() => handleSend(prompt)}
-              className="text-xs font-bold bg-white hover:bg-indigo-50 text-indigo-600 border border-indigo-100 hover:border-indigo-200 px-3.5 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
+              className="text-xs font-bold bg-card hover:bg-citation-bg text-citation border border-citation/20 hover:border-citation/20 px-3.5 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
             >
               {prompt}
             </button>
@@ -130,20 +130,20 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
         </div>
 
         {/* Chat Messages */}
-        <div className="flex-1 p-6 space-y-6 overflow-y-auto bg-slate-50/50">
+        <div className="flex-1 p-6 space-y-6 overflow-y-auto bg-paper/50">
           {messages.map((msg, idx) => (
             <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
               <div className={`max-w-[85%] sm:max-w-[75%] rounded-[20px] p-5 shadow-sm ${
                 msg.role === "user" 
-                  ? "bg-indigo-600 text-white rounded-br-none" 
-                  : "bg-white border border-slate-200 text-slate-800 rounded-bl-none"
+                  ? "bg-citation text-white rounded-br-none" 
+                  : "bg-card border border-line text-ink rounded-bl-none"
               }`}>
                 {msg.role === "assistant" && (
-                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
-                    <Bot className="w-4 h-4 text-indigo-500" />
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest font-mono">EVIDENCE ENGINE</span>
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-line">
+                    <Bot className="w-4 h-4 text-citation" />
+                    <span className="text-xs font-bold text-muted uppercase tracking-widest font-mono">EVIDENCE ENGINE</span>
                     {msg.hasSufficientEvidence === false && (
-                      <span className="ml-auto flex items-center gap-1 text-[10px] font-mono font-bold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-md border border-amber-200">
+                      <span className="ml-auto flex items-center gap-1 text-[10px] font-mono font-bold bg-warning-bg text-warning px-2 py-0.5 rounded-md border border-warning/25">
                         <AlertTriangle className="w-3 h-3" /> LOW EVIDENCE COVERAGE
                       </span>
                     )}
@@ -155,9 +155,9 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
                 </div>
 
                 {msg.role === "assistant" && msg.citations && msg.citations.length > 0 && (
-                  <div className="mt-4 pt-3 border-t border-slate-100 space-y-2">
-                    <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> TRACEABLE CITATIONS ({msg.citations.length})
+                  <div className="mt-4 pt-3 border-t border-line space-y-2">
+                    <span className="text-[10px] font-mono font-bold text-muted uppercase tracking-widest flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5 text-verified" /> TRACEABLE CITATIONS ({msg.citations.length})
                     </span>
                     <div className="flex flex-wrap gap-2">
                       {msg.citations.map((cit, i) => (
@@ -166,7 +166,7 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
                           href={cit.url} 
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-[10px] font-mono bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-md transition-colors font-semibold"
+                          className="inline-flex items-center gap-1.5 text-[10px] font-mono bg-citation-bg hover:bg-citation/20 text-citation border border-citation/20 px-2.5 py-1 rounded-md transition-colors font-semibold"
                         >
                           <ExternalLink className="w-3 h-3" />
                           {cit.publisher}
@@ -181,11 +181,11 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
 
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white border border-slate-200 rounded-[20px] rounded-bl-none p-5 shadow-sm flex items-center gap-3 text-sm font-bold text-slate-500">
+              <div className="bg-card border border-line rounded-[20px] rounded-bl-none p-5 shadow-sm flex items-center gap-3 text-sm font-bold text-muted">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-citation/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-citation/60 animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-citation/60 animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
                 Querying verification graph...
               </div>
@@ -194,24 +194,24 @@ export default function AskAssistantPage({ params }: { params: { id: string } })
         </div>
 
         {/* Input Area */}
-        <div className="p-4 bg-white border-t border-slate-200">
+        <div className="p-4 bg-card border-t border-line">
           <form 
             onSubmit={(e) => { e.preventDefault(); handleSend(); }}
             className="relative flex items-center"
           >
-            <HelpCircle className="w-5 h-5 text-slate-500 absolute left-4" />
+            <HelpCircle className="w-5 h-5 text-muted absolute left-4" />
             <input
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask a technical question about the findings..."
-              className="w-full bg-slate-50 border-2 border-slate-200 rounded-[16px] pl-12 pr-14 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-500 placeholder:font-medium"
+              className="w-full bg-paper border-2 border-line rounded-[16px] pl-12 pr-14 py-4 text-sm font-bold text-ink focus:outline-none focus:border-citation focus:ring-4 focus:ring-citation/10 transition-all placeholder:text-muted placeholder:font-medium"
               disabled={loading}
             />
             <button
               type="submit"
               disabled={!question.trim() || loading}
-              className="absolute right-3 bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-xl disabled:opacity-50 transition-colors shadow-sm active:scale-95"
+              className="absolute right-3 bg-citation hover:bg-citation text-white p-2.5 rounded-xl disabled:opacity-50 transition-colors shadow-sm active:scale-95"
             >
               <Send className="w-4 h-4" />
             </button>

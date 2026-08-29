@@ -152,7 +152,7 @@ export default function ResearchPlanPage({ params }: { params: { id: string } })
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 bg-verified-bg border border-verified rounded-[12px] p-3.5 sm:px-[18px] sm:py-[14px]">
         <span className="flex items-center gap-2 text-[12.5px] font-semibold text-verified">✓ Automatic SoC & hardware variant compatibility guaranteed</span>
-        <span className="font-mono text-[11px] bg-white px-2.5 py-1 rounded-full text-verified">{questions.length} ACTIVE VECTORS</span>
+        <span className="font-mono text-[11px] bg-card px-2.5 py-1 rounded-full text-verified">{questions.length} ACTIVE VECTORS</span>
       </div>
     </div>
   );

@@ -160,7 +160,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
           <div className="w-9 h-9 rounded-full bg-conflict text-white flex items-center justify-center shrink-0"><XCircle className="w-4.5 h-4.5" /></div>
           <div>
             <p className="m-0 text-conflict font-semibold text-[14px]">Execution encountered an error and was halted.</p>
-            <p className="mt-1.5 mb-0 font-mono text-[11.5px] text-conflict/80 bg-white/50 rounded-lg px-2.5 py-1.5 inline-block">{run.failureReason || "Unknown pipeline error"}</p>
+            <p className="mt-1.5 mb-0 font-mono text-[11.5px] text-conflict/80 bg-card/50 rounded-lg px-2.5 py-1.5 inline-block">{run.failureReason || "Unknown pipeline error"}</p>
           </div>
         </div>
       )}
@@ -206,7 +206,7 @@ export default function LiveExecutionPage({ params }: { params: { id: string } }
               className="h-full bg-gradient-to-r from-citation to-verified rounded-full transition-all duration-700 ease-out relative"
               style={{ width: `${progressPercent}%` }}
             >
-              {!isTerminal && <div className="absolute inset-0 bg-white/25 animate-pulse" />}
+              {!isTerminal && <div className="absolute inset-0 bg-card/25 animate-pulse" />}
             </div>
           </div>
           <div className="flex justify-between mt-2.5 font-mono text-[11px] text-muted-2 uppercase tracking-wide">

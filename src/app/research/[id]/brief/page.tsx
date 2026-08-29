@@ -76,26 +76,26 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
   return (
     <div className="space-y-6">
       {/* Header & Export Actions */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-line pb-4">
         <div>
-          <span className="text-xs font-mono text-emerald-600 font-bold flex items-center gap-1.5 uppercase tracking-wider mb-1">
+          <span className="text-xs font-mono text-verified font-bold flex items-center gap-1.5 uppercase tracking-wider mb-1">
             <ShieldCheck className="w-4 h-4" /> AUDITED RESEARCH BRIEF DOCUMENT
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">{run.topic}</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">{run.topic}</h1>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={handleCopyMarkdown}
-            className="flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-xl text-xs font-semibold transition shadow-sm"
+            className="flex items-center gap-1.5 bg-card hover:bg-paper text-ink/80 border border-line px-4 py-2.5 rounded-xl text-xs font-semibold transition shadow-sm"
           >
-            {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-indigo-600" />}
+            {copied ? <Check className="w-4 h-4 text-verified" /> : <Copy className="w-4 h-4 text-citation" />}
             {copied ? "Copied Markdown!" : "Copy Markdown"}
           </button>
 
           <button
             onClick={handleDownloadMarkdown}
-            className="flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white px-4.5 py-2.5 rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/25 transition transform hover:-translate-y-0.5"
+            className="flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white px-4.5 py-2.5 rounded-xl text-xs font-semibold shadow-card shadow-indigo-600/25 transition transform hover:-translate-y-0.5"
           >
             <Download className="w-4 h-4" />
             Export Brief (.md)
@@ -108,15 +108,15 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
       {/* Structured Brief Document Card */}
       <div
         dir={run.outputLanguage === "ar" ? "rtl" : "ltr"}
-        className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-6 sm:p-10 space-y-8 font-sans"
+        className="bg-card rounded-[24px] shadow-sm border border-line p-6 sm:p-10 space-y-8 font-sans"
       >
         {/* Executive Summary */}
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-indigo-600" />
+          <h2 className="text-lg font-bold text-ink border-b border-line pb-2 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-citation" />
             1. Executive Summary
           </h2>
-          <div className="space-y-3 text-sm text-slate-700 leading-relaxed font-sans">
+          <div className="space-y-3 text-sm text-ink/80 leading-relaxed font-sans">
             {(brief.executive_summary || []).map((p, idx) => (
               <p key={idx}>{p}</p>
             ))}
@@ -125,11 +125,11 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
 
         {/* Key Findings */}
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2">2. Key Findings & Verified Facts</h2>
+          <h2 className="text-lg font-bold text-ink border-b border-line pb-2">2. Key Findings & Verified Facts</h2>
           <div className="space-y-2.5">
             {(brief.key_findings || []).map((f, idx) => (
-              <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-sm flex items-start justify-between gap-4">
-                <span className="text-slate-700 leading-relaxed">{f.finding}</span>
+              <div key={idx} className="p-4 rounded-xl bg-paper border border-line text-sm flex items-start justify-between gap-4">
+                <span className="text-ink/80 leading-relaxed">{f.finding}</span>
                 <span className="badge-verified px-2.5 py-1 rounded-md text-xs font-mono font-bold shrink-0">
                   {f.confidence} CONFIDENCE
                 </span>
@@ -140,12 +140,12 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
 
         {/* Disagreements & Conflicts */}
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">3. Conflicting Evidence & Disagreements</h2>
+          <h2 className="text-lg font-bold text-ink border-b border-line pb-2">3. Conflicting Evidence & Disagreements</h2>
           <div className="space-y-2.5">
             {(brief.conflicts || []).map((c, idx) => (
-              <div key={idx} className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-600 space-y-1.5">
+              <div key={idx} className="p-4 rounded-xl bg-warning-bg border border-warning/25 text-xs text-warning space-y-1.5">
                 <span className="font-bold uppercase font-mono tracking-wider">[{c.conflict_type} DISAGREEMENT]</span>
-                <p className="leading-relaxed text-slate-700">{c.explanation}</p>
+                <p className="leading-relaxed text-ink/80">{c.explanation}</p>
               </div>
             ))}
           </div>
@@ -154,11 +154,11 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
         {/* Community & Audience */}
         <div className="grid md:grid-cols-2 gap-6 pt-2">
           <div className="space-y-3">
-            <h2 className="text-base font-bold text-slate-900 border-b border-slate-200 pb-2">4. Community Signals</h2>
+            <h2 className="text-base font-bold text-ink border-b border-line pb-2">4. Community Signals</h2>
             <div className="space-y-2">
               {(brief.community_signals || []).map((s, idx) => (
-                <div key={idx} className="p-3 rounded-lg bg-slate-50 border border-slate-100 text-xs text-slate-700">
-                  <span className="font-mono text-indigo-600 font-semibold uppercase block mb-0.5">{s.signal_type}</span>
+                <div key={idx} className="p-3 rounded-lg bg-paper border border-line text-xs text-ink/80">
+                  <span className="font-mono text-citation font-semibold uppercase block mb-0.5">{s.signal_type}</span>
                   <p>{s.signal}</p>
                 </div>
               ))}
@@ -166,12 +166,12 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
           </div>
 
           <div className="space-y-3">
-            <h2 className="text-base font-bold text-slate-900 border-b border-slate-200 pb-2">5. Unanswered Audience Questions</h2>
+            <h2 className="text-base font-bold text-ink border-b border-line pb-2">5. Unanswered Audience Questions</h2>
             <div className="space-y-2">
               {(brief.audience_questions || []).map((q, idx) => (
-                <div key={idx} className="p-3 rounded-lg bg-slate-50 border border-slate-100 text-xs text-slate-700 flex justify-between items-start gap-2">
+                <div key={idx} className="p-3 rounded-lg bg-paper border border-line text-xs text-ink/80 flex justify-between items-start gap-2">
                   <p>{q.question}</p>
-                  <span className="font-mono text-[10px] bg-slate-50 px-2 py-0.5 rounded text-indigo-600 shrink-0 font-semibold">{q.coverage_gap} GAP</span>
+                  <span className="font-mono text-[10px] bg-paper px-2 py-0.5 rounded text-citation shrink-0 font-semibold">{q.coverage_gap} GAP</span>
                 </div>
               ))}
             </div>
@@ -180,25 +180,25 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
 
         {/* Content Opportunities */}
         <div className="space-y-3 pt-2">
-          <h2 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2">6. High-Demand Content Opportunities</h2>
+          <h2 className="text-lg font-bold text-ink border-b border-line pb-2">6. High-Demand Content Opportunities</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {(brief.content_opportunities || []).map((o, idx) => (
-              <div key={idx} className="bg-slate-50 rounded-xl shadow-sm border border-slate-200 p-4 space-y-1.5">
-                <span className="font-bold text-indigo-600 text-sm block">{o.title}</span>
-                <p className="text-xs text-slate-500 leading-relaxed">{o.description}</p>
+              <div key={idx} className="bg-paper rounded-xl shadow-sm border border-line p-4 space-y-1.5">
+                <span className="font-bold text-citation text-sm block">{o.title}</span>
+                <p className="text-xs text-muted leading-relaxed">{o.description}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Sources */}
-        <div className="space-y-3 pt-2 border-t border-slate-200">
-          <h2 className="text-sm font-bold text-slate-700 font-mono uppercase">7. Audited Sources & Citations</h2>
-          <ul className="space-y-1 text-xs font-mono text-slate-500 divide-y divide-slate-100">
+        <div className="space-y-3 pt-2 border-t border-line">
+          <h2 className="text-sm font-bold text-ink/80 font-mono uppercase">7. Audited Sources & Citations</h2>
+          <ul className="space-y-1 text-xs font-mono text-muted divide-y divide-line">
             {(run.sources || []).map((s, idx) => (
               <li key={idx} className="pt-2 flex justify-between items-center gap-4">
-                <span className="text-slate-700 truncate">{s.title} ({s.publisher})</span>
-                <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline shrink-0 text-[11px]">
+                <span className="text-ink/80 truncate">{s.title} ({s.publisher})</span>
+                <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-citation hover:underline shrink-0 text-[11px]">
                   View Source ↗
                 </a>
               </li>

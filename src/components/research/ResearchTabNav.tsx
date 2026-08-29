@@ -94,14 +94,14 @@ export function ResearchTabNav({ runId }: { runId: string }) {
   };
 
   return (
-    <div className="relative mb-6 border-b border-slate-200 group flex items-center">
+    <div className="relative mb-6 border-b border-line group flex items-center">
       
       {/* Left scroll button */}
       <button 
         onClick={scrollLeftBtn}
         className="absolute left-1 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity h-full pb-3"
       >
-        <div className="bg-white border border-slate-200 shadow-md rounded-full p-1.5 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 cursor-pointer transition-all">
+        <div className="bg-card border border-line shadow-card rounded-full p-1.5 text-ink/80 hover:text-citation hover:border-citation/20 hover:bg-citation-bg cursor-pointer transition-all">
           <ChevronLeft className="w-4 h-4" />
         </div>
       </button>
@@ -137,11 +137,11 @@ export function ResearchTabNav({ runId }: { runId: string }) {
               draggable={false}
               className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all select-none shrink-0 ${
                 isActive
-                  ? "bg-indigo-600 text-white shadow-md"
-                  : "bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                  ? "bg-citation text-white shadow-card"
+                  : "bg-card border border-line text-muted hover:text-ink hover:bg-paper"
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-500"}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-muted"}`} />
               {t.label}
             </Link>
           );
@@ -155,7 +155,7 @@ export function ResearchTabNav({ runId }: { runId: string }) {
         onClick={scrollRightBtn}
         className="absolute right-1 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity h-full pb-3"
       >
-        <div className="bg-white border border-slate-200 shadow-md rounded-full p-1.5 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 cursor-pointer transition-all">
+        <div className="bg-card border border-line shadow-card rounded-full p-1.5 text-ink/80 hover:text-citation hover:border-citation/20 hover:bg-citation-bg cursor-pointer transition-all">
           <ChevronRight className="w-4 h-4" />
         </div>
       </button>

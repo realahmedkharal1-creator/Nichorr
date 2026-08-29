@@ -14,7 +14,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AppHeader />
-      <main>
+      <main className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 py-6 sm:py-8">
         {children}
       </main>
     </>
