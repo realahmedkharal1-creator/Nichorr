@@ -10,7 +10,7 @@
 @layer base {
   :root {
     --ink: 26 26 30;
-    --paper: 247 246 243;
+    --paper: 234 231 222;
     --card: 255 255 255;
     --citation: 232 89 63;
     --citation-bg: 252 234 229;
@@ -22,8 +22,8 @@
     --warning-bg: 251 240 220;
     --muted: 94 98 104;
     --muted-2: 138 142 148;
-    --line: 228 224 216;
-    --line-soft: 239 235 227;
+    --line: 222 216 203;
+    --line-soft: 230 225 214;
     --shadow-rgb: 40 38 34;
     --header: 22 23 26;
 
@@ -35,8 +35,8 @@
 
   .dark {
     --ink: 244 243 241;
-    --paper: 16 17 19;
-    --card: 26 27 30;
+    --paper: 14 15 17;
+    --card: 30 31 35;
     --citation: 255 115 85;
     --citation-bg: 58 33 28;
     --verified: 61 214 140;
@@ -47,7 +47,7 @@
     --warning-bg: 44 34 19;
     --muted: 162 166 172;
     --muted-2: 113 117 123;
-    --line: 44 46 50;
+    --line: 48 50 55;
     --line-soft: 36 38 41;
     --shadow-rgb: 0 0 0;
     --header: 12 13 15;
@@ -73,7 +73,7 @@ body {
   background-color: rgb(var(--card));
   border: 1px solid rgb(var(--line));
   border-radius: 1.5rem;
-  box-shadow: 0 1px 2px rgb(var(--shadow-rgb) / 0.05), 0 4px 16px -4px rgb(var(--shadow-rgb) / 0.08);
+  box-shadow: 0 1px 2px rgb(var(--shadow-rgb) / 0.06), 0 6px 20px -6px rgb(var(--shadow-rgb) / 0.12);
 }
 
 .slate-card-hover {
