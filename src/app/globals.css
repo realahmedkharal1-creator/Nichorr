@@ -10,20 +10,20 @@
 @layer base {
   :root {
     --ink: 26 26 30;
-    --paper: 214 208 192;
+    --paper: 220 217 212;
     --card: 255 255 255;
     --citation: 226 82 56;
-    --citation-bg: 249 221 211;
+    --citation-bg: 250 227 219;
     --verified: 18 128 92;
-    --verified-bg: 208 235 221;
+    --verified-bg: 214 238 226;
     --conflict: 194 45 62;
-    --conflict-bg: 247 217 221;
+    --conflict-bg: 249 224 227;
     --warning: 169 107 18;
-    --warning-bg: 247 231 201;
+    --warning-bg: 249 235 211;
     --muted: 94 98 104;
     --muted-2: 138 142 148;
-    --line: 197 189 169;
-    --line-soft: 210 203 185;
+    --line: 202 197 189;
+    --line-soft: 214 210 203;
     --shadow-rgb: 40 38 34;
     --header: 22 23 26;
 
