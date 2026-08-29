@@ -265,6 +265,44 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* MARKET FACTS */}
+      <section className="py-16 md:py-20 border-b border-line">
+        <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
+          <div className="max-w-[640px] mb-10 md:mb-12">
+            <span className="font-mono text-[12.5px] tracking-wide uppercase text-citation mb-3 block">The stakes</span>
+            <h2 className="font-sans font-extrabold tracking-tight text-[26px] md:text-[34px] leading-tight text-ink">
+              Your audience already treats you like a news source.
+            </h2>
+          </div>
+          <div className="grid gap-4 sm:gap-5 sm:grid-cols-3">
+            {[
+              {
+                stat: "1B+ hrs/day",
+                body: "of YouTube is watched on TV screens — where a viewer can't tap a link in your description to check a claim you made on camera.",
+              },
+              {
+                stat: "$100B+",
+                body: "paid out to YouTube creators over the last four years. Sponsors back the channels their audience trusts to get the facts right.",
+              },
+              {
+                stat: "1 in 5",
+                body: "U.S. adults now regularly get news from online creators — most of whom have no newsroom or fact-checking desk behind them.",
+              },
+            ].map((f) => (
+              <div key={f.stat} className="bg-card border border-line rounded-2xl p-6 sm:p-7">
+                <div className="font-sans font-extrabold text-ink leading-none text-[30px] sm:text-[32px] md:text-[38px] mb-3">
+                  {f.stat}
+                </div>
+                <p className="text-[13.5px] text-muted leading-relaxed">{f.body}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-[11.5px] text-muted-2 mt-5 leading-relaxed">
+            Sources: Nielsen &amp; YouTube (connected-TV watch time, 2025); YouTube / CNBC (creator payouts, Sept 2025); Pew Research Center (news influencers, Nov 2024).
+          </p>
+        </div>
+      </section>
+
       {/* PROBLEM / SOLUTION */}
       <section className="border-b border-line py-16 md:py-20">
         <div className="max-w-[1180px] mx-auto px-7">
@@ -387,13 +425,13 @@ export default function LandingPage() {
               />
             </div>
 
-            <div className="order-2 lg:order-1 flex flex-col gap-1 max-h-[320px] lg:max-h-none overflow-y-auto lg:overflow-visible pr-1 lg:pr-0">
+            <div className="order-2 lg:order-1 flex flex-col gap-0.5 sm:gap-1 max-h-[420px] lg:max-h-none overflow-y-auto lg:overflow-visible">
               {VIDEO_SHOWCASE.map((v, i) => (
                 <button
                   key={v.id}
                   onClick={() => setActiveVideo(i)}
                   type="button"
-                  className={`w-full text-left flex items-center gap-2.5 sm:gap-3 px-2 py-1.5 sm:p-2 rounded-lg sm:rounded-xl transition-colors ${
+                  className={`w-full text-left flex items-center gap-2.5 sm:gap-3 px-2 py-1 sm:p-2 rounded-lg sm:rounded-xl transition-colors ${
                     i === activeVideo ? "bg-white/10" : "hover:bg-white/5"
                   }`}
                 >
