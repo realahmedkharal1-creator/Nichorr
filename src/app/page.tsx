@@ -151,19 +151,19 @@ export default function LandingPage() {
     <div className="bg-paper text-ink min-h-screen">
       {/* HEADER */}
       <header className="sticky top-0 z-50 bg-paper/90 backdrop-blur-md border-b border-line">
-        <nav className="max-w-[1180px] mx-auto px-4 sm:px-7 h-[58px] sm:h-[68px] flex items-center justify-between gap-3">
+        <nav className="max-w-[1180px] mx-auto px-3 sm:px-7 h-[56px] sm:h-[68px] flex flex-nowrap items-center justify-between gap-2 sm:gap-4">
           <Link href="/" className="flex items-center shrink-0">
-            <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={120} height={32} className="h-8 sm:h-10 w-auto" priority />
+            <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={120} height={32} className="h-6 sm:h-10 w-auto" priority />
           </Link>
-          <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
-            <Link href="/login" className="text-[13.5px] sm:text-[14.5px] font-semibold text-muted hover:text-ink px-2.5 sm:px-3 py-2 rounded-lg hover:bg-ink/5 transition-colors whitespace-nowrap">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+            <Link href="/login" className="text-[13px] sm:text-[14.5px] font-semibold text-muted hover:text-ink py-2 sm:px-3 sm:rounded-lg sm:hover:bg-ink/5 transition-colors whitespace-nowrap">
               Sign In
             </Link>
             <Link
               href="/signup"
-              className="inline-flex items-center gap-1.5 bg-ink text-white text-[13.5px] sm:text-[14.5px] font-semibold px-4 sm:px-5 py-2.5 rounded-full hover:bg-ink/85 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 bg-ink text-white text-[13px] sm:text-[14.5px] font-semibold px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full hover:bg-ink/85 transition-colors whitespace-nowrap"
             >
-              Get Started <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+              Get Started <ArrowRight className="hidden sm:block w-3.5 h-3.5 shrink-0" />
             </Link>
           </div>
         </nav>
