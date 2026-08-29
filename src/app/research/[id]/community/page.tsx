@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ResearchTabNav } from "@/components/research/ResearchTabNav";
-import { MessageSquare, AlertCircle, ShieldCheck, Flame } from "lucide-react";
+import { MessageSquare, ShieldCheck } from "lucide-react";
 import { ResearchRunSession } from "@/features/research/research-engine";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 
@@ -14,78 +14,75 @@ export default function CommunityPage({ params }: { params: { id: string } }) {
     fetch(`/api/research/${params.id}/status`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) { setRun(data.run); } else { setNotFound(true); }
+        if (data.success) setRun(data.run);
+        else setNotFound(true);
       });
   }, [params.id]);
 
   if (notFound) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-6 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-ink">Run Not Found</h2>
-        <p className="text-ink/80">This research run could not be recovered. Please start a new one.</p>
+      <div className="max-w-4xl mx-auto py-12 text-center space-y-3">
+        <h2 className="text-2xl font-bold text-ink">Run not found</h2>
+        <p className="text-muted">This research run could not be recovered.</p>
       </div>
     );
   }
+  if (!run) return <div className="space-y-6"><SkeletonCard /></div>;
 
-  if (!run) {
-    return (
-      <div className="space-y-6">
-        <SkeletonCard />
-      </div>
-    );
-  }
+  const signals = run.communitySignals || [];
 
   return (
     <div className="space-y-6">
       <div className="border-b border-line pb-4">
-        <span className="text-xs font-mono text-citation font-semibold uppercase tracking-wider block mb-1">USER SENTIMENT & FORUM REPORTS</span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight flex items-center gap-2.5">
+        <span className="text-[10.5px] font-mono text-citation font-bold uppercase tracking-[0.4px] block mb-1.5">
+          User sentiment &amp; forum reports
+        </span>
+        <h1 className="text-2xl sm:text-[30px] font-extrabold text-ink tracking-tight flex items-center gap-2.5">
           <MessageSquare className="w-6 h-6 text-citation" />
-          Community Forum & User Signals
+          Community &amp; User Signals
         </h1>
-        <p className="text-xs sm:text-sm text-muted mt-1">Recurring user complaints, workarounds, and firsthand reports extracted from Reddit and technical forums.</p>
+        <p className="text-[13px] text-muted mt-1.5">
+          Recurring complaints and firsthand reports pulled from the comment sets and forums in this run.
+        </p>
       </div>
 
       <ResearchTabNav runId={run.id} />
 
-      {/* Mandatory Disclaimer */}
-      <div className="bg-citation-bg rounded-[24px] shadow-sm border border-citation/20 p-4 text-xs text-citation flex items-center gap-3 font-mono">
-        <ShieldCheck className="w-5 h-5 text-citation shrink-0" />
+      <div className="bg-citation-bg border border-citation/20 rounded-2xl p-4 text-[12.5px] text-citation flex items-start gap-3">
+        <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
         <span>
-          <strong>Ethos Rule:</strong> Community signals represent user-reported sentiment. They are logged as user reports, not universal hardware facts.
+          <strong>Ethos rule:</strong> these are user-reported sentiment, logged as reports — not verified hardware facts.
         </span>
       </div>
 
-      <div className="space-y-4">
-        {(run.communitySignals || []).length === 0 ? (
-          <div className="text-center py-12 bg-card rounded-2xl border border-line">
-            <MessageSquare className="w-8 h-8 text-muted-2 mx-auto mb-3" />
-            <h3 className="text-ink font-bold">No community signals found yet for this research run</h3>
-            <p className="text-sm text-muted mt-1">This run did not identify any strong community patterns.</p>
-          </div>
-        ) : (
-          (run.communitySignals || []).map((sig) => (
-            <div key={sig.id} className="bg-card rounded-[24px] shadow-sm border border-line p-6 space-y-3.5">
-              <div className="flex items-center justify-between border-b border-line pb-2.5">
-                <span className="badge-community px-3 py-1 rounded-full text-xs font-mono font-bold uppercase">
-                  {sig.signal_type}
+      {signals.length === 0 ? (
+        <div className="bg-card border border-dashed border-line rounded-2xl p-12 text-center">
+          <MessageSquare className="w-9 h-9 text-muted-2 mx-auto mb-3" />
+          <h3 className="text-[15px] font-semibold text-ink font-serif">No community signals for this run</h3>
+          <p className="text-[13px] text-muted mt-1 max-w-sm mx-auto">
+            No recurring viewer-reported issue surfaced across the sources gathered for this topic.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3.5">
+          {signals.map((sig) => (
+            <div key={sig.id} className="bg-card border border-line rounded-2xl shadow-card p-5 sm:p-6">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="badge-community px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase">
+                  {sig.signal_type.replace(/_/g, " ")}
                 </span>
-                <div className="flex gap-4 text-xs font-mono text-muted">
-                  <span>FREQUENCY: <strong className="text-ink/80">{sig.frequency_level}</strong></span>
-                  <span>FIRSTHAND LIKELIHOOD: <strong className="text-ink/80">{sig.firsthand_likelihood}</strong></span>
-                </div>
+                <span className="font-mono text-[10.5px] text-muted-2">
+                  frequency: <strong className="text-ink/80">{sig.frequency_level}</strong>
+                </span>
+                <span className="font-mono text-[10.5px] text-muted-2">
+                  firsthand likelihood: <strong className="text-ink/80">{sig.firsthand_likelihood}</strong>
+                </span>
               </div>
-  
-              <p className="text-sm font-bold text-ink leading-snug">{sig.signal}</p>
-  
-              <div className="text-xs text-muted font-mono bg-paper p-3 rounded-xl border border-line">
-                Source Context: Verified multi-post thread activity on technical Reddit subreddits and forums.
-              </div>
+              <p className="text-[14px] leading-[1.6] text-ink m-0">{sig.signal}</p>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-

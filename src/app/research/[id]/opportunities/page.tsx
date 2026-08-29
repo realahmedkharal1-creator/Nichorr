@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ResearchTabNav } from "@/components/research/ResearchTabNav";
-import { Lightbulb, Sparkles, Trophy, ArrowRight } from "lucide-react";
+import { Lightbulb, Sparkles } from "lucide-react";
 import { ResearchRunSession } from "@/features/research/research-engine";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 
@@ -14,73 +14,70 @@ export default function OpportunitiesPage({ params }: { params: { id: string } }
     fetch(`/api/research/${params.id}/status`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) { setRun(data.run); } else { setNotFound(true); }
+        if (data.success) setRun(data.run);
+        else setNotFound(true);
       });
   }, [params.id]);
 
   if (notFound) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-6 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-ink">Run Not Found</h2>
-        <p className="text-ink/80">This research run could not be recovered. Please start a new one.</p>
+      <div className="max-w-4xl mx-auto py-12 text-center space-y-3">
+        <h2 className="text-2xl font-bold text-ink">Run not found</h2>
+        <p className="text-muted">This research run could not be recovered.</p>
       </div>
     );
   }
+  if (!run) return <div className="space-y-6"><SkeletonCard /></div>;
 
-  if (!run) {
-    return (
-      <div className="space-y-6">
-        <SkeletonCard />
-      </div>
-    );
-  }
+  const opps = run.opportunities || [];
 
   return (
     <div className="space-y-6">
       <div className="border-b border-line pb-4">
-        <span className="text-xs font-mono text-conflict font-semibold uppercase tracking-wider block mb-1">HIGH-DEMAND VIDEO ANGLES</span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight flex items-center gap-2.5">
-          <Lightbulb className="w-6 h-6 text-conflict" />
-          Evidence-Backed Content Opportunities
+        <span className="text-[10.5px] font-mono text-citation font-bold uppercase tracking-[0.4px] block mb-1.5">
+          High-demand video angles
+        </span>
+        <h1 className="text-2xl sm:text-[30px] font-extrabold text-ink tracking-tight flex items-center gap-2.5">
+          <Lightbulb className="w-6 h-6 text-citation" />
+          Content Opportunities
         </h1>
-        <p className="text-xs sm:text-sm text-muted mt-1">High-value video and article title angles derived from under-covered technical topics and audience question gaps.</p>
+        <p className="text-[13px] text-muted mt-1.5">
+          Video angles this research supports — built from the disagreements, complaints and unanswered questions above.
+        </p>
       </div>
 
       <ResearchTabNav runId={run.id} />
 
-      <div className="space-y-4">
-        {(run.opportunities || []).length === 0 ? (
-          <div className="text-center py-12 bg-card rounded-2xl border border-line">
-            <Lightbulb className="w-8 h-8 text-muted-2 mx-auto mb-3" />
-            <h3 className="text-ink font-bold">No content opportunities identified yet</h3>
-            <p className="text-sm text-muted mt-1">This run did not identify any high-demand video angles.</p>
-          </div>
-        ) : (
-          (run.opportunities || []).map((opp) => (
-            <div key={opp.id} className="bg-card rounded-[24px] shadow-sm border border-conflict/25 p-6 space-y-4 hover:border-conflict/25 transition-all">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-line pb-3">
-                <span className="badge-opportunity px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-conflict/25 text-conflict">
-                  {opp.opportunity_type} OPPORTUNITY
+      {opps.length === 0 ? (
+        <div className="bg-card border border-dashed border-line rounded-2xl p-12 text-center">
+          <Lightbulb className="w-9 h-9 text-muted-2 mx-auto mb-3" />
+          <h3 className="text-[15px] font-semibold text-ink font-serif">No content opportunities yet</h3>
+          <p className="text-[13px] text-muted mt-1 max-w-sm mx-auto">
+            These are generated from reviewer disagreements, recurring complaints and unanswered audience questions.
+          </p>
+        </div>
+      ) : (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {opps.map((opp) => (
+            <div
+              key={opp.id}
+              className="bg-card border border-line rounded-2xl shadow-card p-5 sm:p-6 flex flex-col gap-3 hover:shadow-card-hover hover:-translate-y-0.5 transition-all"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-mono text-[10px] font-bold px-2 py-1 rounded-full uppercase bg-citation-bg text-citation inline-flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3" />
+                  {opp.opportunity_type.replace(/_/g, " ")}
                 </span>
-                <span className="text-xs font-mono text-conflict font-bold bg-conflict-bg px-3 py-1 rounded-full border border-conflict/25 shadow-sm">
-                  OPPORTUNITY SCORE: {opp.score} / 10
-                </span>
+                {typeof opp.score === "number" && (
+                  <span className="font-mono text-[10.5px] text-muted-2">score {opp.score}/10</span>
+                )}
               </div>
-  
-              <div className="space-y-1.5">
-                <h3 className="text-lg font-bold text-ink">{opp.title}</h3>
-                <p className="text-xs sm:text-sm text-ink/80 leading-relaxed font-sans">{opp.description}</p>
-              </div>
-  
-              <div className="p-3.5 bg-paper rounded-xl border border-line text-xs font-mono text-muted space-y-1">
-                <span className="text-citation font-bold block uppercase text-[11px]">EVIDENCE JUSTIFICATION:</span>
-                <p className="text-ink/80">Supported by 2 independent benchmark sources + high audience question gap signal.</p>
-              </div>
+              <h3 className="text-[16px] font-semibold text-ink font-serif leading-snug m-0">{opp.title}</h3>
+              <p className="text-[13px] text-muted leading-[1.55] m-0">{opp.description}</p>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-

@@ -87,7 +87,7 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
         <div className="flex items-center gap-2">
           <button
             onClick={handleCopyMarkdown}
-            className="flex items-center gap-1.5 bg-card hover:bg-paper text-ink/80 border border-line px-4 py-2.5 rounded-xl text-xs font-semibold transition shadow-sm"
+            className="flex items-center gap-1.5 bg-card hover:bg-paper text-ink/80 border border-line px-4 py-2.5 rounded-xl text-xs font-semibold transition"
           >
             {copied ? <Check className="w-4 h-4 text-verified" /> : <Copy className="w-4 h-4 text-citation" />}
             {copied ? "Copied Markdown!" : "Copy Markdown"}
@@ -95,7 +95,7 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
 
           <button
             onClick={handleDownloadMarkdown}
-            className="flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white px-4.5 py-2.5 rounded-xl text-xs font-semibold shadow-card shadow-indigo-600/25 transition transform hover:-translate-y-0.5"
+            className="flex items-center gap-1.5 bg-citation hover:opacity-90 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-card transition transform hover:-translate-y-0.5"
           >
             <Download className="w-4 h-4" />
             Export Brief (.md)
@@ -108,7 +108,7 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
       {/* Structured Brief Document Card */}
       <div
         dir={run.outputLanguage === "ar" ? "rtl" : "ltr"}
-        className="bg-card rounded-[24px] shadow-sm border border-line p-6 sm:p-10 space-y-8 font-sans"
+        className="bg-card rounded-2xl shadow-card border border-line p-6 sm:p-10 space-y-8 font-sans"
       >
         {/* Executive Summary */}
         <div className="space-y-3">
@@ -142,6 +142,9 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
         <div className="space-y-3">
           <h2 className="text-lg font-bold text-ink border-b border-line pb-2">3. Conflicting Evidence & Disagreements</h2>
           <div className="space-y-2.5">
+            {(brief.conflicts || []).length === 0 && (
+              <p className="text-sm text-muted m-0">No conflicting reports — independent sources agree on the primary findings.</p>
+            )}
             {(brief.conflicts || []).map((c, idx) => (
               <div key={idx} className="p-4 rounded-xl bg-warning-bg border border-warning/25 text-xs text-warning space-y-1.5">
                 <span className="font-bold uppercase font-mono tracking-wider">[{c.conflict_type} DISAGREEMENT]</span>
@@ -156,6 +159,9 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
           <div className="space-y-3">
             <h2 className="text-base font-bold text-ink border-b border-line pb-2">4. Community Signals</h2>
             <div className="space-y-2">
+              {(brief.community_signals || []).length === 0 && (
+                <p className="text-xs text-muted m-0">No recurring community signals.</p>
+              )}
               {(brief.community_signals || []).map((s, idx) => (
                 <div key={idx} className="p-3 rounded-lg bg-paper border border-line text-xs text-ink/80">
                   <span className="font-mono text-citation font-semibold uppercase block mb-0.5">{s.signal_type}</span>
@@ -168,6 +174,9 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
           <div className="space-y-3">
             <h2 className="text-base font-bold text-ink border-b border-line pb-2">5. Unanswered Audience Questions</h2>
             <div className="space-y-2">
+              {(brief.audience_questions || []).length === 0 && (
+                <p className="text-xs text-muted m-0">No unanswered audience questions surfaced.</p>
+              )}
               {(brief.audience_questions || []).map((q, idx) => (
                 <div key={idx} className="p-3 rounded-lg bg-paper border border-line text-xs text-ink/80 flex justify-between items-start gap-2">
                   <p>{q.question}</p>
@@ -183,7 +192,7 @@ ${(run.sources || []).map((s) => `- ${s.title} (${s.publisher}) - ${s.url}`).joi
           <h2 className="text-lg font-bold text-ink border-b border-line pb-2">6. High-Demand Content Opportunities</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {(brief.content_opportunities || []).map((o, idx) => (
-              <div key={idx} className="bg-paper rounded-xl shadow-sm border border-line p-4 space-y-1.5">
+              <div key={idx} className="bg-paper rounded-xl border border-line p-4 space-y-1.5">
                 <span className="font-bold text-citation text-sm block">{o.title}</span>
                 <p className="text-xs text-muted leading-relaxed">{o.description}</p>
               </div>
