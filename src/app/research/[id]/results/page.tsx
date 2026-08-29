@@ -15,7 +15,7 @@ import {
 type Tone = "ink" | "verified" | "conflict" | "citation" | "warning";
 
 const TONE_SURFACE: Record<Tone, string> = {
-  ink: "bg-paper border-line",
+  ink: "bg-card border-line",
   verified: "bg-verified-bg border-verified/25",
   conflict: "bg-conflict-bg border-conflict/25",
   citation: "bg-citation-bg border-citation/25",
@@ -23,7 +23,7 @@ const TONE_SURFACE: Record<Tone, string> = {
 };
 
 const TONE_ICON_SOLID: Record<Tone, string> = {
-  ink: "bg-ink text-card",
+  ink: "bg-ink/90 text-card",
   verified: "bg-verified text-white",
   conflict: "bg-conflict text-white",
   citation: "bg-citation text-white",
