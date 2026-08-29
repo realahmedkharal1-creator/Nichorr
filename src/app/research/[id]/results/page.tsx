@@ -30,6 +30,14 @@ const TONE_VALUE_TEXT: Record<Tone, string> = {
   warning: "text-warning",
 };
 
+const TONE_BAR: Record<Tone, string> = {
+  ink: "bg-muted-2",
+  verified: "bg-verified",
+  conflict: "bg-conflict",
+  citation: "bg-citation",
+  warning: "bg-warning",
+};
+
 function StatCard({
   icon: Icon,
   label,
@@ -44,13 +52,16 @@ function StatCard({
   tone?: Tone;
 }) {
   return (
-    <div className="group relative bg-card border border-line-soft rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
-      <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${TONE_ICON_BG[tone]}`}>
-        <Icon className="w-4 h-4" />
+    <div className="group relative bg-card border border-line rounded-2xl p-5 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+      <span className={`absolute left-0 top-4 bottom-4 w-[3px] rounded-full ${TONE_BAR[tone]} opacity-70`} />
+      <div className="flex items-start justify-between mb-4">
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${TONE_ICON_BG[tone]}`}>
+          <Icon className="w-[18px] h-[18px]" />
+        </div>
       </div>
-      <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-1.5">{label}</div>
-      <div className={`font-serif font-semibold text-[28px] leading-none ${TONE_VALUE_TEXT[tone]}`}>{value}</div>
-      {sublabel && <div className="text-[11.5px] text-muted mt-1.5">{sublabel}</div>}
+      <div className={`font-serif font-bold text-[32px] leading-none tracking-tight ${TONE_VALUE_TEXT[tone]}`}>{value}</div>
+      <div className="font-mono text-[10.5px] tracking-[0.4px] uppercase text-muted-2 mt-2">{label}</div>
+      {sublabel && <div className="text-[11.5px] text-muted mt-0.5">{sublabel}</div>}
     </div>
   );
 }
@@ -286,25 +297,31 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
   return (
     <div className="max-w-[1180px] mx-auto py-6 px-5 pb-20 font-sans">
       {/* Hero header */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-citation-bg via-card to-card border border-line-soft p-6 sm:p-7 mb-6 shadow-sm">
-        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-citation/[0.06] blur-3xl pointer-events-none" />
-        <div className="relative flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div>
-            <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold text-verified bg-verified-bg px-3 py-1 rounded-full mb-3">
-              <ShieldCheck className="w-3.5 h-3.5" /> AUDITED BRIEF READY
+      <div className="relative rounded-3xl overflow-hidden bg-card border border-line p-6 sm:p-8 mb-6 shadow-card">
+        <div className="absolute -top-24 -right-16 w-72 h-72 rounded-full bg-citation/[0.07] blur-3xl pointer-events-none" />
+        <div className="relative flex flex-col sm:flex-row sm:items-end justify-between gap-5">
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.4px] text-verified bg-verified-bg px-2.5 py-1 rounded-full mb-3.5">
+              <ShieldCheck className="w-3.5 h-3.5" /> Audited brief ready
             </span>
-            <h1 className="font-serif font-semibold text-[26px] sm:text-[32px] m-0 text-ink leading-tight max-w-xl">{run.topic}</h1>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-[12px] text-muted font-medium">
-              <span className="inline-flex items-center gap-1.5"><FileCheck className="w-3.5 h-3.5 text-citation" />{run.sources?.length || 0} sources</span>
-              <span className="inline-flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5 text-verified" />{run.claims?.length || 0} claims</span>
+            <h1 className="font-serif font-bold text-[27px] sm:text-[34px] m-0 text-ink leading-[1.15] tracking-tight max-w-2xl">{run.topic}</h1>
+            <div className="flex flex-wrap items-center gap-2 mt-4">
+              <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-ink bg-paper border border-line rounded-full px-2.5 py-1">
+                <FileCheck className="w-3.5 h-3.5 text-citation" />{run.sources?.length || 0} sources
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-ink bg-paper border border-line rounded-full px-2.5 py-1">
+                <BadgeCheck className="w-3.5 h-3.5 text-verified" />{run.claims?.length || 0} claims
+              </span>
               {conflicts.length > 0 && (
-                <span className="inline-flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5 text-conflict" />{conflicts.length} conflicts</span>
+                <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-ink bg-paper border border-line rounded-full px-2.5 py-1">
+                  <AlertTriangle className="w-3.5 h-3.5 text-conflict" />{conflicts.length} conflicts
+                </span>
               )}
             </div>
           </div>
           <button
             onClick={() => setActiveTab("brief")}
-            className="group/btn inline-flex items-center justify-center gap-2 bg-citation text-white font-semibold text-[13.5px] px-5 py-2.5 rounded-xl border-none cursor-pointer whitespace-nowrap w-full sm:w-auto shadow-sm hover:shadow-md hover:opacity-95 hover:-translate-y-0.5 transition-all"
+            className="group/btn shrink-0 inline-flex items-center justify-center gap-2 bg-citation text-white font-semibold text-[13.5px] px-5 py-2.5 rounded-xl border-none cursor-pointer whitespace-nowrap w-full sm:w-auto shadow-card hover:shadow-card-hover hover:opacity-95 hover:-translate-y-0.5 transition-all"
           >
             View Full Brief <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
           </button>
@@ -347,9 +364,9 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                   setActiveTab(t.id);
                 }}
                 draggable={false}
-                className={`shrink-0 inline-flex items-center gap-1.5 font-sans text-[13px] font-semibold px-4 py-2 rounded-full border cursor-pointer whitespace-nowrap transition-all ${
+                className={`shrink-0 inline-flex items-center gap-1.5 font-sans text-[12.5px] font-semibold px-3.5 py-2 rounded-full border cursor-pointer whitespace-nowrap transition-all ${
                   isActive
-                    ? "bg-ink text-paper border-ink shadow-sm"
+                    ? "bg-ink text-paper border-ink shadow-card"
                     : "bg-card text-muted border-line hover:border-muted-2 hover:text-ink"
                 }`}
               >
@@ -359,7 +376,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             );
           })}
         </div>
-        <div className="h-px bg-line-soft" />
+        <div className="h-px bg-line" />
       </div>
 
       {activeTab === "overview" && (
@@ -427,7 +444,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                 <StatCard icon={Users} label="Recurring Issues" value={youtubeReport.recurringProblems.length} sublabel="real user complaints" tone="warning" />
               </div>
 
-              <div className="flex gap-1.5 overflow-x-auto p-1 bg-paper rounded-xl border border-line-soft" style={{ scrollbarWidth: "none" }}>
+              <div className="flex gap-1.5 overflow-x-auto p-1 bg-paper rounded-xl border border-line" style={{ scrollbarWidth: "none" }}>
                 {[
                   { id: "consensus", label: "Reviewer Consensus & Gaps" },
                   { id: "disagreements", label: "Disagreements" },
@@ -500,7 +517,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                     )}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
                       {youtubeReport.contentOpportunities.map((opp, idx) => (
-                        <div key={idx} className="bg-paper border border-line-soft rounded-xl p-4 flex flex-col h-full hover:shadow-sm transition-shadow">
+                        <div key={idx} className="bg-paper border border-line rounded-xl p-4 flex flex-col h-full hover:shadow-card transition-shadow">
                           <div className="font-mono text-[10px] text-muted-2 uppercase mb-1.5 tracking-wide">{opp.targetAudience}</div>
                           <h4 className="m-0 mb-2.5 text-[14.5px] font-semibold text-ink font-serif">{opp.title}</h4>
                           <div className="bg-card border-l-[3px] border-citation py-2.5 px-3 text-[12.5px] italic text-muted rounded-r-lg mb-3 mt-auto flex gap-1.5">
@@ -523,7 +540,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                       <h4 className="m-0 mb-3 text-[14px] font-semibold text-conflict flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {dis.aspect}</h4>
                       <div className="space-y-2 mb-2">
                         {dis.reviewers.map((rev, rIdx) => (
-                          <div key={rIdx} className="bg-white rounded-[10px] p-3 text-[12.5px] text-ink border border-line-soft">
+                          <div key={rIdx} className="bg-card rounded-[10px] p-3 text-[12.5px] text-ink border border-line">
                             <b>{rev.channel}</b> — {rev.claim}
                             {rev.methodologyNotes && <span className="text-muted"> ({rev.methodologyNotes})</span>}
                           </div>
@@ -538,7 +555,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                 </div>
               )}
               {ytActiveTab === "transcripts" && (
-                <div className="flex flex-col md:flex-row h-[500px] border border-line-soft rounded-2xl overflow-hidden shadow-sm">
+                <div className="flex flex-col md:flex-row h-[500px] border border-line rounded-2xl overflow-hidden shadow-card">
                   <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-line-soft bg-paper overflow-y-auto">
                     {youtubeReport.videos.map(vid => {
                       const t = youtubeReport.transcripts[vid.videoId];
@@ -548,7 +565,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                           key={vid.videoId}
                           onClick={() => setSelectedVideo(vid)}
                           className={`p-3.5 border-b border-line-soft cursor-pointer transition-colors flex items-center gap-2.5 ${
-                            selectedVideo?.videoId === vid.videoId ? "bg-white border-l-[3px] border-l-citation" : "hover:bg-white/60"
+                            selectedVideo?.videoId === vid.videoId ? "bg-card border-l-[3px] border-l-citation" : "hover:bg-card/60"
                           }`}
                         >
                           <PlayCircle className={`w-4 h-4 shrink-0 ${selectedVideo?.videoId === vid.videoId ? "text-citation" : ok ? "text-verified" : "text-muted-2"}`} />
@@ -735,7 +752,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
       {activeTab === "conflicts" && (
         <div className="animate-in fade-in duration-300 space-y-3.5">
-          <div className="bg-card border border-line-soft rounded-2xl p-4 sm:p-5 flex items-start gap-3">
+          <div className="bg-card border border-line rounded-2xl p-4 sm:p-5 flex items-start gap-3">
             <Info className="w-4 h-4 text-muted-2 shrink-0 mt-0.5" />
             <div className="space-y-1.5 text-[12.5px] text-muted leading-relaxed">
               <p className="font-semibold text-ink m-0">What counts as a conflict?</p>
@@ -761,7 +778,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                   <div className="w-7 h-7 rounded-full bg-conflict text-white flex items-center justify-center shrink-0"><AlertTriangle className="w-3.5 h-3.5" /></div>
                   <h4 className="m-0 text-[14px] font-semibold text-conflict">{cnf.conflict_type} Disagreement</h4>
                 </div>
-                <div className="bg-white rounded-xl p-3 mb-2.5 text-[12.5px] text-ink border border-conflict/10">
+                <div className="bg-card rounded-xl p-3 mb-2.5 text-[12.5px] text-ink border border-conflict/10">
                   {cnf.explanation}
                 </div>
                 <div className="text-[12px] text-muted italic mt-2 flex gap-1.5"><Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-muted-2" />Nichorr's read: both are methodologically valid but not directly comparable — flagged rather than averaged.</div>
@@ -771,7 +788,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             <EmptyState icon={Info} title="No data yet" description="Nothing to check for conflicts." />
           ) : (
             <div className="bg-verified-bg border border-verified/30 rounded-2xl p-8 shadow-sm text-center">
-              <div className="w-12 h-12 rounded-2xl bg-white text-verified flex items-center justify-center mx-auto mb-3 shadow-sm"><CheckCircle2 className="w-6 h-6" /></div>
+              <div className="w-12 h-12 rounded-2xl bg-card text-verified flex items-center justify-center mx-auto mb-3 shadow-card"><CheckCircle2 className="w-6 h-6" /></div>
               <h4 className="m-0 mb-1.5 text-[15px] font-semibold text-ink font-serif">No critical conflicts detected</h4>
               <p className="m-0 text-[13px] text-muted max-w-sm mx-auto">All other independent lab publications and official spec sheets concur on primary findings.</p>
             </div>
@@ -851,7 +868,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             ))}
           </div>
 
-          <div className="bg-card border border-line-soft rounded-2xl p-5 max-w-[640px] mb-5 space-y-4 shadow-sm">
+          <div className="bg-card border border-line rounded-2xl p-5 max-w-[640px] mb-5 space-y-4 shadow-sm">
             {askMessages.map((msg, i) => (
               msg.role === 'user' ? (
                 <div key={i} className="flex justify-end">
@@ -960,7 +977,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
       {activeTab === "brief" && (
         <div className="animate-in fade-in duration-300">
-          <div className="bg-card border border-line-soft rounded-3xl p-5 sm:p-10 max-w-[760px] mx-auto shadow-sm">
+          <div className="bg-card border border-line rounded-3xl p-5 sm:p-10 max-w-[760px] mx-auto shadow-card">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
               <span className="font-mono text-[11px] text-muted-2 tracking-[0.5px] uppercase">Research Brief · Generated from {(run.claims || []).length} verified claims</span>
               <div className="flex gap-2">

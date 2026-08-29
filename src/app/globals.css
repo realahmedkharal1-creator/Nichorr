@@ -2,146 +2,126 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme tokens. Values are space-separated RGB channels so Tailwind's
+ * `<alpha-value>` opacity modifiers work (see tailwind.config.ts).
+ * :root = light (default), .dark = dark.
+ */
 @layer base {
   :root {
-    --ink: #121214;
-    --paper: #FAF9F7;
-    --card: #FFFFFF;
-    --citation: #EF6351;
-    --citation-bg: #FDECE7;
-    --verified: #1E8F6B;
-    --verified-bg: #E3F5EE;
-    --conflict: #AF2A3C;
-    --conflict-bg: #FBE8EA;
-    --warning: #B7791E;
-    --warning-bg: #FDF3E0;
-    --muted: #6B6F76;
-    --muted-2: #9A9EA1;
-    --line: #DAD5CB;
-    --line-soft: #E6E1D7;
-    --surface: #FFFFFF;
-    --border-subtle: #DAD5CB;
-    --border-medium: #C7C1B4;
+    --ink: 26 26 30;
+    --paper: 247 246 243;
+    --card: 255 255 255;
+    --citation: 232 89 63;
+    --citation-bg: 252 234 229;
+    --verified: 18 128 92;
+    --verified-bg: 224 242 234;
+    --conflict: 194 45 62;
+    --conflict-bg: 251 231 233;
+    --warning: 169 107 18;
+    --warning-bg: 251 240 220;
+    --muted: 94 98 104;
+    --muted-2: 138 142 148;
+    --line: 228 224 216;
+    --line-soft: 239 235 227;
+    --shadow-rgb: 40 38 34;
+    --header: 22 23 26;
+
+    /* legacy aliases still referenced by a few utility classes */
+    --surface: rgb(var(--card));
+    --border-subtle: rgb(var(--line));
+    --border-medium: rgb(var(--muted-2));
+  }
+
+  .dark {
+    --ink: 244 243 241;
+    --paper: 16 17 19;
+    --card: 26 27 30;
+    --citation: 255 115 85;
+    --citation-bg: 58 33 28;
+    --verified: 61 214 140;
+    --verified-bg: 22 40 31;
+    --conflict: 242 100 122;
+    --conflict-bg: 46 26 30;
+    --warning: 224 164 74;
+    --warning-bg: 44 34 19;
+    --muted: 162 166 172;
+    --muted-2: 113 117 123;
+    --line: 44 46 50;
+    --line-soft: 36 38 41;
+    --shadow-rgb: 0 0 0;
+    --header: 12 13 15;
   }
 }
 
-body {
-  color: var(--ink);
-  background: var(--paper);
-  -webkit-font-smoothing: antialiased;
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
 }
 
-/* Custom Sleek Card Styling (Light & Dark) */
+body {
+  color: rgb(var(--ink));
+  background: rgb(var(--paper));
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Sleek card helper (kept for the few pages still using it) */
 .slate-card {
-  background-color: var(--surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 1.5rem; /* rounded-3xl equivalent for sleekness */
-  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  background-color: rgb(var(--card));
+  border: 1px solid rgb(var(--line));
+  border-radius: 1.5rem;
+  box-shadow: 0 1px 2px rgb(var(--shadow-rgb) / 0.05), 0 4px 16px -4px rgb(var(--shadow-rgb) / 0.08);
 }
 
 .slate-card-hover {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .slate-card-hover:hover {
-  border-color: var(--border-medium);
+  border-color: rgb(var(--muted-2));
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 12px 28px -6px rgb(var(--shadow-rgb) / 0.14);
 }
 
-/* Organic Gradient Mesh for Highlights */
-.mesh-gradient-green {
-  background-color: #dcfce7;
-  background-image: 
-    radial-gradient(at 40% 20%, #bbf7d0 0px, transparent 50%),
-    radial-gradient(at 80% 0%, #86efac 0px, transparent 50%),
-    radial-gradient(at 0% 50%, #4ade80 0px, transparent 50%),
-    radial-gradient(at 80% 50%, #22c55e 0px, transparent 50%),
-    radial-gradient(at 0% 100%, #16a34a 0px, transparent 50%),
-    radial-gradient(at 80% 100%, #15803d 0px, transparent 50%),
-    radial-gradient(at 0% 0%, #14532d 0px, transparent 50%);
-}
-.dark .mesh-gradient-green {
-  background-color: #064e3b;
-  background-image: 
-    radial-gradient(at 40% 20%, #065f46 0px, transparent 50%),
-    radial-gradient(at 80% 0%, #047857 0px, transparent 50%),
-    radial-gradient(at 0% 50%, #059669 0px, transparent 50%);
-}
-
-/* Striped Progress Bar Pattern */
-.pattern-diagonal-stripes-green {
-  background-image: repeating-linear-gradient(
-    45deg,
-    #22c55e,
-    #22c55e 6px,
-    #4ade80 6px,
-    #4ade80 12px
-  );
-}
-.pattern-diagonal-stripes-blue {
-  background-image: repeating-linear-gradient(
-    45deg,
-    #3b82f6,
-    #3b82f6 6px,
-    #60a5fa 6px,
-    #60a5fa 12px
-  );
-}
-.pattern-diagonal-stripes-pink {
-  background-image: repeating-linear-gradient(
-    45deg,
-    #ec4899,
-    #ec4899 6px,
-    #f472b6 6px,
-    #f472b6 12px
-  );
-}
-
-/* Trust Badges */
+/* Trust badges */
 .badge-verified {
-  background-color: #dcfce7;
-  color: #16a34a;
-  border: 1px solid #bbf7d0;
+  background-color: rgb(var(--verified-bg));
+  color: rgb(var(--verified));
+  border: 1px solid rgb(var(--verified) / 0.25);
 }
-.dark .badge-verified {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
 .badge-conflict {
-  background-color: #fef3c7;
-  color: #d97706;
-  border: 1px solid #fde68a;
+  background-color: rgb(var(--warning-bg));
+  color: rgb(var(--warning));
+  border: 1px solid rgb(var(--warning) / 0.25);
 }
-.dark .badge-conflict {
-  background-color: rgba(245, 158, 11, 0.1);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
 .badge-community {
-  background-color: #e0e7ff;
-  color: #4f46e5;
-  border: 1px solid #c7d2fe;
-}
-.dark .badge-community {
-  background-color: rgba(99, 102, 241, 0.1);
-  color: #818cf8;
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background-color: rgb(var(--citation-bg));
+  color: rgb(var(--citation));
+  border: 1px solid rgb(var(--citation) / 0.25);
 }
 
-/* Pulse Skeleton Animations */
+/* Skeleton loading */
 @keyframes skeleton-pulse {
   0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+  50% { opacity: 0.75; }
 }
-
 .skeleton {
   animation: skeleton-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  background-color: var(--border-subtle);
+  background-color: rgb(var(--line));
   border-radius: 0.5rem;
+}
+
+/* Diagonal stripe patterns (progress bars) */
+.pattern-diagonal-stripes-green {
+  background-image: repeating-linear-gradient(45deg, #22c55e, #22c55e 6px, #4ade80 6px, #4ade80 12px);
+}
+.pattern-diagonal-stripes-blue {
+  background-image: repeating-linear-gradient(45deg, #3b82f6, #3b82f6 6px, #60a5fa 6px, #60a5fa 12px);
+}
+.pattern-diagonal-stripes-pink {
+  background-image: repeating-linear-gradient(45deg, #ec4899, #ec4899 6px, #f472b6 6px, #f472b6 12px);
 }
 
 @media (prefers-reduced-motion: reduce) {

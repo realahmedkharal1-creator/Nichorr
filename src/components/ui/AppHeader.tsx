@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function AppHeader() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -53,7 +54,7 @@ export function AppHeader() {
 
   return (
     <>
-      <header className="bg-ink text-paper sticky top-0 z-50">
+      <header className="bg-header text-white sticky top-0 z-50">
         <div className="max-w-[1280px] mx-auto flex items-center justify-between px-5 h-[58px]">
           <Link href="/dashboard" className="font-serif font-semibold text-[18px] text-white tracking-tight">
             Nichorr<span className="text-citation">.</span>
@@ -76,7 +77,8 @@ export function AppHeader() {
             })}
           </nav>
 
-          <div className="flex items-center gap-[14px]">
+          <div className="flex items-center gap-[10px]">
+            <ThemeToggle />
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setIsProfileMenuOpen((v) => !v)}
@@ -124,7 +126,7 @@ export function AppHeader() {
           onClick={() => setIsDrawerOpen(false)}
         >
           <div 
-            className="bg-ink w-[78%] max-w-[300px] h-full p-5 flex flex-col gap-0.5"
+            className="bg-header w-[78%] max-w-[300px] h-full p-5 flex flex-col gap-0.5"
             onClick={(e) => e.stopPropagation()}
           >
             <button 
