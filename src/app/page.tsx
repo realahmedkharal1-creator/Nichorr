@@ -393,7 +393,7 @@ export default function LandingPage() {
                   key={v.id}
                   onClick={() => setActiveVideo(i)}
                   type="button"
-                  className={`w-full text-left flex items-center gap-3 p-2 rounded-xl transition-colors ${
+                  className={`w-full text-left flex items-center gap-2.5 sm:gap-3 px-2 py-1.5 sm:p-2 rounded-lg sm:rounded-xl transition-colors ${
                     i === activeVideo ? "bg-white/10" : "hover:bg-white/5"
                   }`}
                 >
@@ -401,10 +401,10 @@ export default function LandingPage() {
                   <img
                     src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
                     alt={v.channel}
-                    className="w-16 h-11 rounded-lg object-cover shrink-0"
+                    className="w-[52px] h-[32px] sm:w-16 sm:h-11 rounded-md sm:rounded-lg object-cover shrink-0"
                     loading="lazy"
                   />
-                  <span className={`text-[13.5px] font-semibold leading-snug ${i === activeVideo ? "text-white" : "text-white/60"}`}>
+                  <span className={`text-[12px] sm:text-[13px] leading-snug ${i === activeVideo ? "font-semibold text-white" : "font-medium text-white/55"}`}>
                     {v.channel}
                   </span>
                 </button>
