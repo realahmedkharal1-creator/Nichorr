@@ -1,6 +1,6 @@
 "use client";
 
-export type OAuthProvider = "google" | "apple" | "facebook";
+export type OAuthProvider = "google" | "facebook";
 
 function GoogleIcon() {
   return (
@@ -25,14 +25,6 @@ function GoogleIcon() {
   );
 }
 
-function AppleIcon() {
-  return (
-    <svg width="16" height="18" viewBox="0 0 16 18" fill="currentColor" aria-hidden="true">
-      <path d="M13.09 15.47c-.72 1.04-1.47 2.06-2.64 2.08-1.15.02-1.52-.68-2.83-.68-1.31 0-1.72.66-2.81.7-1.13.04-1.99-1.12-2.72-2.15-1.48-2.13-2.62-6.03-1.09-8.66a4.2 4.2 0 0 1 3.55-2.16c1.11-.02 2.16.75 2.83.75.68 0 1.95-.92 3.29-.79.56.03 2.13.23 3.14 1.7-.08.05-1.88 1.1-1.86 3.28.02 2.6 2.28 3.47 2.31 3.48-.02.07-.36 1.24-1.19 2.46l-.63.36ZM9.1 3.2c.6-.72 1-1.73.89-2.73-.86.03-1.9.57-2.52 1.29-.55.63-1.04 1.65-.91 2.62.96.08 1.94-.49 2.55-1.18Z" />
-    </svg>
-  );
-}
-
 function FacebookIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
@@ -50,7 +42,6 @@ function FacebookIcon() {
 
 const PROVIDERS: { id: OAuthProvider; label: string; Icon: () => JSX.Element }[] = [
   { id: "google", label: "Continue with Google", Icon: GoogleIcon },
-  { id: "apple", label: "Continue with Apple", Icon: AppleIcon },
   { id: "facebook", label: "Continue with Facebook", Icon: FacebookIcon },
 ];
 
