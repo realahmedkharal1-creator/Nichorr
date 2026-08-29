@@ -244,15 +244,22 @@ export default function LandingPage() {
 
       {/* STATS */}
       <section className="py-10 md:py-12 border-y border-line bg-card">
-        <div className="max-w-[1180px] mx-auto px-4 sm:px-7 grid grid-cols-3 gap-2 sm:gap-6 md:gap-10">
+        <div className="max-w-[1180px] mx-auto px-5 sm:px-7 flex flex-col divide-y divide-line sm:grid sm:grid-cols-3 sm:divide-y-0 sm:gap-6 md:gap-10">
           {[
             { stat: "10–45s", label: "Full run time, Quick to Deep tier" },
             { stat: "0", label: "Fabricated citations, ever" },
             { stat: "100%", label: "Claims traced to a live source" },
           ].map((s) => (
-            <div key={s.label} className="text-center md:text-left">
-              <div className="font-sans font-extrabold text-citation text-[22px] sm:text-[30px] md:text-[42px] leading-none mb-2 whitespace-nowrap">{s.stat}</div>
-              <div className="text-[11.5px] sm:text-[12.5px] md:text-[13.5px] text-muted leading-snug">{s.label}</div>
+            <div
+              key={s.label}
+              className="flex items-center gap-4 py-4 first:pt-0 last:pb-0 sm:block sm:py-0 sm:text-left"
+            >
+              <div className="font-sans font-extrabold text-citation leading-none whitespace-nowrap shrink-0 w-[86px] sm:w-auto text-[26px] sm:text-[30px] md:text-[42px] sm:mb-2">
+                {s.stat}
+              </div>
+              <div className="text-[13px] sm:text-[12.5px] md:text-[13.5px] text-muted leading-snug">
+                {s.label}
+              </div>
             </div>
           ))}
         </div>
