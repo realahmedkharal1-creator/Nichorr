@@ -481,6 +481,12 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
  // Phase 72: Video Editor Sync & Timeline Integration State
  const [syncPlan, setSyncPlan] = useState<TimelineSyncPlan | null>(null);
  const [editorStatus, setEditorStatus] = useState<{ status: EditorIntegrationStatus; message: string } | null>(null);
+ // Real claims for this run. The impact-simulation control previously offered two hardcoded
+ // options ("Claim #4: S27 Ultra sustained thermal limit is 45°C", "Claim #7: A18 Pro
+ // benchmark multicore score") that referenced a different phone entirely and did not exist
+ // in any run — so the simulation always posted an unknown id and silently returned nothing.
+ const [runClaims, setRunClaims] = useState<Array<{ id: string; claim_text: string }>>([]);
+ const [simulationError, setSimulationError] = useState<string | null>(null);
  const [importedContent, setImportedContent] = useState("");
  const [importedResult, setImportedResult] = useState<ImportedTimelineResult | null>(null);
  const [isImporting, setIsImporting] = useState(false);
@@ -699,6 +705,13 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
  // Load initial data
  useEffect(() => {
+  fetch(`/api/research/${params.id}/status`)
+   .then((res) => res.json())
+   .then((data) => {
+    if (data.success && data.run) setRunClaims(data.run.claims || []);
+   })
+   .catch(() => {});
+
   fetch(`/api/research/${params.id}/creator-studio/training`)
    .then((res) => res.json())
    .then((data) => {
@@ -1777,6 +1790,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
  const handleRunSimulation = () => {
   if (!simulationTargetId) return;
   setIsSimulating(true);
+  setSimulationError(null);
   fetch(`/api/research/${params.id}/creator-project/impact-preview`, {
    method: "POST",
    headers: { "Content-Type": "application/json" },
@@ -1791,9 +1805,13 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
    .then((data) => {
     if (data.success && data.simulation) {
      setSimulationPreview(data.simulation);
+    } else {
+     // Previously this failed silently, so the button looked dead.
+     setSimulationPreview(null);
+     setSimulationError(data.error || "The simulation returned no impact for this claim.");
     }
    })
-   .catch(() => {})
+   .catch((err) => setSimulationError(err?.message || "Could not reach the simulation service."))
    .finally(() => setIsSimulating(false));
  };
 
@@ -2197,9 +2215,14 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
               onChange={(e) => setSimulationTargetId(e.target.value)}
               className="w-full font-sans text-[13px] p-[10px_12px] border border-line rounded-[9px] bg-paper text-ink focus:outline-none focus:border-citation"
             >
-              <option value="">— Choose Claim to Simulate —</option>
-              <option value="claim-4">Claim #4: S27 Ultra sustained thermal limit is 45°C</option>
-              <option value="claim-7">Claim #7: A18 Pro benchmark multicore score</option>
+              <option value="">
+                {runClaims.length === 0 ? "— No claims available in this run —" : "— Choose Claim to Simulate —"}
+              </option>
+              {runClaims.map((c, i) => (
+                <option key={c.id} value={c.id}>
+                  {`Claim #${i + 1}: ${c.claim_text.slice(0, 90)}${c.claim_text.length > 90 ? "…" : ""}`}
+                </option>
+              ))}
             </select>
           </div>
           
@@ -2224,6 +2247,11 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
             {isSimulating ? "⚡ Simulating..." : "⚡ Run Simulation"}
           </button>
         </div>
+        {simulationError && (
+          <div className="mt-[12px] text-[12.5px] text-conflict bg-conflict-bg border border-conflict/20 rounded-[9px] p-[10px_12px]">
+            {simulationError}
+          </div>
+        )}
       </div>
       
     </div>

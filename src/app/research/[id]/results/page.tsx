@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ResearchRunSession } from "@/features/research/research-engine";
 import { YouTubeIntelligenceReport, YouTubeVideoItem } from "@/lib/youtube/youtube.types";
@@ -92,6 +92,28 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
   // Evidence State
   const [evidenceSearch, setEvidenceSearch] = useState("");
   const [evidenceFilter, setEvidenceFilter] = useState("All Claims");
+  const [expandedClaimId, setExpandedClaimId] = useState<string | null>(null);
+
+  // Horizontal tab strip: drag-to-scroll + mouse-wheel support
+  const tabStripRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef({ active: false, moved: false, startX: 0, startScroll: 0 });
+
+  useEffect(() => {
+    const el = tabStripRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY === 0) return;
+      // Only hijack the wheel when there is actually somewhere to scroll, so the page
+      // still scrolls normally once the strip is at its end.
+      const atStart = el.scrollLeft <= 0;
+      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 1;
+      if ((e.deltaY < 0 && atStart) || (e.deltaY > 0 && atEnd)) return;
+      e.preventDefault();
+      el.scrollLeft += Math.abs(e.deltaY) < 40 ? e.deltaY : e.deltaY * 1.5;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
 
   // Ask AI State
   const [askQuestion, setAskQuestion] = useState("");
@@ -224,6 +246,21 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
     ...conflicts.map((c) => `${c.conflict_type.replace(/_/g, " ")}: ${c.explanation} State both sets of test conditions on screen rather than presenting one as definitive.`),
   ];
 
+  // Evidence tab filtering. The category chips were previously decorative: `evidenceFilter`
+  // was set on click but never applied, so all four showed an identical list.
+  const EVIDENCE_CATEGORIES: Record<string, RegExp> = {
+    "Performance & SoC": /\bchip|\bsoc\b|processor|snapdragon|\ba\d\d\b|exynos|\bcpu\b|\bgpu\b|\bfps\b|benchmark|\bperformance\b|throttl|thermal/i,
+    "Camera & Optics": /\bcamera|\bmegapixel|\d+\s?mp\b|\blens\b|telephoto|\bzoom\b|\bphoto|video quality|\bsensor\b|aperture/i,
+    "Battery & Charging": /\bbattery|\bmah\b|\bcharg|\bwatt|\d+\s?w\b|\bendurance\b|playback|screen[- ]on time/i,
+  };
+  const filteredClaims = (run.claims || []).filter((c) => {
+    const text = c.claim_text.toLowerCase();
+    if (!text.includes(evidenceSearch.toLowerCase())) return false;
+    if (evidenceFilter === "All Claims") return true;
+    const pattern = EVIDENCE_CATEGORIES[evidenceFilter];
+    return pattern ? pattern.test(c.claim_text) : true;
+  });
+
   const firstClaim = (run.claims || [])[0];
   const lineage = firstClaim
     ? (() => {
@@ -277,7 +314,22 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
       {/* Tab bar */}
       <div className="relative mb-6">
         <div
-          className="flex gap-2 overflow-x-auto pb-2"
+          ref={tabStripRef}
+          onMouseDown={(e) => {
+            const el = tabStripRef.current;
+            if (!el) return;
+            dragState.current = { active: true, moved: false, startX: e.pageX, startScroll: el.scrollLeft };
+          }}
+          onMouseMove={(e) => {
+            const el = tabStripRef.current;
+            if (!el || !dragState.current.active) return;
+            const walk = e.pageX - dragState.current.startX;
+            if (Math.abs(walk) > 4) dragState.current.moved = true;
+            el.scrollLeft = dragState.current.startScroll - walk;
+          }}
+          onMouseUp={() => { dragState.current.active = false; }}
+          onMouseLeave={() => { dragState.current.active = false; }}
+          className="flex gap-2 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
           style={{
             scrollbarWidth: "none",
             WebkitMaskImage: "linear-gradient(to right, black calc(100% - 24px), transparent)",
@@ -290,7 +342,11 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             return (
               <button
                 key={t.id}
-                onClick={() => setActiveTab(t.id)}
+                onClick={() => {
+                  if (dragState.current.moved) return;
+                  setActiveTab(t.id);
+                }}
+                draggable={false}
                 className={`shrink-0 inline-flex items-center gap-1.5 font-sans text-[13px] font-semibold px-4 py-2 rounded-full border cursor-pointer whitespace-nowrap transition-all ${
                   isActive
                     ? "bg-ink text-paper border-ink shadow-sm"
@@ -545,23 +601,60 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             </div>
 
             <div className="divide-y divide-line-soft">
-              {(run.claims || [])
-                .filter(c => c.claim_text.toLowerCase().includes(evidenceSearch.toLowerCase()))
-                .map((claim, idx) => (
+              {filteredClaims.map((claim, idx) => (
                   <div key={idx} className="py-4 first:pt-0 last:pb-0">
                     <div className="text-[14px] leading-[1.6] mb-2 text-ink">
                       {claim.claim_text}{" "}
-                      <button className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none align-super ml-0.5 cursor-pointer hover:bg-citation hover:text-white transition-colors">{(idx % 3) + 1}</button>
+                      <button
+                        onClick={() => setExpandedClaimId(expandedClaimId === claim.id ? null : claim.id)}
+                        title="Show the source excerpt behind this claim"
+                        aria-expanded={expandedClaimId === claim.id}
+                        className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none align-super ml-0.5 cursor-pointer hover:bg-citation hover:text-white transition-colors"
+                      >
+                        {idx + 1}
+                      </button>
                     </div>
                     <div className="flex gap-2 items-center flex-wrap">
-                      <span className="font-mono text-[10.5px] font-semibold px-2 py-1 rounded-full inline-flex items-center gap-1.5 bg-verified-bg text-verified uppercase">
-                        <BadgeCheck className="w-3 h-3" />VERIFIED
+                      <span className={`font-mono text-[10.5px] font-semibold px-2 py-1 rounded-full inline-flex items-center gap-1.5 uppercase ${
+                        (claim.evidence_ids || []).length > 0 ? "bg-verified-bg text-verified" : "bg-conflict-bg text-conflict"
+                      }`}>
+                        {(claim.evidence_ids || []).length > 0
+                          ? (<><BadgeCheck className="w-3 h-3" />Verified</>)
+                          : (<><AlertTriangle className="w-3 h-3" />Unbacked</>)}
                       </span>
                       <span className="font-mono text-[11px] text-muted-2">{sourceLabelForClaim(claim)}</span>
                     </div>
+
+                    {/* The citation marker now opens the actual excerpt this claim rests on,
+                        instead of being a decorative button with no handler. */}
+                    {expandedClaimId === claim.id && (() => {
+                      const ev = (run.evidence || []).find((e) => (claim.evidence_ids || []).includes(e.id));
+                      const src = ev ? (run.sources || []).find((sc) => sc.id === ev.source_id) : undefined;
+                      return (
+                        <div className="mt-3 bg-paper border border-line-soft rounded-xl p-3.5">
+                          <div className="font-mono text-[10px] uppercase tracking-wide text-muted-2 mb-1.5">Source excerpt</div>
+                          {ev ? (
+                            <p className="text-[12.5px] leading-[1.6] text-ink m-0">&ldquo;{ev.excerpt.slice(0, 600)}&rdquo;</p>
+                          ) : (
+                            <p className="text-[12.5px] text-conflict m-0">No excerpt is linked to this claim.</p>
+                          )}
+                          {src && (
+                            <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-citation text-[12px] mt-2 font-semibold inline-flex items-center gap-1 hover:underline">
+                              <ExternalLink className="w-3 h-3" />{src.publisher || src.title}
+                            </a>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 ))}
-              {(run.claims || []).length === 0 && <p className="text-[13px] text-muted py-3">No claims extracted yet.</p>}
+              {filteredClaims.length === 0 && (
+                <p className="text-[13px] text-muted py-3">
+                  {(run.claims || []).length === 0
+                    ? "No claims extracted yet."
+                    : "No claims match this filter."}
+                </p>
+              )}
             </div>
           </div>
         </div>

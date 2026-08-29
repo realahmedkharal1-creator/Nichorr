@@ -258,7 +258,10 @@ export class YouTubeIntelligenceEngine {
     claims: YouTubeClaim[],
     questions: YouTubeAudienceQuestion[]
   ): string[] {
-    if (questions.length === 0) return [];
+    // A coverage gap is "viewers asked X, but no reviewer covered X". That comparison is
+    // meaningless when no reviewer claims were extracted at all (e.g. no transcripts were
+    // available) — every question would trivially look uncovered. Report nothing instead.
+    if (questions.length === 0 || claims.length === 0) return [];
 
     const STOPWORDS = new Set([
       "what", "when", "where", "which", "does", "did", "will", "would", "could", "should",

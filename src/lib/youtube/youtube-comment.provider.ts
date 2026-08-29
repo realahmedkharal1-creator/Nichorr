@@ -24,7 +24,22 @@ export class YouTubeCommentProvider {
     const isVeryShort = clean.length < 5 && !clean.includes("why") && !clean.includes("how");
     const isGenericReaction = ["first", "nice", "cool", "wow", "great video", "love this", "legend", "goat"].includes(clean);
 
-    if (hasSpamKeyword || (hasUrl && !clean.includes("reddit") && !clean.includes("github"))) {
+    // Creator self-promo blocks (pinned comments / description dumps) are the common case
+    // that used to leak through: they are long, contain many links, and mention affiliate or
+    // sponsorship markers. One such block was surfaced to the user as an "audience question".
+    const linkCount = (clean.match(/https?:\/\//g) || []).length;
+    const promoMarkers = ["sponsored", "affiliate", "amzn.to", "product links", "blog post:", "follow me", "my links", "discount code", "use code", "shop:", "merch"];
+    const hasPromoMarker = promoMarkers.some((kw) => clean.includes(kw));
+    const isLinkFarm = linkCount >= 3;
+    const isDescriptionDump = clean.length > 600 && linkCount >= 1;
+
+    if (hasSpamKeyword || isLinkFarm || hasPromoMarker || isDescriptionDump) {
+      return { spamScore: 0.95, isFiltered: true, category: "NOISE" };
+    }
+
+    // A single link is tolerated only when the comment cites a discussion source, which is
+    // the case this exemption was written for.
+    if (hasUrl && !clean.includes("reddit") && !clean.includes("github")) {
       return { spamScore: 0.95, isFiltered: true, category: "NOISE" };
     }
 
@@ -33,7 +48,12 @@ export class YouTubeCommentProvider {
     }
 
     // Category determination
-    if (clean.includes("?") || clean.startsWith("should i") || clean.startsWith("is it") || clean.startsWith("how does") || clean.startsWith("does anyone")) {
+    // Cap the length so a long rambling post that happens to contain "?" isn't presented
+    // as a crisp audience question.
+    const looksLikeQuestion =
+      clean.includes("?") || clean.startsWith("should i") || clean.startsWith("is it") ||
+      clean.startsWith("how does") || clean.startsWith("does anyone");
+    if (looksLikeQuestion && clean.length <= 300) {
       return { spamScore: 0.05, isFiltered: false, category: "QUESTION" };
     }
 
