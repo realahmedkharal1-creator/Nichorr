@@ -23,6 +23,7 @@ export function AppHeader() {
     { label: "Sources", href: "/research/sources" },
     { label: "Content", href: "/content" },
     { label: "Quality", href: "/research/quality" },
+    { label: "Docs", href: "/docs" },
   ];
 
   useEffect(() => {

@@ -156,6 +156,9 @@ export default function LandingPage() {
             <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={120} height={32} className="h-6 sm:h-10 w-auto" priority />
           </Link>
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+            <Link href="/docs" className="hidden sm:inline-flex text-[14.5px] font-semibold text-muted hover:text-ink py-2 px-3 rounded-lg hover:bg-ink/5 transition-colors whitespace-nowrap">
+              Docs
+            </Link>
             <Link href="/login" className="text-[13px] sm:text-[14.5px] font-semibold text-muted hover:text-ink py-2 sm:px-3 sm:rounded-lg sm:hover:bg-ink/5 transition-colors whitespace-nowrap">
               Sign In
             </Link>
@@ -625,6 +628,7 @@ export default function LandingPage() {
                   <a href="#features" className="text-muted hover:text-ink transition-colors">Features</a>
                   <a href="#videos" className="text-muted hover:text-ink transition-colors">Video intelligence</a>
                   <a href="#how-it-works" className="text-muted hover:text-ink transition-colors">How it works</a>
+                  <Link href="/docs" className="text-muted hover:text-ink transition-colors">Documentation</Link>
                   <a href="#faq" className="text-muted hover:text-ink transition-colors">FAQ</a>
                 </div>
               </div>

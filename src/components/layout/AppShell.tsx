@@ -10,7 +10,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     pathname === "/login" ||
     pathname === "/signup" ||
     pathname === "/terms" ||
-    pathname === "/privacy";
+    pathname === "/privacy" ||
+    pathname === "/docs";
 
   if (isBareLayout) {
     return <>{children}</>;
