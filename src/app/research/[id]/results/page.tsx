@@ -14,12 +14,20 @@ import {
 
 type Tone = "ink" | "verified" | "conflict" | "citation" | "warning";
 
-const TONE_ICON_BG: Record<Tone, string> = {
-  ink: "bg-paper text-ink",
-  verified: "bg-verified-bg text-verified",
-  conflict: "bg-conflict-bg text-conflict",
-  citation: "bg-citation-bg text-citation",
-  warning: "bg-warning-bg text-warning",
+const TONE_SURFACE: Record<Tone, string> = {
+  ink: "bg-paper border-line",
+  verified: "bg-verified-bg border-verified/25",
+  conflict: "bg-conflict-bg border-conflict/25",
+  citation: "bg-citation-bg border-citation/25",
+  warning: "bg-warning-bg border-warning/25",
+};
+
+const TONE_ICON_SOLID: Record<Tone, string> = {
+  ink: "bg-ink text-card",
+  verified: "bg-verified text-white",
+  conflict: "bg-conflict text-white",
+  citation: "bg-citation text-white",
+  warning: "bg-warning text-white",
 };
 
 const TONE_VALUE_TEXT: Record<Tone, string> = {
@@ -28,14 +36,6 @@ const TONE_VALUE_TEXT: Record<Tone, string> = {
   conflict: "text-conflict",
   citation: "text-citation",
   warning: "text-warning",
-};
-
-const TONE_BAR: Record<Tone, string> = {
-  ink: "bg-muted-2",
-  verified: "bg-verified",
-  conflict: "bg-conflict",
-  citation: "bg-citation",
-  warning: "bg-warning",
 };
 
 function StatCard({
@@ -52,24 +52,29 @@ function StatCard({
   tone?: Tone;
 }) {
   return (
-    <div className="group relative bg-card border border-line rounded-2xl p-5 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
-      <span className={`absolute left-0 top-4 bottom-4 w-[3px] rounded-full ${TONE_BAR[tone]} opacity-70`} />
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${TONE_ICON_BG[tone]}`}>
-          <Icon className="w-[18px] h-[18px]" />
-        </div>
+    <div
+      className={`group relative rounded-2xl border p-5 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 overflow-hidden ${TONE_SURFACE[tone]}`}
+    >
+      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-4 shadow-sm ${TONE_ICON_SOLID[tone]}`}>
+        <Icon className="w-5 h-5" strokeWidth={2.25} />
       </div>
-      <div className={`font-serif font-bold text-[32px] leading-none tracking-tight ${TONE_VALUE_TEXT[tone]}`}>{value}</div>
-      <div className="font-mono text-[10.5px] tracking-[0.4px] uppercase text-muted-2 mt-2">{label}</div>
-      {sublabel && <div className="text-[11.5px] text-muted mt-0.5">{sublabel}</div>}
+      <div className={`font-serif font-extrabold text-[36px] leading-none tracking-tight ${TONE_VALUE_TEXT[tone]}`}>
+        {value}
+      </div>
+      <div className="text-[12px] font-bold uppercase tracking-[0.3px] text-ink/75 mt-2.5">{label}</div>
+      {sublabel && <div className="text-[11.5px] font-medium text-ink/45 mt-0.5">{sublabel}</div>}
     </div>
   );
 }
 
 function SectionLabel({ icon: Icon, children }: { icon?: any; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2 font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-3">
-      {Icon && <Icon className="w-3.5 h-3.5" />}
+    <div className="flex items-center gap-2 text-[12.5px] font-bold uppercase tracking-[0.4px] text-ink/70 mb-4">
+      {Icon && (
+        <span className="w-6 h-6 rounded-lg bg-ink/5 flex items-center justify-center text-ink/60">
+          <Icon className="w-3.5 h-3.5" />
+        </span>
+      )}
       {children}
     </div>
   );
@@ -295,7 +300,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
   ];
 
   return (
-    <div className="max-w-[1180px] mx-auto py-6 px-5 pb-20 font-sans">
+    <div className="max-w-[1200px] mx-auto py-7 px-5 pb-24 font-sans">
       {/* Hero header */}
       <div className="relative rounded-3xl overflow-hidden bg-card border border-line p-6 sm:p-8 mb-6 shadow-card">
         <div className="absolute -top-24 -right-16 w-72 h-72 rounded-full bg-citation/[0.07] blur-3xl pointer-events-none" />
@@ -388,31 +393,31 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             <StatCard icon={Users} label="Community Signals" value={run.communitySignals?.length || 0} sublabel="user reported" tone="warning" />
           </div>
 
-          <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card">
+          <div className="bg-card border border-line rounded-2xl p-6 sm:p-7 shadow-card">
             <SectionLabel icon={Sparkles}>Executive Summary</SectionLabel>
-            <div className="text-[14px] leading-[1.75] m-0 text-ink">
+            <div className="text-[14.5px] leading-[1.8] m-0 text-ink/90">
               {(run.brief?.executive_summary || [run.objective || "Research brief summary processing..."]).map((para, idx) => (
-                <p key={idx} className="mb-2.5 last:mb-0">{para}</p>
+                <p key={idx} className="mb-3 last:mb-0">{para}</p>
               ))}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card">
+            <div className="bg-card border border-line rounded-2xl p-6 sm:p-7 shadow-card">
               <SectionLabel icon={BadgeCheck}>Key Verified Findings</SectionLabel>
-              <div className="divide-y divide-line-soft">
+              <div className="divide-y divide-line">
                 {(run.claims || []).slice(0, 3).map((c, idx) => (
-                  <div key={idx} className="py-3 first:pt-0 last:pb-0 flex items-start gap-3 text-[13.5px] leading-[1.6] text-ink">
-                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-verified-bg text-verified font-mono text-[10px] font-bold flex items-center justify-center">{idx + 1}</span>
+                  <div key={idx} className="py-3.5 first:pt-0 last:pb-0 flex items-start gap-3 text-[13.5px] leading-[1.65] text-ink">
+                    <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-verified text-white font-mono text-[11px] font-bold flex items-center justify-center">{idx + 1}</span>
                     <span className="flex-1">{c.claim_text.replace(/^Verified finding:\s*/i, "")}</span>
-                    <button onClick={() => setActiveTab("evidence")} className="shrink-0 inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-citation-bg text-citation font-mono text-[10px] font-bold border-none cursor-pointer hover:bg-citation hover:text-white transition-colors">{(idx % 3) + 1}</button>
+                    <button onClick={() => setActiveTab("evidence")} title="See evidence" className="shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-md bg-citation-bg text-citation font-mono text-[10px] font-bold border-none cursor-pointer hover:bg-citation hover:text-white transition-colors">{(idx % 3) + 1}</button>
                   </div>
                 ))}
                 {(run.claims || []).length === 0 && <p className="text-[13px] text-muted py-2">No findings yet.</p>}
               </div>
             </div>
 
-            <div className="bg-card border border-conflict/20 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <div className="bg-card border border-conflict/25 rounded-2xl p-6 sm:p-7 shadow-card">
               <SectionLabel icon={AlertTriangle}>Disagreements & Conflicts</SectionLabel>
               {conflicts.length > 0 ? (
                 <>
