@@ -113,7 +113,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, []);
+  }, [loading]); // re-bind once the strip actually mounts (it renders only after loading)
 
   // Ask AI State
   const [askQuestion, setAskQuestion] = useState("");
@@ -371,7 +371,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             <StatCard icon={Users} label="Community Signals" value={run.communitySignals?.length || 0} sublabel="user reported" tone="warning" />
           </div>
 
-          <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+          <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card">
             <SectionLabel icon={Sparkles}>Executive Summary</SectionLabel>
             <div className="text-[14px] leading-[1.75] m-0 text-ink">
               {(run.brief?.executive_summary || [run.objective || "Research brief summary processing..."]).map((para, idx) => (
@@ -381,7 +381,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+            <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card">
               <SectionLabel icon={BadgeCheck}>Key Verified Findings</SectionLabel>
               <div className="divide-y divide-line-soft">
                 {(run.claims || []).slice(0, 3).map((c, idx) => (
@@ -465,7 +465,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
               {ytActiveTab === "consensus" && (
                 <>
-                  <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+                  <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card">
                     <SectionLabel icon={CheckCircle2}>Reviewer Consensus (Multi-Channel Agreement)</SectionLabel>
                     <div className="divide-y divide-line-soft">
                       {youtubeReport.reviewerConsensus.map((con, idx) => (
@@ -480,7 +480,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                     </div>
                   </div>
 
-                  <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm mt-5">
+                  <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card mt-5">
                     <SectionLabel icon={Search}>Under-Covered Research Gaps</SectionLabel>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5">
                       {youtubeReport.coverageGaps.map((gap, idx) => (
@@ -648,7 +648,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             <StatCard icon={ShieldCheck} label="Confidence Rating" value={dominantConfidence} sublabel={`${claimsWithEvidence} of ${(run.claims || []).length} claims have matched evidence`} tone="verified" />
           </div>
 
-          <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+          <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card">
             <div className="relative mb-3.5">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-2" />
               <input
@@ -792,7 +792,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             <StatCard icon={TrendingUp} label="Confidence" value={dominantConfidence} sublabel="dominant band across claims" tone="ink" />
           </div>
 
-          <div className="bg-card border border-line-soft rounded-2xl p-5 sm:p-6 shadow-sm">
+          <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card">
             <SectionLabel icon={GitBranch}>Full Evidence Lineage Chain</SectionLabel>
             {lineage ? (
               <div className="relative pl-2">
@@ -904,52 +904,56 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           {(run.communitySignals || []).length > 0 ? (
             <div className="space-y-3">
               {(run.communitySignals || []).map((s, idx) => (
-                <div key={idx} className="bg-card border border-line-soft rounded-2xl p-4 flex gap-3 hover:shadow-sm transition-shadow">
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-warning-bg text-warning flex items-center justify-center"><MessageSquare className="w-4 h-4" /></div>
-                  <div>
-                    <span className="font-mono text-[10px] text-citation uppercase tracking-[0.5px] mb-1 block">{s.signal_type}</span>
-                    <p className="m-0 text-[13.5px] text-ink">{s.signal}</p>
+                <div key={idx} className="bg-card border border-line rounded-2xl p-4 sm:p-5 flex gap-3.5 shadow-card">
+                  <div className="shrink-0 w-9 h-9 rounded-xl bg-warning-bg text-warning flex items-center justify-center"><MessageSquare className="w-4 h-4" /></div>
+                  <div className="min-w-0">
+                    <span className="font-mono text-[10px] text-muted-2 uppercase tracking-[0.5px] mb-1 block">{s.signal_type.replace(/_/g, " ")}</span>
+                    <p className="m-0 text-[13.5px] leading-[1.6] text-ink">{s.signal}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <EmptyState icon={MessageSquare} title="No community signals found yet for this research run" description="Reddit and forum threads for this topic haven't surfaced reportable patterns yet." />
+            <EmptyState icon={MessageSquare} title="No community signals for this run" description="No recurring viewer-reported issue surfaced across the sources gathered for this topic." />
           )}
         </div>
       )}
 
       {activeTab === "audience" && (
         <div className="animate-in fade-in duration-300">
+          <p className="text-[12.5px] text-muted mb-4 m-0">Questions viewers keep asking that the existing coverage does not answer well.</p>
           {(run.audienceQuestions || []).length > 0 ? (
             <div className="grid sm:grid-cols-2 gap-4">
               {(run.audienceQuestions || []).map((q, idx) => (
-                <div key={idx} className="bg-card border border-line-soft rounded-2xl p-4 flex flex-col h-full hover:shadow-sm transition-shadow">
-                  <div className="font-mono text-[10px] text-citation uppercase tracking-[0.5px] mb-2.5 inline-flex items-center gap-1.5 self-start bg-citation-bg px-2 py-1 rounded-full"><HelpCircle className="w-3 h-3" />{q.coverage_gap} GAP</div>
-                  <h4 className="m-0 text-[14px] font-semibold text-ink font-serif">"{q.question}"</h4>
+                <div key={idx} className="bg-card border border-line rounded-2xl p-5 flex flex-col gap-3 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.5px] inline-flex items-center gap-1.5 self-start px-2 py-1 rounded-full bg-citation-bg text-citation">
+                    <HelpCircle className="w-3 h-3" />{q.coverage_gap === "HIGH" ? "Wide coverage gap" : "Minor coverage gap"}
+                  </span>
+                  <p className="m-0 text-[14px] leading-[1.55] font-medium text-ink">&ldquo;{q.question}&rdquo;</p>
                 </div>
               ))}
             </div>
           ) : (
-            <EmptyState icon={HelpCircle} title="No audience question gaps identified yet" description="Run again with Deep research depth to mine viewer comment questions." />
+            <EmptyState icon={HelpCircle} title="No audience question gaps identified" description="No viewer question recurred often enough, or there was not enough reviewer coverage to compare against." />
           )}
         </div>
       )}
 
       {activeTab === "opportunities" && (
         <div className="animate-in fade-in duration-300">
+          <p className="text-[12.5px] text-muted mb-4 m-0">Video angles this research supports — built from the disagreements, complaints and questions above.</p>
           {(run.opportunities || []).length > 0 || (run.brief?.content_opportunities || []).length > 0 ? (
             <div className="grid sm:grid-cols-2 gap-4">
               {(run.opportunities || run.brief?.content_opportunities || []).map((o, idx) => (
-                <div key={idx} className="bg-card border border-line-soft rounded-2xl p-4 flex flex-col h-full hover:shadow-md hover:-translate-y-0.5 transition-all">
-                  <div className="w-8 h-8 rounded-full bg-warning-bg text-warning flex items-center justify-center mb-2.5"><Sparkles className="w-4 h-4" /></div>
-                  <h4 className="m-0 mb-1.5 text-[14px] font-semibold text-ink font-serif">{o.title}</h4>
-                  <p className="m-0 text-[13px] text-muted leading-[1.5]">{o.description}</p>
+                <div key={idx} className="bg-card border border-line rounded-2xl p-5 flex flex-col gap-2 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
+                  <div className="w-9 h-9 rounded-xl bg-warning-bg text-warning flex items-center justify-center mb-1"><Sparkles className="w-4 h-4" /></div>
+                  <h4 className="m-0 text-[15px] font-semibold text-ink font-serif leading-snug">{o.title}</h4>
+                  <p className="m-0 text-[13px] text-muted leading-[1.55]">{o.description}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <EmptyState icon={Sparkles} title="No content opportunities identified yet" description="Opportunities are generated once audience question gaps are available." />
+            <EmptyState icon={Sparkles} title="No content opportunities yet" description="These are generated from reviewer disagreements, recurring complaints and unanswered audience questions." />
           )}
         </div>
       )}
