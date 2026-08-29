@@ -139,7 +139,7 @@ export default function LandingPage() {
 
       {/* HERO */}
       <section className="pt-20 pb-16 md:pt-24 md:pb-20">
-        <div className="max-w-[1180px] mx-auto px-7 grid md:grid-cols-2 gap-12 md:gap-14 items-start">
+        <div className="max-w-[1180px] mx-auto px-7 grid md:grid-cols-2 gap-12 md:gap-14 items-center">
           <div>
             <div className="inline-flex items-center gap-2 font-mono text-[12.5px] tracking-wide uppercase text-muted mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-citation" /> Evidence-first research, built for tech creators
@@ -151,14 +151,14 @@ export default function LandingPage() {
             <p className="text-[18px] text-muted max-w-[46ch] mb-8 leading-relaxed">
               Nichorr researches your next video the way a fact-checker would — every claim traced to a real source, every disagreement between sources flagged, every number confidence-scored. Nothing fabricated. Ever.
             </p>
-            <div className="flex items-center gap-5 flex-wrap">
+            <div className="flex flex-col items-start gap-3">
               <Link
                 href="/signup"
                 className="inline-flex items-center gap-2 bg-ink text-white font-semibold text-[15.5px] px-7 py-3.5 rounded-full hover:bg-ink/85 hover:-translate-y-0.5 transition-all"
               >
                 Get Started Free <ArrowRight className="w-4 h-4" />
               </Link>
-              <span className="text-[13.5px] text-muted-2">
+              <span className="text-[13.5px] text-muted-2 pl-1">
                 No waitlist. No card required to try it.
               </span>
             </div>
