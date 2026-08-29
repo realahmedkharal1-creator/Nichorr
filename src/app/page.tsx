@@ -151,19 +151,19 @@ export default function LandingPage() {
     <div className="bg-paper text-ink min-h-screen">
       {/* HEADER */}
       <header className="sticky top-0 z-50 bg-paper/90 backdrop-blur-md border-b border-line">
-        <nav className="max-w-[1180px] mx-auto px-7 h-[68px] flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={120} height={32} style={{ height: "40px", width: "auto" }} priority />
+        <nav className="max-w-[1180px] mx-auto px-4 sm:px-7 h-[58px] sm:h-[68px] flex items-center justify-between gap-3">
+          <Link href="/" className="flex items-center shrink-0">
+            <Image src="/nichorr-logo.svg" alt="Nichorr Logo" width={120} height={32} className="h-8 sm:h-10 w-auto" priority />
           </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-[14.5px] font-semibold text-muted hover:text-ink px-3 py-2 rounded-lg hover:bg-ink/5 transition-colors">
+          <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
+            <Link href="/login" className="text-[13.5px] sm:text-[14.5px] font-semibold text-muted hover:text-ink px-2.5 sm:px-3 py-2 rounded-lg hover:bg-ink/5 transition-colors whitespace-nowrap">
               Sign In
             </Link>
             <Link
               href="/signup"
-              className="inline-flex items-center gap-1.5 bg-ink text-white text-[14.5px] font-semibold px-5 py-2.5 rounded-full hover:bg-ink/85 transition-colors"
+              className="inline-flex items-center gap-1.5 bg-ink text-white text-[13.5px] sm:text-[14.5px] font-semibold px-4 sm:px-5 py-2.5 rounded-full hover:bg-ink/85 transition-colors whitespace-nowrap"
             >
-              Get Started <ArrowRight className="w-3.5 h-3.5" />
+              Get Started <ArrowRight className="w-3.5 h-3.5 shrink-0" />
             </Link>
           </div>
         </nav>
@@ -244,15 +244,15 @@ export default function LandingPage() {
 
       {/* STATS */}
       <section className="py-10 md:py-12 border-y border-line bg-card">
-        <div className="max-w-[1180px] mx-auto px-7 grid grid-cols-3 gap-6 md:gap-10">
+        <div className="max-w-[1180px] mx-auto px-4 sm:px-7 grid grid-cols-3 gap-2 sm:gap-6 md:gap-10">
           {[
             { stat: "10–45s", label: "Full run time, Quick to Deep tier" },
             { stat: "0", label: "Fabricated citations, ever" },
             { stat: "100%", label: "Claims traced to a live source" },
           ].map((s) => (
             <div key={s.label} className="text-center md:text-left">
-              <div className="font-sans font-extrabold text-citation text-[30px] md:text-[42px] leading-none mb-2">{s.stat}</div>
-              <div className="text-[12.5px] md:text-[13.5px] text-muted leading-snug">{s.label}</div>
+              <div className="font-sans font-extrabold text-citation text-[22px] sm:text-[30px] md:text-[42px] leading-none mb-2 whitespace-nowrap">{s.stat}</div>
+              <div className="text-[11.5px] sm:text-[12.5px] md:text-[13.5px] text-muted leading-snug">{s.label}</div>
             </div>
           ))}
         </div>
@@ -342,9 +342,11 @@ export default function LandingPage() {
                   { label: "Reviewer B", grad: "from-ink to-conflict" },
                   { label: "Reviewer C", grad: "from-ink to-verified" },
                 ].map((v) => (
-                  <div key={v.label} className={`relative aspect-video rounded-xl bg-gradient-to-br ${v.grad} overflow-hidden flex items-center justify-center`}>
-                    <PlayCircle className="w-6 h-6 text-white/85" />
-                    <span className="absolute bottom-1.5 left-1.5 font-mono text-[9px] text-white/80">{v.label}</span>
+                  <div key={v.label} className="space-y-1.5">
+                    <div className={`relative aspect-video rounded-xl bg-gradient-to-br ${v.grad} overflow-hidden flex items-center justify-center`}>
+                      <PlayCircle className="w-6 h-6 text-white/85" />
+                    </div>
+                    <span className="block font-mono text-[10px] text-muted text-center">{v.label}</span>
                   </div>
                 ))}
               </div>
@@ -365,14 +367,26 @@ export default function LandingPage() {
             </h3>
           </div>
 
-          <div className="bg-ink rounded-3xl p-3 md:p-4 grid lg:grid-cols-[280px_1fr] gap-1.5 md:gap-3">
-            <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-1 pb-1 lg:pb-0">
+          <div className="bg-ink rounded-3xl p-3 md:p-4 grid lg:grid-cols-[280px_1fr] gap-3">
+            <div className="order-1 lg:order-2 aspect-video rounded-2xl overflow-hidden bg-black">
+              <iframe
+                key={VIDEO_SHOWCASE[activeVideo].id}
+                src={`https://www.youtube.com/embed/${VIDEO_SHOWCASE[activeVideo].id}`}
+                title={VIDEO_SHOWCASE[activeVideo].title}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              />
+            </div>
+
+            <div className="order-2 lg:order-1 flex flex-col gap-1 max-h-[320px] lg:max-h-none overflow-y-auto lg:overflow-visible pr-1 lg:pr-0">
               {VIDEO_SHOWCASE.map((v, i) => (
                 <button
                   key={v.id}
                   onClick={() => setActiveVideo(i)}
                   type="button"
-                  className={`shrink-0 lg:shrink text-left flex items-center gap-3 p-2 rounded-xl transition-colors whitespace-nowrap lg:whitespace-normal ${
+                  className={`w-full text-left flex items-center gap-3 p-2 rounded-xl transition-colors ${
                     i === activeVideo ? "bg-white/10" : "hover:bg-white/5"
                   }`}
                 >
@@ -383,23 +397,11 @@ export default function LandingPage() {
                     className="w-16 h-11 rounded-lg object-cover shrink-0"
                     loading="lazy"
                   />
-                  <span className={`text-[13.5px] font-semibold ${i === activeVideo ? "text-white" : "text-white/60"}`}>
+                  <span className={`text-[13.5px] font-semibold leading-snug ${i === activeVideo ? "text-white" : "text-white/60"}`}>
                     {v.channel}
                   </span>
                 </button>
               ))}
-            </div>
-
-            <div className="aspect-video rounded-2xl overflow-hidden bg-black">
-              <iframe
-                key={VIDEO_SHOWCASE[activeVideo].id}
-                src={`https://www.youtube.com/embed/${VIDEO_SHOWCASE[activeVideo].id}`}
-                title={VIDEO_SHOWCASE[activeVideo].title}
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
             </div>
           </div>
         </div>
