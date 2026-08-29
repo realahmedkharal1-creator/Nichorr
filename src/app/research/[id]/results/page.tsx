@@ -583,26 +583,56 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               )}
               {ytActiveTab === "community" && (
                 <div className="space-y-4">
+                  <p className="text-[12px] text-muted m-0">
+                    Viewer-reported sentiment from the comments of the analysed videos — logged as user reports, not verified hardware facts.
+                  </p>
                   {youtubeReport.recurringProblems.map((prob, i) => (
-                    <div key={i} className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm">
-                      <div className="font-mono text-[10px] text-warning bg-warning-bg px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 mb-3 font-semibold uppercase"><AlertTriangle className="w-3 h-3" />{prob.category} · {prob.commentCount} REPORTS</div>
-                      <div className="space-y-2">
+                    <div key={i} className="bg-card border border-line rounded-2xl overflow-hidden shadow-card">
+                      <div className="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-line-soft bg-paper">
+                        <div className="flex items-center gap-2 font-semibold text-[13px] text-ink">
+                          <AlertTriangle className="w-4 h-4 text-warning" />
+                          {prob.category.replace(/_/g, " ")}
+                        </div>
+                        <span className="font-mono text-[10.5px] text-muted-2 shrink-0">
+                          {prob.commentCount} {prob.commentCount === 1 ? "comment" : "comments"} · {prob.signalStrength.replace(/_/g, " ").toLowerCase()}
+                        </span>
+                      </div>
+                      <div className="p-5 space-y-2.5">
                         {prob.sampleComments.map((com, idx) => (
-                          <div key={idx} className="bg-paper p-3 rounded-xl text-[13px] italic text-muted flex gap-2"><Quote className="w-3 h-3 shrink-0 mt-1 text-muted-2" />"{com.text}"</div>
+                          <div key={idx} className="flex gap-2.5 text-[13px] leading-[1.6] text-ink">
+                            <Quote className="w-3.5 h-3.5 shrink-0 mt-1 text-muted-2" />
+                            <span className="italic">&ldquo;{com.text}&rdquo;</span>
+                          </div>
                         ))}
                       </div>
                     </div>
                   ))}
+                  {youtubeReport.recurringProblems.length === 0 && (
+                    <EmptyState icon={MessageSquare} title="No recurring complaints" description="No problem was raised often enough across the analysed comment sets to report as a signal." />
+                  )}
                 </div>
               )}
               {ytActiveTab === "audience" && (
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {youtubeReport.audienceQuestions.map((q, i) => (
-                    <div key={i} className="bg-card border border-line-soft rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-                      <div className="font-mono text-[10px] text-citation uppercase mb-2 flex items-center gap-1.5"><HelpCircle className="w-3 h-3" />{q.category} · {q.frequency}× FREQUENCY</div>
-                      <div className="text-[14px] font-semibold text-ink font-serif">"{q.question}"</div>
-                    </div>
-                  ))}
+                <div className="space-y-4">
+                  <p className="text-[12px] text-muted m-0">
+                    Questions viewers asked repeatedly in the comments — each is a topic your video could own.
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {youtubeReport.audienceQuestions.map((q, i) => (
+                      <div key={i} className="bg-card border border-line rounded-2xl p-5 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all flex flex-col gap-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-mono text-[10px] text-citation bg-citation-bg px-2 py-1 rounded-full uppercase inline-flex items-center gap-1.5">
+                            <HelpCircle className="w-3 h-3" />{q.category.replace(/_/g, " ")}
+                          </span>
+                          <span className="font-mono text-[10px] text-muted-2">asked {q.frequency}×</span>
+                        </div>
+                        <p className="text-[14px] leading-[1.55] font-medium text-ink m-0">&ldquo;{q.question}&rdquo;</p>
+                      </div>
+                    ))}
+                  </div>
+                  {youtubeReport.audienceQuestions.length === 0 && (
+                    <EmptyState icon={HelpCircle} title="No recurring audience questions" description="No question came up often enough across the analysed comments to surface here." />
+                  )}
                 </div>
               )}
             </div>

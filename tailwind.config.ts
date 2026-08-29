@@ -13,6 +13,10 @@ const config: Config = {
         serif: ['var(--font-sans)', 'sans-serif'],
         mono: ['var(--font-ibm-plex-mono)', 'monospace'],
       },
+      boxShadow: {
+        card: '0 1px 2px rgba(23,23,23,0.04), 0 4px 16px -4px rgba(23,23,23,0.06)',
+        'card-hover': '0 2px 4px rgba(23,23,23,0.05), 0 12px 28px -6px rgba(23,23,23,0.10)',
+      },
       colors: {
         ink: '#121214',
         paper: '#FAF9F7',
@@ -27,8 +31,8 @@ const config: Config = {
         'warning-bg': '#FDF3E0',
         muted: '#6B6F76',
         'muted-2': '#9A9EA1',
-        line: '#E7E4DF',
-        'line-soft': '#F1EFEB',
+        line: '#DAD5CB',
+        'line-soft': '#E6E1D7',
       },
     },
   },
