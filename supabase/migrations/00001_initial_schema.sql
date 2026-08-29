@@ -1,4 +1,4 @@
--- VeritasTech AI Database Migration Schema (20 Core Tables)
+-- Nichorr Database Migration Schema (20 Core Tables)
 -- Created for evidence-first tech research platform
 
 -- Custom ENUM Types

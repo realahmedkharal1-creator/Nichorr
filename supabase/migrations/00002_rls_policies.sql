@@ -1,4 +1,4 @@
--- VeritasTech AI Row Level Security Policies (RLS)
+-- Nichorr Row Level Security Policies (RLS)
 -- Enables strict multi-tenant isolation per authenticated user_id
 
 -- 1. Enable RLS on all user-owned tables
