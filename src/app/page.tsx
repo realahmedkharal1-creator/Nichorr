@@ -52,20 +52,52 @@ const FEATURE_GROUPS: {
 
 const FAQ_ITEMS = [
   {
-    q: "Is Nichorr free to use right now?",
-    a: "Nichorr is in early access. Create an account to start running research — there's no waitlist or approval step required.",
+    q: "What does Nichorr actually do?",
+    a: "You give it a topic for your next video — a phone comparison, a GPU review, a \"is X worth it\" explainer. It researches that topic the way a fact-checker would: it finds real sources, pulls out every factual claim, checks each one against other sources, scores how solid it is, and flags where sources disagree. You get back a structured brief you can read straight into a script.",
+  },
+  {
+    q: "Who is it for?",
+    a: "Tech video creators who make review, comparison, and explainer content — phones, laptops, GPUs, wearables, and the like. If your audience will call out a wrong spec or a shaky benchmark in the comments, Nichorr is built to catch it before you record.",
+  },
+  {
+    q: "What do I get at the end of a research run?",
+    a: "A research brief: the key claims on your topic, each traced to a live source, each marked solid / contested / insufficient-data, plus a list of where sources conflict and why, viewer questions no existing video has answered, and timestamped quotes from other creators' videos. It's organized to script from, not a pile of tabs to sort.",
+  },
+  {
+    q: "How is this different from searching myself or asking ChatGPT?",
+    a: "A chatbot will give you a confident paragraph with no way to check it, and it will invent a citation if it has to. Nichorr only states something if it found a real source for it at research time, shows you that source, tells you how confident it is, and says \"no solid evidence\" when that's the honest answer.",
+  },
+  {
+    q: "Does it analyze other creators' videos too?",
+    a: "Yes. It reads competitor video transcripts and comment sections, pulls exact quotes with timestamps, compares where different creators' takes on the same product disagree, and surfaces the questions viewers keep asking that nobody has answered yet.",
+  },
+  {
+    q: "How long does a research run take?",
+    a: "Roughly 10–45 seconds on the Quick tier for a focused question, up to a few minutes on the Deep tier when it's cross-checking many sources and video transcripts. You can watch each stage run live.",
   },
   {
     q: "What happens when sources disagree?",
-    a: "Nichorr surfaces both claims side by side with their sources and a confidence read on each, instead of silently averaging or picking one for you.",
+    a: "Nichorr surfaces both claims side by side with their sources and a confidence read on each, instead of silently averaging or picking one for you. Naming the disagreement in your video is what earns trust with a technical audience.",
   },
   {
     q: "Where does the evidence actually come from?",
     a: "Live benchmarks, reviews, spec sheets, forums, and video transcripts pulled at research time — not a cached or pre-baked answer.",
   },
   {
+    q: "What if there's no solid evidence for a claim?",
+    a: "It's marked insufficient-data and the brief says so plainly. Nichorr will never invent a source or round a shaky number up to sound certain — that's the whole point of the tool.",
+  },
+  {
+    q: "Can I find my past research later?",
+    a: "Every run is saved under Research History, searchable by topic. Open any past run to re-read its brief, re-check its sources, or export it again.",
+  },
+  {
     q: "Can I trust the numbers in my brief?",
     a: "Every number is traced to its source and confidence-scored. If evidence is thin, the brief says so instead of rounding up to sound certain.",
+  },
+  {
+    q: "Is Nichorr free to use right now?",
+    a: "Nichorr is in early access. Create an account to start running research — there's no waitlist or approval step required.",
   },
 ];
 
@@ -376,36 +408,48 @@ export default function LandingPage() {
       {/* FEATURES */}
       <section id="features" className="py-16 md:py-20">
         <div className="max-w-[1180px] mx-auto px-7">
-          <div className="max-w-[640px] mb-12">
+          <div className="max-w-[680px] mb-12 md:mb-14">
             <span className="font-mono text-[12.5px] tracking-wide uppercase text-citation mb-3 block">What&apos;s inside</span>
             <h2 className="font-sans font-extrabold tracking-tight text-[26px] md:text-[34px] leading-tight mb-3 text-ink">
               Everything between &quot;I think&quot; and &quot;I can defend this.&quot;
             </h2>
-            <p className="text-[16.5px] text-muted">
+            <p className="text-[16.5px] text-muted leading-relaxed">
               Every feature exists to answer one question before you hit publish: could I show my working, if someone asked?
             </p>
           </div>
 
-          {FEATURE_GROUPS.map((group) => (
-            <div key={group.label} className="mb-12 last:mb-0">
-              <div className="font-mono text-[12.5px] tracking-wide uppercase text-muted mb-5 pb-3.5 border-b border-line">
-                {group.label}
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-7 md:gap-9">
-                {group.items.map((item) => (
-                  <div key={item.title} className="flex gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-citation-bg text-citation flex items-center justify-center shrink-0">
-                      <item.icon className="w-[18px] h-[18px]" />
+          <div className="space-y-10 md:space-y-14">
+            {FEATURE_GROUPS.map((group) => (
+              <div key={group.label}>
+                <div className="flex items-center gap-4 mb-6">
+                  <span className="font-mono text-[12px] tracking-wide uppercase text-muted whitespace-nowrap">
+                    {group.label}
+                  </span>
+                  <span className="h-px flex-1 bg-line" />
+                </div>
+                <div
+                  className={`grid gap-4 sm:grid-cols-2 ${
+                    group.items.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-2"
+                  }`}
+                >
+                  {group.items.map((item) => (
+                    <div
+                      key={item.title}
+                      className="flex gap-4 rounded-2xl border border-line bg-card p-5 transition-colors hover:border-citation/40"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-citation-bg text-citation flex items-center justify-center shrink-0">
+                        <item.icon className="w-[18px] h-[18px]" />
+                      </div>
+                      <div>
+                        <h4 className="text-[15.5px] font-bold mb-1 text-ink leading-snug">{item.title}</h4>
+                        <p className="text-[14px] text-muted leading-relaxed">{item.body}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-[16px] font-bold mb-1 text-ink">{item.title}</h4>
-                      <p className="text-[14.5px] text-muted leading-relaxed">{item.body}</p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
