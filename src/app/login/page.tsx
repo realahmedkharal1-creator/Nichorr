@@ -137,7 +137,14 @@ function LoginContent() {
 
         <SocialAuthButtons onSelect={handleOAuthLogin} />
 
-        <div className="flex items-center gap-2 justify-center mt-[26px] font-mono text-[10.5px] text-muted-2 tracking-[0.4px]">
+        <p className="text-[11px] text-muted-2 text-center leading-relaxed mt-5">
+          By continuing you agree to our{" "}
+          <Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-citation hover:underline">Terms of Service</Link>{" "}
+          and{" "}
+          <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-citation hover:underline">Privacy Policy</Link>.
+        </p>
+
+        <div className="flex items-center gap-2 justify-center mt-[22px] font-mono text-[10.5px] text-muted-2 tracking-[0.4px]">
           <span className="w-[5px] h-[5px] rounded-full bg-verified"></span>
           TRACED CLAIMS ONLY · ZERO FABRICATED CITATIONS
         </div>

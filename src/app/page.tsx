@@ -635,6 +635,13 @@ export default function LandingPage() {
                   <Link href="/signup" className="text-muted hover:text-ink transition-colors">Get started</Link>
                 </div>
               </div>
+              <div>
+                <span className="font-mono text-[11px] uppercase tracking-wide text-muted-2 mb-3 block">Legal</span>
+                <div className="flex flex-col gap-2.5 text-[13.5px]">
+                  <Link href="/terms" className="text-muted hover:text-ink transition-colors">Terms of Service</Link>
+                  <Link href="/privacy" className="text-muted hover:text-ink transition-colors">Privacy Policy</Link>
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-between flex-wrap gap-4 pt-8 border-t border-line">

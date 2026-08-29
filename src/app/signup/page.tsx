@@ -164,7 +164,10 @@ function SignUpContent() {
               className="mt-1 w-4 h-4 text-citation bg-paper rounded border-line focus:ring-citation-bg"
             />
             <label htmlFor="terms" className="text-xs text-muted font-medium leading-relaxed">
-              I agree to the <Link href="#" className="text-citation hover:underline">Terms of Service</Link> and <Link href="#" className="text-citation hover:underline">Privacy Policy</Link>.
+              I agree to the{" "}
+              <Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-citation hover:underline">Terms of Service</Link>{" "}
+              and{" "}
+              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-citation hover:underline">Privacy Policy</Link>.
             </label>
           </div>
 
