@@ -77,7 +77,7 @@ export default function ProjectsListPage() {
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white px-5 py-2.5 rounded-[9px] text-sm font-semibold   transition transform hover:-translate-y-0.5"
+          className="flex items-center gap-2 bg-citation hover:opacity-90 text-white px-5 py-2.5 rounded-[9px] text-sm font-semibold transition transform hover:-translate-y-0.5"
         >
           <Plus className="w-4 h-4" />
           Create New Project
@@ -93,7 +93,7 @@ export default function ProjectsListPage() {
             placeholder="Search projects..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-ink border border-line rounded-[9px] pl-9 pr-4 py-2.5 text-xs text-ink focus:outline-none focus:border-indigo-500 transition"
+            className="w-full bg-card border border-line rounded-[9px] pl-9 pr-4 py-2.5 text-xs text-ink placeholder:text-muted-2 focus:outline-none focus:border-citation transition"
           />
         </div>
         <span className="text-xs font-mono text-muted-2 shrink-0">{filteredProjects.length} Projects Active</span>
@@ -113,7 +113,7 @@ export default function ProjectsListPage() {
                   placeholder="e.g. Galaxy S27 Ultra vs iPhone 18 Pro Max"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-card border border-line rounded-[9px] px-4 py-2.5 text-ink placeholder:text-slate-400 text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 "
+                  className="w-full bg-card border border-line rounded-[9px] px-4 py-2.5 text-ink placeholder:text-muted-2 text-xs focus:outline-none focus:border-citation focus:ring-1 focus:ring-citation "
                 />
               </div>
   
@@ -124,7 +124,7 @@ export default function ProjectsListPage() {
                   placeholder="Describe the scope of this project and key benchmark comparisons..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-card border border-line rounded-[9px] px-4 py-2.5 text-ink placeholder:text-slate-400 text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 "
+                  className="w-full bg-card border border-line rounded-[9px] px-4 py-2.5 text-ink placeholder:text-muted-2 text-xs focus:outline-none focus:border-citation focus:ring-1 focus:ring-citation "
                 />
               </div>
   
@@ -132,14 +132,14 @@ export default function ProjectsListPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 rounded-[9px] text-xs font-semibold text-muted-2 hover:text-slate-700 hover:bg-slate-50 transition"
+                  className="px-4 py-2 rounded-[9px] text-xs font-semibold text-muted-2 hover:text-ink hover:bg-paper transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!name.trim() || creating}
-                  className="bg-citation hover:bg-indigo-700 text-white px-5 py-2 rounded-[9px] text-xs font-semibold  transition disabled:opacity-50"
+                  className="bg-citation hover:opacity-90 text-white px-5 py-2 rounded-[9px] text-xs font-semibold  transition disabled:opacity-50"
                 >
                   {creating ? "Creating..." : "Save Project"}
                 </button>
@@ -165,7 +165,7 @@ export default function ProjectsListPage() {
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 bg-citation hover:bg-indigo-500 text-white px-4 py-2 rounded-[9px] text-xs font-semibold transition "
+            className="inline-flex items-center gap-2 bg-citation hover:opacity-90 text-white px-4 py-2 rounded-[9px] text-xs font-semibold transition "
           >
             <Plus className="w-4 h-4" />
             Create First Project
@@ -177,16 +177,16 @@ export default function ProjectsListPage() {
             <Link
               key={p.id}
               href={`/projects/${p.id}`}
-              className="bg-card border border-line-soft rounded-[16px] p-6 space-y-4 hover:border-indigo-500/60 hover:bg-slate-900/90 transition-all group flex flex-col justify-between"
+              className="bg-card border border-line-soft rounded-[16px] p-6 space-y-4 shadow-card hover:border-citation/50 hover:-translate-y-0.5 transition-all group flex flex-col justify-between"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs font-mono text-citation">
                   <span className="font-semibold uppercase tracking-wider">PROJECT</span>
-                  <span className="px-2 py-0.5 rounded-full bg-citation-bg text-citation border border-citation font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-citation-bg text-citation border border-citation/25 font-bold">
                     {p.run_count || 0} Runs
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-ink group-hover:text-indigo-300 transition line-clamp-1">
+                <h3 className="text-lg font-bold text-ink group-hover:text-citation transition line-clamp-1">
                   {p.name}
                 </h3>
                 <p className="text-xs text-muted-2 line-clamp-2 leading-relaxed">

@@ -19,6 +19,7 @@ export function AppHeader() {
     { label: "Dashboard", href: "/dashboard" },
     { label: "Projects", href: "/projects" },
     { label: "Research", href: "/research/create" },
+    { label: "History", href: "/research/history" },
     { label: "Sources", href: "/research/sources" },
     { label: "Content", href: "/content" },
     { label: "Quality", href: "/research/quality" },
