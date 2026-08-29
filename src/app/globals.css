@@ -10,7 +10,7 @@
 @layer base {
   :root {
     --ink: 26 26 30;
-    --paper: 234 231 222;
+    --paper: 226 222 211;
     --card: 255 255 255;
     --citation: 232 89 63;
     --citation-bg: 252 234 229;
@@ -22,8 +22,8 @@
     --warning-bg: 251 240 220;
     --muted: 94 98 104;
     --muted-2: 138 142 148;
-    --line: 222 216 203;
-    --line-soft: 230 225 214;
+    --line: 214 207 191;
+    --line-soft: 224 218 205;
     --shadow-rgb: 40 38 34;
     --header: 22 23 26;
 
