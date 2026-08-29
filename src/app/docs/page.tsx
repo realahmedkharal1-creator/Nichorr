@@ -437,10 +437,19 @@ export default function DocsPage() {
                 Usually means the sources found were thin or hard to parse. Try a more specific objective, add
                 a couple of concrete questions in Step 3, or raise the depth to Standard/Deep.
               </p>
-              <h3>A YouTube transcript shows as blocked / unavailable</h3>
+              <h3>YouTube transcripts show as blocked / unavailable</h3>
               <p>
-                YouTube blocks automated transcript access for some videos. Nichorr marks those honestly
-                instead of inventing quotes &mdash; the rest of the run is unaffected.
+                YouTube blocks automated transcript access from server IPs for most videos, so by default
+                the transcript-derived tabs (Reviewer Consensus, Disagreements, Transcript Evidence) can be
+                empty. Nichorr marks this honestly instead of inventing quotes &mdash; video metadata,
+                Community Signals, and Audience Questions still work.
+              </p>
+              <p>
+                To turn transcript analysis on, connect a transcript provider: set{" "}
+                <strong>YT_TRANSCRIPT_API_URL</strong> (and <strong>YT_TRANSCRIPT_API_KEY</strong>) in your
+                environment to a service that returns YouTube transcripts &mdash; <code>.env.example</code>{" "}
+                has ready-to-paste configs (e.g. Supadata&rsquo;s free tier). Once set, re-run the research;
+                the YouTube tabs fill in automatically.
               </p>
               <h3>Results look sparse</h3>
               <p>
@@ -479,6 +488,7 @@ function Article({ children }: { children: React.ReactNode }) {
         [&_a]:text-citation [&_a]:font-medium hover:[&_a]:underline
         [&_strong]:text-ink [&_strong]:font-semibold
         [&_em]:text-ink [&_em]:not-italic [&_em]:font-medium
+        [&_code]:font-mono [&_code]:text-[12.5px] [&_code]:bg-card [&_code]:border [&_code]:border-line [&_code]:rounded [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-ink
         [&_th]:text-left [&_th]:font-semibold [&_th]:text-ink [&_th]:bg-card [&_th]:p-3 [&_th]:border [&_th]:border-line
         [&_td]:p-3 [&_td]:border [&_td]:border-line [&_td]:align-top
       "

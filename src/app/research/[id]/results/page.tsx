@@ -469,21 +469,25 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                 ))}
               </div>
 
-              {/* When no transcript could be retrieved, consensus / disagreements / gaps have
-                  nothing real to stand on. Say so once, up front, instead of leaving three
-                  sections mysteriously blank. */}
-              {youtubeReport.transcriptCoverage && youtubeReport.transcriptCoverage.available === 0 && (
-                <div className="bg-warning-bg border border-warning/25 rounded-2xl p-4 flex items-start gap-3 text-[12.5px] leading-[1.6] text-ink">
-                  <Info className="w-4 h-4 text-warning shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="block mb-0.5">Transcript analysis unavailable for this run</strong>
-                    {youtubeReport.transcriptCoverage.blocked > 0
-                      ? `${youtubeReport.transcriptCoverage.blocked} of ${youtubeReport.transcriptCoverage.total} videos have captions, but YouTube blocked automated transcript retrieval (a known restriction on server IPs). `
-                      : `None of the ${youtubeReport.transcriptCoverage.total} analysed videos had a retrievable transcript. `}
-                    Reviewer consensus, disagreements and coverage gaps are derived from transcripts, so they are empty here. Video metadata and viewer comments below are unaffected.
+              {/* When no transcript could be retrieved, consensus / disagreements / transcript
+                  evidence have nothing real to stand on. Explain that on those tabs only —
+                  Community and Audience tabs run off comments and are unaffected. */}
+              {youtubeReport.transcriptCoverage &&
+                youtubeReport.transcriptCoverage.available === 0 &&
+                ["consensus", "disagreements", "transcripts"].includes(ytActiveTab) && (
+                  <div className="bg-warning-bg border border-warning/25 rounded-2xl p-4 flex items-start gap-3 text-[12.5px] leading-[1.6] text-ink">
+                    <Info className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block mb-0.5">Transcript analysis unavailable for this run</strong>
+                      {youtubeReport.transcriptCoverage.blocked > 0
+                        ? `${youtubeReport.transcriptCoverage.blocked} of ${youtubeReport.transcriptCoverage.total} videos have captions, but YouTube blocked automated transcript retrieval (a known restriction on server IPs). `
+                        : `None of the ${youtubeReport.transcriptCoverage.total} analysed videos had a retrievable transcript. `}
+                      This tab is transcript-derived, so it is empty. The Community and Audience tabs run off
+                      viewer comments and are unaffected. To enable transcript analysis, set a transcript
+                      provider (see docs / .env).
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {ytActiveTab === "consensus" && (
                 <>

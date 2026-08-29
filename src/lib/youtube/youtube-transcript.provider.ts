@@ -79,13 +79,17 @@ export class YouTubeTranscriptProvider {
   /**
    * Fetches timestamped transcript data for a YouTube video.
    *
-   * YouTube's public timedtext endpoint now rejects unauthenticated requests from datacenter
-   * IPs: the caption baseUrl returns HTTP 200 with an EMPTY body unless a BotGuard-generated
-   * `pot` token is attached. So this tries, in order:
-   *   1. a direct watch-page scrape (still works from residential IPs / for some videos),
-   *   2. an external transcript API, if YT_TRANSCRIPT_API_URL is configured.
-   * If a caption track demonstrably exists but no body can be retrieved, the status is BLOCKED
-   * (not UNAVAILABLE) so the UI can explain the difference. Nothing is ever fabricated.
+   * YouTube actively blocks unauthenticated transcript retrieval from datacenter IPs. Every
+   * free server-side route (timedtext, InnerTube get_transcript, InnerTube ANDROID player)
+   * now returns HTTP 200 with an EMPTY body or a 400 FAILED_PRECONDITION unless a
+   * BotGuard-generated `pot` token is attached — and that token needs a real browser to
+   * generate. So this tries, in order:
+   *   1. Watch-page scrape of `captionTracks` — still lets us *detect* that a caption track
+   *      exists (so we can report BLOCKED vs UNAVAILABLE), and occasionally returns a body.
+   *   2. An external transcript API, if YT_TRANSCRIPT_API_URL is set. This is the reliable
+   *      production path — those providers run residential proxies / solve BotGuard. See
+   *      .env.example for ready-to-use provider configs (e.g. Supadata).
+   * Nothing is ever fabricated: if no body can be retrieved the tab stays honestly empty.
    */
   async getTranscript(videoId: string): Promise<YouTubeTranscriptResult> {
     const cleanId = videoId
@@ -104,7 +108,7 @@ export class YouTubeTranscriptProvider {
     // --- Strategy 1: direct watch-page scrape --------------------------------------------
     try {
       const response = await fetch(
-        `https://www.youtube.com/watch?v=${cleanId}&bpctr=9999999999&has_verified=1`,
+        `https://www.youtube.com/watch?v=${cleanId}&bpctr=9999999999&has_verified=1&hl=en&gl=US`,
         {
           headers: {
             "Accept-Language": "en-US,en;q=0.9",
@@ -158,7 +162,7 @@ export class YouTubeTranscriptProvider {
       console.warn(`Direct transcript scrape failed for ${cleanId}:`, err.message);
     }
 
-    // --- Strategy 2: external transcript API -------------------------------------------------
+    // --- Strategy 2: external transcript API -----------------------------------------------
     const apiUrl = process.env.YT_TRANSCRIPT_API_URL;
     if (apiUrl) {
       try {
@@ -182,10 +186,19 @@ export class YouTubeTranscriptProvider {
           // Accept the common shapes: {content:[...]}, {transcript:[...]}, {segments:[...]}, [ ... ]
           const rawSegs: any[] =
             data.content || data.transcript || data.segments || (Array.isArray(data) ? data : []);
+          // Supadata-style providers report per-segment `offset`/`duration` in milliseconds
+          // (and tag each segment with a `lang`); youtube-transcript-api-style providers use
+          // `start`/`dur` in seconds. Force-ms can also be set via YT_TRANSCRIPT_API_MS=1.
+          const msMode =
+            process.env.YT_TRANSCRIPT_API_MS === "1" ||
+            rawSegs.some((s) => s && s.lang !== undefined && s.offset !== undefined);
           const segments: YouTubeTranscriptSegment[] = rawSegs
             .map((s: any, i: number): YouTubeTranscriptSegment | null => {
-              const start = Number(s.start ?? s.offset ?? (s.startMs ? s.startMs / 1000 : 0)) || 0;
-              const duration = Number(s.dur ?? s.duration ?? (s.durationMs ? s.durationMs / 1000 : 0)) || 0;
+              const div = msMode ? 1000 : 1;
+              const start =
+                Number(s.start ?? (s.startMs != null ? s.startMs / 1000 : s.offset != null ? s.offset / div : 0)) || 0;
+              const duration =
+                Number(s.dur ?? (s.durationMs != null ? s.durationMs / 1000 : s.duration != null ? s.duration / div : 0)) || 0;
               const text = YouTubeTranscriptProvider.cleanTranscriptText(String(s.text ?? s.content ?? ""));
               if (!text) return null;
               return {
@@ -229,7 +242,7 @@ export class YouTubeTranscriptProvider {
       segments: [],
       fullText: "",
       errorMessage: captionTrackExists
-        ? "This video has captions, but YouTube blocked automated retrieval of the transcript body (a known restriction on server IPs). Set YT_TRANSCRIPT_API_URL to enable transcript-derived analysis."
+        ? "This video has captions, but YouTube blocked every automated retrieval route (get_transcript, ANDROID player, and timedtext all returned empty — a known restriction on server IPs). Configure YT_TRANSCRIPT_API_URL with a transcript provider to enable transcript-derived analysis."
         : "No captions or transcript were published for this video.",
       retrievedAt: new Date().toISOString(),
     });
