@@ -352,7 +352,7 @@ export function CreatorTeleprompter({
       {/* Top Header Bar */}
       <div className="flex items-center justify-between px-6 py-3 bg-slate-950/90 border-b border-slate-850 backdrop-blur z-20">
         <div className="flex items-center gap-3">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-citation/15 text-citation border border-citation/40">
             TELEPROMPTER PRO
           </span>
           <h2 className="text-sm font-bold text-slate-200 truncate max-w-xs sm:max-w-md">{topic}</h2>
@@ -362,7 +362,7 @@ export function CreatorTeleprompter({
         {/* Top Right Actions */}
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300">
-            <Clock className="w-3.5 h-3.5 text-indigo-400" />
+            <Clock className="w-3.5 h-3.5 text-citation" />
             <span>{formatTimer(elapsedSeconds)}</span>
             <span className="text-slate-500">/</span>
             <span className="text-slate-400">~{targetDurationMinutes}:00</span>
@@ -409,7 +409,7 @@ export function CreatorTeleprompter({
             onClick={() => jumpToSection(idx)}
             className={`px-2.5 py-1 rounded transition shrink-0 font-medium ${
               activeSectionIndex === idx
-                ? "bg-indigo-600 text-white font-bold shadow-sm"
+                ? "bg-citation text-white font-bold shadow-sm"
                 : "bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-850"
             }`}
           >
@@ -419,7 +419,7 @@ export function CreatorTeleprompter({
       </div>
 
       {/* Reading Eye Guide Line (Horizontal Overlay) */}
-      <div className="absolute top-[35%] left-0 right-0 h-1 bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent pointer-events-none z-10" />
+      <div className="absolute top-[35%] left-0 right-0 h-1 bg-gradient-to-r from-transparent via-citation/40 to-transparent pointer-events-none z-10" />
 
       {/* Main Script Scrollable Viewport */}
       <div
@@ -439,8 +439,8 @@ export function CreatorTeleprompter({
               }`}
             >
               {/* Section Header Marker */}
-              <div className="border-b-2 border-indigo-500/50 pb-2 mb-6 flex items-center justify-between">
-                <span className="font-mono text-sm uppercase tracking-widest text-indigo-400 font-bold">
+              <div className="border-b-2 border-citation/50 pb-2 mb-6 flex items-center justify-between">
+                <span className="font-mono text-sm uppercase tracking-widest text-citation font-bold">
                   {sec.estimatedTimestamp}  {sec.title}
                 </span>
                 <span className="font-mono text-xs text-slate-500">Goal: {sec.goal}</span>
@@ -457,13 +457,13 @@ export function CreatorTeleprompter({
                     {/* Teleprompter Cue Notes (Smaller font for eye reference) */}
                     {tp.contextNote && (
                       <div className="font-sans text-xs font-mono text-amber-400/90 bg-amber-950/30 px-3 py-1 rounded border border-amber-800/40 inline-block">
-                        ?? CUE: {tp.contextNote}
+                        CUE: {tp.contextNote}
                       </div>
                     )}
 
                     {tp.doNotSayWarning && (
                       <div className="font-sans text-xs font-mono text-rose-400/90 bg-rose-950/30 px-3 py-1 rounded border border-rose-800/40 inline-block">
-                        ?? DO NOT SAY: {tp.doNotSayWarning}
+                        DO NOT SAY: {tp.doNotSayWarning}
                       </div>
                     )}
                   </div>
@@ -473,7 +473,7 @@ export function CreatorTeleprompter({
               {/* B-Roll Video Cue Indicator */}
               {sec.bRollSuggestions.length > 0 && (
                 <div className="mt-6 pt-3 border-t border-slate-800/50 flex flex-wrap gap-2 text-xs font-mono text-cyan-400/80">
-                  <span className="font-bold text-cyan-300">?? B-ROLL CUE:</span>
+                  <span className="font-bold text-cyan-300">B-ROLL CUE:</span>
                   {sec.bRollSuggestions.map((b) => (
                     <span key={b.id} className="bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-800/30">
                       {b.visualTitle} ({b.durationSeconds}s)
@@ -486,7 +486,7 @@ export function CreatorTeleprompter({
 
           {/* End of Script Indicator */}
           <div className="text-center py-24 text-slate-600 font-mono text-sm uppercase tracking-widest font-bold">
-            ?? END OF SCRIPT ??
+            — END OF SCRIPT —
           </div>
         </div>
       </div>
@@ -525,7 +525,7 @@ export function CreatorTeleprompter({
             >
               <Rewind className="w-3.5 h-3.5" />
             </button>
-            <span className="font-bold text-indigo-400 w-4 text-center">{scrollSpeed}x</span>
+            <span className="font-bold text-citation w-4 text-center">{scrollSpeed}x</span>
             <button
               onClick={() => setScrollSpeed((prev) => Math.min(prev + 1, 5))}
               className="p-1 hover:text-white transition"
@@ -545,7 +545,7 @@ export function CreatorTeleprompter({
                 key={size}
                 onClick={() => setFontSize(size)}
                 className={`px-2 py-1 rounded uppercase transition font-bold ${
-                  fontSize === size ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-slate-200"
+                  fontSize === size ? "bg-citation text-white" : "text-slate-400 hover:text-slate-200"
                 }`}
               >
                 {size}
@@ -560,7 +560,7 @@ export function CreatorTeleprompter({
                 key={w}
                 onClick={() => setTextWidth(w)}
                 className={`px-2 py-1 rounded uppercase transition font-bold ${
-                  textWidth === w ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-slate-200"
+                  textWidth === w ? "bg-citation text-white" : "text-slate-400 hover:text-slate-200"
                 }`}
               >
                 {w[0]}
@@ -573,7 +573,7 @@ export function CreatorTeleprompter({
             onClick={() => setIsMirrored((prev) => !prev)}
             className={`p-2 rounded-lg border transition ${
               isMirrored
-                ? "bg-indigo-950 text-indigo-400 border-indigo-700"
+                ? "bg-citation/15 text-citation border-citation"
                 : "bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200"
             }`}
             title="Mirror Text (for teleprompter glass)"

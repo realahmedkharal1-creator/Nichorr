@@ -2075,7 +2075,12 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
               </React.Fragment>
             ))}
           </span>
-          <button className="bg-citation text-white border-none px-[16px] py-[9px] rounded-[9px] text-[12.5px] font-semibold cursor-pointer">
+          <button
+            onClick={() => setIsTeleprompterOpen(true)}
+            disabled={!report?.scriptSections?.length}
+            title={report?.scriptSections?.length ? "Open the teleprompter" : "Generate a script first"}
+            className="bg-citation text-white border-none px-[16px] py-[9px] rounded-[9px] text-[12.5px] font-semibold cursor-pointer hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+          >
             🎙 Teleprompter
           </button>
         </div>
@@ -2287,10 +2292,30 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
                       <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
                       {label} ({items.length})
                     </div>
-                    <ul className="m-0 pl-4 space-y-0.5">
-                      {items.map((it) => (
-                        <li key={it.assetId} className="text-[12.5px] text-ink/80">{it.label}</li>
-                      ))}
+                    <ul className="m-0 pl-0 list-none space-y-1">
+                      {items.map((it) => {
+                        const parts = it.label.split(":").map((x) => x.trim()).filter(Boolean);
+                        const rawVal = parts.pop() || it.label;
+                        const cat = parts.pop() || "";
+                        const cls = parts.join(" · ");
+                        const val = /^[A-Z0-9_]+$/.test(rawVal)
+                          ? rawVal.toLowerCase().replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+                          : rawVal;
+                        const kicker = [cls, cat].filter(Boolean).join(" · ");
+                        return (
+                          <li key={it.assetId} className="flex items-baseline gap-2">
+                            <span className="w-1 h-1 rounded-full bg-muted-2 shrink-0 translate-y-[-2px]" />
+                            <span className="min-w-0">
+                              {kicker && (
+                                <span className="font-mono text-[9.5px] uppercase tracking-wide text-muted-2 mr-1.5">
+                                  {kicker}
+                                </span>
+                              )}
+                              <span className="text-[12.5px] text-ink/85">{val}</span>
+                            </span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 );
@@ -4357,15 +4382,15 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
      {/* Notifications */}
      {matrixSuccessMsg && (
-      <div className="p-4 rounded-[10px] bg-verified-bg border border-verified/80 text-verified text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-verified" />
+      <div className="p-4 rounded-[10px] bg-verified-bg border border-verified/25 text-verified text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-verified shrink-0" />
        <span>{matrixSuccessMsg}</span>
       </div>
      )}
 
      {matrixErrorMsg && (
-      <div className="p-4 rounded-[10px] bg-conflict-bg border border-conflict-bg text-conflict text-xs font-mono flex items-center gap-2">
-       <AlertOctagon className="w-4 h-4 text-conflict" />
+      <div className="p-4 rounded-[10px] bg-conflict-bg border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <AlertOctagon className="w-4 h-4 text-conflict shrink-0" />
        <span>{matrixErrorMsg}</span>
       </div>
      )}
@@ -4732,15 +4757,15 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
      {/* Notifications */}
      {exportSuccessMsg && (
-      <div className="p-4 rounded-[10px] bg-ink/60 border border-citation/80 text-citation text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-citation" />
+      <div className="p-4 rounded-[10px] bg-verified-bg border border-verified/25 text-verified text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-verified shrink-0" />
        <span>{exportSuccessMsg}</span>
       </div>
      )}
 
      {exportErrorMsg && (
-      <div className="p-4 rounded-[10px] bg-conflict-bg border border-conflict-bg text-conflict text-xs font-mono flex items-center gap-2">
-       <AlertOctagon className="w-4 h-4 text-conflict" />
+      <div className="p-4 rounded-[10px] bg-conflict-bg border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <AlertOctagon className="w-4 h-4 text-conflict shrink-0" />
        <span>{exportErrorMsg}</span>
       </div>
      )}
@@ -5860,7 +5885,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         <button
          onClick={loadCalibrationState}
          disabled={isCalibrating}
-         className="flex items-center gap-1.5 bg-warning hover:opacity-90 disabled:opacity-50 text-white px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className="flex items-center gap-1.5 bg-ink hover:opacity-90 disabled:opacity-50 text-paper px-4 py-2 rounded-[10px] text-xs font-bold font-mono transition"
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isCalibrating ? "animate-spin" : ""}`} />
          {isCalibrating ? "Ingesting..." : "Ingest & Re-evaluate"}
@@ -6666,12 +6691,19 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
 
    {/* Teleprompter Modal */}
    {isTeleprompterOpen && report && (
-    <CreatorTeleprompter
-     topic={report.topic}
-     targetDurationMinutes={duration}
-     sections={report.scriptSections || []}
-     onClose={() => setIsTeleprompterOpen(false)}
-    />
+    <div
+     className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+     onClick={() => setIsTeleprompterOpen(false)}
+    >
+     <div className="w-full max-w-[1100px]" onClick={(e) => e.stopPropagation()}>
+      <CreatorTeleprompter
+       topic={report.topic}
+       targetDurationMinutes={duration}
+       sections={report.scriptSections || []}
+       onClose={() => setIsTeleprompterOpen(false)}
+      />
+     </div>
+    </div>
    )}
   </div>
  );

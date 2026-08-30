@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, FileText, Layers, ShieldCheck, BookOpen, GitBranch } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { InfoTooltip } from "@/components/ui/Tooltip";
@@ -235,13 +235,49 @@ export default function DashboardPage() {
             </Button>
           </form>
 
-          <div className="mt-[16px] pt-[16px] border-t border-line-soft">
-            <Link
-              href="/content"
-              className="text-[12.5px] font-semibold text-ink inline-flex items-center gap-1.5 hover:text-citation transition"
-            >
-              Open Content Board <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+          {/* How a run works — fills the panel and orients new users */}
+          <div className="mt-[20px] pt-[18px] border-t border-line-soft">
+            <div className="font-mono text-[10.5px] tracking-[0.5px] uppercase text-muted-2 mb-[12px]">
+              How a run works
+            </div>
+            <ol className="space-y-[10px] m-0 p-0 list-none">
+              {[
+                { n: "1", t: "Topic & questions", d: "Describe the video; Nichorr drafts the research questions." },
+                { n: "2", t: "Evidence & conflicts", d: "It retrieves live sources, scores each claim, flags disagreements." },
+                { n: "3", t: "Script-ready brief", d: "You get a cited brief plus YouTube, community and audience intel." },
+              ].map((s) => (
+                <li key={s.n} className="flex gap-[10px]">
+                  <span className="shrink-0 w-[20px] h-[20px] rounded-full bg-citation-bg text-citation font-mono text-[11px] font-bold flex items-center justify-center mt-[1px]">
+                    {s.n}
+                  </span>
+                  <div>
+                    <div className="text-[12.5px] font-semibold text-ink leading-tight">{s.t}</div>
+                    <div className="text-[11.5px] text-muted leading-snug mt-[2px]">{s.d}</div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="mt-[18px] pt-[16px] border-t border-line-soft grid grid-cols-2 gap-[8px]">
+            {[
+              { href: "/research/history", label: "History", icon: GitBranch },
+              { href: "/research/sources", label: "Sources", icon: ShieldCheck },
+              { href: "/content", label: "Content Board", icon: Layers },
+              { href: "/docs", label: "Docs", icon: BookOpen },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="group flex items-center justify-between gap-2 border border-line rounded-[9px] px-[12px] py-[9px] text-[12px] font-semibold text-ink hover:border-citation hover:bg-paper transition-colors"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <l.icon className="w-3.5 h-3.5 text-muted-2 group-hover:text-citation transition-colors" />
+                  {l.label}
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-muted-2 group-hover:text-citation group-hover:translate-x-0.5 transition" />
+              </Link>
+            ))}
           </div>
         </Card>
       </div>
