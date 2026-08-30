@@ -174,10 +174,11 @@ export function CreatorTeleprompter({
   };
 
   const jumpToSection = (index: number) => {
-    if (!scrollContainerRef.current) return;
-    const el = scrollContainerRef.current.querySelector<HTMLElement>(`[data-section-index="${index}"]`);
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const el = container.querySelector<HTMLElement>(`[data-section-index="${index}"]`);
     if (el) {
-      scrollContainerRef.current.scrollTop = el.offsetTop - 50;
+      container.scrollTo({ top: Math.max(0, el.offsetTop - 50), behavior: "smooth" });
       setActiveSectionIndex(index);
     }
   };
@@ -426,10 +427,14 @@ export function CreatorTeleprompter({
       {/* Reading Eye Guide Line (Horizontal Overlay) */}
       <div className="absolute top-[35%] left-0 right-0 h-1 bg-gradient-to-r from-transparent via-citation/40 to-transparent pointer-events-none z-10" />
 
-      {/* Main Script Scrollable Viewport */}
+      {/* Main Script Scrollable Viewport.
+          NOTE: no `scroll-smooth` here — the rAF auto-scroll writes scrollTop every frame,
+          and CSS smooth-scrolling turns each of those into a ~300ms animation that never
+          settles, so the prompter appears frozen. jumpToSection() opts into smooth
+          explicitly via scrollTo({ behavior: "smooth" }). */}
       <div
         ref={scrollContainerRef}
-        className={`flex-1 overflow-y-auto px-6 sm:px-12 py-24 scroll-smooth ${
+        className={`flex-1 overflow-y-auto px-6 sm:px-12 py-24 ${
           isMirrored ? "scale-x-[-1]" : ""
         }`}
         style={{ scrollbarWidth: 'none' }}

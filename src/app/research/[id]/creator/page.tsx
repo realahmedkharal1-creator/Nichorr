@@ -5916,7 +5916,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
       <div className="flex items-center gap-2">
        <Scale className="w-4 h-4 text-warning shrink-0" />
        <span className="font-bold">EVIDENCE BOUNDARY:</span>
-       <span className="text-ink">Audience Signal â‰  Evidence &nbsp;|&nbsp; Performance â‰  Truth &nbsp;|&nbsp; Correlation â‰  Causation</span>
+       <span className="text-ink">Audience Signal &ne; Evidence &nbsp;|&nbsp; Performance &ne; Truth &nbsp;|&nbsp; Correlation &ne; Causation</span>
       </div>
       <span className="px-2.5 py-1 rounded bg-warning-bg/80 text-warning border border-warning/80 text-[10px] uppercase font-bold shrink-0">
        Formal Research Validation Required
