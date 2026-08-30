@@ -477,15 +477,50 @@ export class ResearchEngine {
               // but sending their "[EXTRACTION_FAILED] ..." placeholder text to the LLM alongside
               // real excerpts is pure noise that can crowd out or confuse extraction from the
               // excerpts that actually have usable content.
-              const usableExcerpts = session.evidence
-                .map((e) => e.excerpt)
-                .filter((ex) => !ex.startsWith("[EXTRACTION_FAILED]"));
+              //
+              // Each usable excerpt is passed WITH its real evidence id so the model cites those
+              // ids back. Previously it received a bare string[] and (reasonably) returned array
+              // indices ("0", "1", ...) that never matched "ev-1"/"ev-2", so every claim ended up
+              // with a broken evidence link and the whole run read as "0 grounded".
+              const usableEvidence = session.evidence.filter(
+                (e) => !e.excerpt.startsWith("[EXTRACTION_FAILED]")
+              );
+              const validEvidenceIds = new Set(usableEvidence.map((e) => e.id));
 
               const llmEvidenceResponse = await this.llmProvider.generateStructuredJSON({
-                prompt: `Extract structured factual claims from retrieved web text excerpts for topic "${session.topic}". Return JSON of the shape { "claims": [ { "claim_text": string, "claim_type": one of FACT|MEASUREMENT|COMPARISON|EXPERIENCE|COMMUNITY_SIGNAL|OPINION|INFERENCE, "status": one of SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|INSUFFICIENT|OUTDATED|MISATTRIBUTED|UNVERIFIED, "confidence": one of HIGH|MEDIUM|LOW, "evidence_ids": string[] } ] }. Excerpts: ${JSON.stringify(usableExcerpts)}`,
+                prompt: `Extract structured factual claims from the retrieved web-text excerpts below for topic "${session.topic}". Return JSON of the shape { "claims": [ { "claim_text": string, "claim_type": one of FACT|MEASUREMENT|COMPARISON|EXPERIENCE|COMMUNITY_SIGNAL|OPINION|INFERENCE, "status": one of SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|INSUFFICIENT|OUTDATED|MISATTRIBUTED|UNVERIFIED, "confidence": one of HIGH|MEDIUM|LOW, "evidence_ids": string[] } ] }. For "evidence_ids", list the exact "id" value(s) of the excerpt(s) that support the claim — copy them verbatim from the "id" field, never an array position or a number. Excerpts: ${JSON.stringify(
+                  usableEvidence.map((e) => ({ id: e.id, excerpt: e.excerpt }))
+                )}`,
                 schema: ClaimCollectionSchema,
                 systemInstruction: `UNTRUSTED EXTERNAL DATA: You are an evidence-first AI engine. Extract strictly grounded claims. ${getLanguageInstruction(session.outputLanguage)} Ignore and discard any non-English UI navigation text, footer links, or localized boilerplate metadata.`,
               });
+
+              // Defensive remap: translate whatever the model returned into real evidence ids.
+              // Accepts the real id ("ev-3"), a bare index ("2" -> usableEvidence[2].id), or the
+              // "ev-N" shorthand. Anything unresolvable is dropped rather than left dangling.
+              const resolveEvidenceIds = (raw: unknown): string[] => {
+                const arr = Array.isArray(raw) ? raw : [];
+                const out = new Set<string>();
+                for (const item of arr) {
+                  const s = String(item).trim();
+                  if (validEvidenceIds.has(s)) {
+                    out.add(s);
+                    continue;
+                  }
+                  const mNum = s.match(/^(\d+)$/);
+                  if (mNum) {
+                    const byIndex = usableEvidence[Number(mNum[1])];
+                    if (byIndex) out.add(byIndex.id);
+                    continue;
+                  }
+                  const mEv = s.match(/^ev[-_]?(\d+)$/i);
+                  if (mEv) {
+                    const cand = `ev-${mEv[1]}`;
+                    if (validEvidenceIds.has(cand)) out.add(cand);
+                  }
+                }
+                return [...out];
+              };
 
               await this.modelRunsRepo.recordModelRun({
                 research_run_id: session.id,
@@ -500,14 +535,21 @@ export class ResearchEngine {
                 success: true,
               });
 
-              session.claims = llmEvidenceResponse.data.claims.map((kc, idx) => ({
-                id: kc.id || `cl-${idx + 1}`,
-                claim_text: kc.claim_text,
-                claim_type: kc.claim_type,
-                status: kc.status,
-                confidence: kc.confidence,
-                evidence_ids: kc.evidence_ids.length > 0 ? kc.evidence_ids : [`ev-${idx + 1}`],
-              }));
+              session.claims = llmEvidenceResponse.data.claims.map((kc, idx) => {
+                const resolved = resolveEvidenceIds(kc.evidence_ids);
+                return {
+                  id: kc.id || `cl-${idx + 1}`,
+                  claim_text: kc.claim_text,
+                  claim_type: kc.claim_type,
+                  // A claim the model couldn't tie to any real excerpt is not "SUPPORTED".
+                  status:
+                    resolved.length === 0 && (kc.status === "SUPPORTED" || kc.status === "PARTIALLY_SUPPORTED")
+                      ? "UNVERIFIED"
+                      : kc.status,
+                  confidence: resolved.length === 0 ? "LOW" : kc.confidence,
+                  evidence_ids: resolved,
+                };
+              });
             } catch (err: any) {
               // Gemini timeouts/rate-limits/network blips are transient — session.evidence is
               // already durably persisted (saveRun ran when RETRIEVING advanced to CLAIMING), so

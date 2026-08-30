@@ -53,8 +53,16 @@ export class ClaimsRepository {
             research_run_id: sessionId,
             claim_text: c.claim || c.claim_text || "Extracted Research Claim",
             claim_type: c.claim_type || "FACT",
-            status: "SUPPORTED",
-            confidence: "HIGH"
+            // Persist the real extraction verdict, not a blanket SUPPORTED/HIGH. A claim with
+            // no resolved evidence link is written as UNVERIFIED/LOW so a relational-only read
+            // (no session_state blob) doesn't overstate how grounded the run was.
+            status:
+              (c.evidence_ids?.length ?? 0) === 0 &&
+              (c.status === "SUPPORTED" || c.status === "PARTIALLY_SUPPORTED" || !c.status)
+                ? "UNVERIFIED"
+                : c.status || "UNVERIFIED",
+            confidence:
+              (c.evidence_ids?.length ?? 0) === 0 ? "LOW" : c.confidence || "MEDIUM",
           }))
         );
       }
