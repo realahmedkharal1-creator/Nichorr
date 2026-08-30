@@ -41,6 +41,7 @@ import {
  Workflow,
  CheckCircle,
  ArrowRight,
+ ArrowDown,
  Send,
  Radio,
  Smartphone,
@@ -4808,23 +4809,32 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         </p>
        </div>
 
-       <div className="flex flex-wrap items-center gap-2 shrink-0">
-        <button
-         onClick={handleValidateExportPackage}
-         disabled={isValidatingPackage}
-         className="flex items-center gap-1.5 bg-paper hover:bg-paper text-ink px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono border border-line transition"
-        >
-         <RefreshCw className={`w-3.5 h-3.5 ${isValidatingPackage ? "animate-spin" : ""}`} />
-         Validate Package
-        </button>
-        <button
-         onClick={handleExecuteExport}
-         disabled={isExporting || exportPackage?.status === "BLOCKED" || exportPackage?.status === "EXPORTED"}
-         className="flex items-center gap-1.5 bg-citation hover:opacity-90 disabled:opacity-50 text-white px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
-        >
-         <Download className="w-3.5 h-3.5" />
-         {isExporting ? "Exporting..." : exportPackage?.status === "EXPORTED" ? "Exported" : "Execute Export"}
-        </button>
+       <div className="flex flex-col items-stretch sm:items-end gap-1 shrink-0">
+        <div className="flex flex-wrap items-center gap-2">
+         <button
+          onClick={handleValidateExportPackage}
+          disabled={isValidatingPackage}
+          className={`flex items-center gap-1.5 bg-ink hover:opacity-90 disabled:opacity-50 text-paper px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono transition ${
+           !exportPackage && !isValidatingPackage ? "ring-2 ring-citation/40 ring-offset-2 ring-offset-card" : ""
+          }`}
+         >
+          <RefreshCw className={`w-3.5 h-3.5 ${isValidatingPackage ? "animate-spin" : ""}`} />
+          {isValidatingPackage ? "Validating…" : "Validate Package"}
+         </button>
+         <button
+          onClick={handleExecuteExport}
+          disabled={isExporting || exportPackage?.status === "BLOCKED" || exportPackage?.status === "EXPORTED"}
+          className="flex items-center gap-1.5 bg-citation hover:opacity-90 disabled:opacity-50 text-white px-4 py-2 rounded-[10px] text-xs font-bold font-mono transition"
+         >
+          <Download className="w-3.5 h-3.5" />
+          {isExporting ? "Exporting..." : exportPackage?.status === "EXPORTED" ? "Exported" : "Execute Export"}
+         </button>
+        </div>
+        {!exportPackage && !isValidatingPackage && (
+         <span className="flex items-center gap-1 text-[10.5px] font-mono text-citation self-center sm:self-end">
+          <ArrowDown className="w-3 h-3 animate-bounce" /> press Validate Package to load the export workspace
+         </span>
+        )}
        </div>
       </div>
 
@@ -5075,15 +5085,22 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         </p>
        </div>
 
-       <div className="flex flex-wrap items-center gap-2 shrink-0">
+       <div className="flex flex-col items-stretch sm:items-end gap-1 shrink-0">
         <button
          onClick={loadPublishingState}
          disabled={isPublishingLoading}
-         className="flex items-center gap-1.5 bg-paper hover:bg-paper text-ink px-3.5 py-2 rounded-[10px] text-xs font-bold font-mono border border-line transition"
+         className={`flex items-center justify-center gap-1.5 bg-ink hover:opacity-90 disabled:opacity-50 text-paper px-4 py-2 rounded-[10px] text-xs font-bold font-mono transition ${
+          !publishingPlan && !isPublishingLoading ? "ring-2 ring-citation/40 ring-offset-2 ring-offset-card" : ""
+         }`}
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isPublishingLoading ? "animate-spin" : ""}`} />
-         Refresh Plan
+         {isPublishingLoading ? "Loading…" : "Refresh Plan"}
         </button>
+        {!publishingPlan && !isPublishingLoading && (
+         <span className="flex items-center gap-1 text-[10.5px] font-mono text-citation self-center sm:self-end">
+          <ArrowDown className="w-3 h-3 animate-bounce" /> press to load the publishing plan
+         </span>
+        )}
        </div>
       </div>
 
@@ -5543,15 +5560,22 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         </p>
        </div>
 
-       <div className="flex flex-wrap items-center gap-2 shrink-0">
+       <div className="flex flex-col items-stretch sm:items-end gap-1 shrink-0">
         <button
          onClick={handleReconcilePublications}
          disabled={isReconciling}
-         className="flex items-center gap-1.5 bg-conflict hover:opacity-90 disabled:opacity-50 text-white px-4 py-2 rounded-[10px] text-xs font-bold font-mono  transition"
+         className={`flex items-center justify-center gap-1.5 bg-ink hover:opacity-90 disabled:opacity-50 text-paper px-4 py-2 rounded-[10px] text-xs font-bold font-mono transition ${
+          !releaseHealthReport && !isReconciling ? "ring-2 ring-citation/40 ring-offset-2 ring-offset-card" : ""
+         }`}
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isReconciling ? "animate-spin" : ""}`} />
-         {isReconciling ? "Reconciling..." : "Reconcile Publications"}
+         {isReconciling ? "Reconciling…" : "Reconcile Publications"}
         </button>
+        {!releaseHealthReport && !isReconciling && (
+         <span className="flex items-center gap-1 text-[10.5px] font-mono text-citation self-center sm:self-end">
+          <ArrowDown className="w-3 h-3 animate-bounce" /> press to load the release health report
+         </span>
+        )}
        </div>
       </div>
 
@@ -5743,39 +5767,53 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
        </div>
 
        {/* Publication Lineage Inspector */}
-       <div className="p-6 bg-card rounded-[24px]  border-line-soft space-y-4">
-        <div className="flex items-center justify-between border-b border-line-soft pb-3">
+       <div className="p-6 bg-card rounded-2xl border border-line shadow-card space-y-4">
+        <div className="flex items-center justify-between border-b border-line-soft pb-3 gap-3">
          <div>
           <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-           <Network className="w-4 h-4 text-conflict" />
+           <Network className="w-4 h-4 text-citation" />
            Why Is This Publication In This State? (Lineage)
           </h3>
           <p className="text-[11px] text-muted-2 font-sans">
            Deterministic provenance from research run down to observed platform state.
           </p>
          </div>
+         {inspectedPubLineage?.links && (
+          <span className="shrink-0 font-mono text-[10px] text-muted-2 bg-paper border border-line rounded-full px-2 py-0.5">
+           {inspectedPubLineage.links.length} stages
+          </span>
+         )}
         </div>
 
         {inspectedPubLineage?.links ? (
-         <div className="space-y-1.5 max-h-80 overflow-y-auto font-mono text-xs">
-          {inspectedPubLineage.links.map((lnk, idx) => (
-           <div key={idx} className="p-2.5 rounded-[10px] bg-paper border border-line-soft flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 truncate">
-             <span className="text-muted-2 text-[10px] w-6 shrink-0">{idx + 1}.</span>
-             <div>
-              <span className="font-bold text-ink block text-[11px]">{lnk.stage}</span>
-              <span className="text-muted-2 text-[10px] font-sans truncate block">{lnk.summary}</span>
+         <div className="relative">
+          <div className="space-y-1.5 max-h-80 overflow-y-auto font-mono text-xs pr-1">
+           {inspectedPubLineage.links.map((lnk, idx) => (
+            <div key={idx} className="p-2.5 rounded-[10px] bg-paper border border-line flex items-center justify-between gap-2">
+             <div className="flex items-center gap-2 truncate">
+              <span className="text-muted-2 text-[10px] w-6 shrink-0">{idx + 1}.</span>
+              <div className="min-w-0">
+               <span className="font-bold text-ink block text-[11px]">{lnk.stage}</span>
+               <span className="text-muted-2 text-[10px] font-sans truncate block">{lnk.summary}</span>
+              </div>
              </div>
+             <span className={`px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 ${
+              lnk.status === "VALID" ? "bg-verified-bg text-verified border-verified/25" :
+              lnk.status === "DRIFTED" ? "bg-warning-bg text-warning border-warning/25" :
+              "bg-paper text-muted-2 border-line"
+             }`}>
+              {lnk.status}
+             </span>
             </div>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 ${
-             lnk.status === "VALID" ? "bg-verified-bg text-verified border-verified-bg" :
-             lnk.status === "DRIFTED" ? "bg-warning-bg text-warning border-warning-bg" :
-             "bg-card rounded-[24px]  text-muted-2 border-line-soft"
-            }`}>
-             {lnk.status}
+           ))}
+          </div>
+          {inspectedPubLineage.links.length > 4 && (
+           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-card to-transparent flex items-end justify-center">
+            <span className="flex items-center gap-1 text-[10px] font-mono text-muted-2 pb-0.5">
+             <ArrowDown className="w-3 h-3 animate-bounce" /> scroll for more stages
             </span>
            </div>
-          ))}
+          )}
          </div>
         ) : (
          <p className="text-xs font-mono text-muted-2 text-center py-4">No lineage trace available.</p>
@@ -5906,15 +5944,24 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
         </p>
        </div>
 
-       <div className="flex flex-wrap items-center gap-2 shrink-0">
+       <div className="flex flex-col items-stretch sm:items-end gap-1 shrink-0">
         <button
          onClick={loadCalibrationState}
          disabled={isCalibrating}
-         className="flex items-center gap-1.5 bg-ink hover:opacity-90 disabled:opacity-50 text-paper px-4 py-2 rounded-[10px] text-xs font-bold font-mono transition"
+         className={`flex items-center justify-center gap-1.5 bg-ink hover:opacity-90 disabled:opacity-50 text-paper px-4 py-2 rounded-[10px] text-xs font-bold font-mono transition ${
+          calibrationCandidates.length === 0 && !calibrationSnapshot && !isCalibrating
+           ? "ring-2 ring-citation/40 ring-offset-2 ring-offset-card"
+           : ""
+         }`}
         >
          <RefreshCw className={`w-3.5 h-3.5 ${isCalibrating ? "animate-spin" : ""}`} />
-         {isCalibrating ? "Ingesting..." : "Ingest & Re-evaluate"}
+         {isCalibrating ? "Ingesting…" : "Ingest & Re-evaluate"}
         </button>
+        {calibrationCandidates.length === 0 && !calibrationSnapshot && !isCalibrating && (
+         <span className="flex items-center gap-1 text-[10.5px] font-mono text-citation self-center sm:self-end">
+          <ArrowDown className="w-3 h-3 animate-bounce" /> press to run calibration &amp; load results
+         </span>
+        )}
        </div>
       </div>
 
@@ -6101,30 +6148,49 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <button
            onClick={() => handleValidateQueueItem(selectedCalibrationItem.queueItemId)}
            disabled={isCalibrating || selectedCalibrationItem.status === "BLOCKED"}
-           className="px-4 py-2 rounded-[10px] bg-warning hover:opacity-90 disabled:opacity-50 text-white font-bold text-xs transition"
+           className="px-4 py-2 rounded-[10px] bg-ink hover:opacity-90 disabled:opacity-50 text-paper font-bold text-xs transition"
           >
-           {isCalibrating ? "Validating..." : "Validate This"}
+           {isCalibrating ? "Validating…" : "Validate This"}
           </button>
          </div>
 
-         {validationResult && (
-          <div className="p-3 rounded-[10px] bg-verified-bg/40 border border-verified-bg space-y-1 text-verified">
-           <span className="font-bold block">Validation Outcome: {validationResult.outcome}</span>
-           <p className="text-ink font-sans text-[11px]">{validationResult.findings}</p>
-           {validationResult.requiredSafeExecutionPlan && (
-            <span className="text-[10px] text-warning font-bold block">
-             Phase 78 Safe Execution Plan required to apply reconciled claims.
-            </span>
-           )}
-          </div>
-         )}
+         {validationResult && (() => {
+          const oc = String(validationResult.outcome || "").toUpperCase();
+          const tone = oc.includes("CONFIRM")
+           ? { box: "bg-verified-bg border-verified/25", chip: "bg-verified text-white", label: "Confirmed" }
+           : oc.includes("REJECT") || oc.includes("FAIL")
+           ? { box: "bg-conflict-bg border-conflict/25", chip: "bg-conflict text-white", label: "Rejected" }
+           : { box: "bg-warning-bg border-warning/25", chip: "bg-warning text-white", label: "Inconclusive" };
+          return (
+           <div className={`p-3.5 rounded-[10px] border ${tone.box} space-y-2`}>
+            <div className="flex items-center gap-2">
+             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${tone.chip}`}>
+              {tone.label}
+             </span>
+             <span className="font-mono text-[10px] text-muted-2 uppercase tracking-wide">
+              {validationResult.outcome}
+             </span>
+            </div>
+            <p className="text-ink font-sans text-[12px] leading-relaxed m-0">{validationResult.findings}</p>
+            {validationResult.requiredSafeExecutionPlan && (
+             <div className="flex items-start gap-1.5 text-[10.5px] text-warning font-semibold pt-1 border-t border-warning/20">
+              <AlertOctagon className="w-3.5 h-3.5 shrink-0 mt-px" />
+              A Safe Execution Plan is required before these reconciled claims can be applied.
+             </div>
+            )}
+           </div>
+          );
+         })()}
 
          {/* Lineage Trace */}
-         <div className="p-3 rounded-[10px] bg-paper border border-line-soft space-y-1">
-          <span className="text-muted-2 block text-[10px]">EXPLAINABILITY & PROVENANCE</span>
-          <ul className="space-y-1 text-[11px] text-muted-2">
+         <div className="p-3 rounded-[10px] bg-paper border border-line space-y-1.5">
+          <span className="text-muted-2 block text-[10px] font-mono uppercase tracking-wide">Explainability &amp; provenance</span>
+          <ul className="space-y-1 text-[11px] text-muted list-none m-0 p-0">
            {selectedCalibrationItem.candidate.upstreamLineage.map((lin, idx) => (
-            <li key={idx} className="truncate">â€¢ {lin}</li>
+            <li key={idx} className="flex gap-1.5">
+             <span className="text-muted-2 shrink-0">&bull;</span>
+             <span className="min-w-0 break-words">{lin}</span>
+            </li>
            ))}
           </ul>
          </div>
