@@ -8,7 +8,7 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 import {
   ExternalLink, PlayCircle, Bot, Send, HelpCircle, Sparkles, AlertTriangle, ShieldCheck,
   CheckCircle2, ShieldAlert, Info, Filter, X, Copy, Quote, MessageSquare, Eye, ThumbsUp, Plus,
-  Search, Download, ArrowRight, BadgeCheck, Users, TrendingUp, ChevronRight, LayoutDashboard,
+  Search, Download, ArrowRight, ArrowUpRight, BadgeCheck, Users, TrendingUp, ChevronRight, LayoutDashboard,
   Video, FileCheck, GitBranch, FileText, Loader2,
 } from "lucide-react";
 
@@ -286,12 +286,13 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
       })()
     : null;
 
-  const tabs = [
+  const tabs: { id: string; label: string; icon: typeof LayoutDashboard; href?: string }[] = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "youtube", label: "YouTube Intel", icon: Video },
     { id: "evidence", label: "Evidence", icon: FileCheck },
     { id: "conflicts", label: "Conflicts", icon: AlertTriangle },
     { id: "provenance", label: "Provenance", icon: GitBranch },
+    { id: "creator", label: "Creator Studio", icon: Sparkles, href: `/research/${run.id}/creator` },
     { id: "ask", label: "Ask AI", icon: Bot },
     { id: "community", label: "Community", icon: MessageSquare },
     { id: "audience", label: "Audience Qs", icon: HelpCircle },
@@ -361,6 +362,28 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           {tabs.map(t => {
             const Icon = t.icon;
             const isActive = activeTab === t.id;
+            const cls = `shrink-0 inline-flex items-center gap-1.5 font-sans text-[12.5px] font-semibold px-3.5 py-2 rounded-full border cursor-pointer whitespace-nowrap transition-all ${
+              isActive
+                ? "bg-ink text-paper border-ink shadow-card"
+                : "bg-card text-muted border-line hover:border-muted-2 hover:text-ink"
+            }`;
+
+            if (t.href) {
+              return (
+                <Link
+                  key={t.id}
+                  href={t.href}
+                  draggable={false}
+                  onClick={(e) => { if (dragState.current.moved) e.preventDefault(); }}
+                  className={cls}
+                >
+                  <Icon className="w-3.5 h-3.5 text-muted-2" />
+                  {t.label}
+                  <ArrowUpRight className="w-3 h-3 text-muted-2" />
+                </Link>
+              );
+            }
+
             return (
               <button
                 key={t.id}
@@ -369,11 +392,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
                   setActiveTab(t.id);
                 }}
                 draggable={false}
-                className={`shrink-0 inline-flex items-center gap-1.5 font-sans text-[12.5px] font-semibold px-3.5 py-2 rounded-full border cursor-pointer whitespace-nowrap transition-all ${
-                  isActive
-                    ? "bg-ink text-paper border-ink shadow-card"
-                    : "bg-card text-muted border-line hover:border-muted-2 hover:text-ink"
-                }`}
+                className={cls}
               >
                 <Icon className={`w-3.5 h-3.5 ${isActive ? "text-paper" : "text-muted-2"}`} />
                 {t.label}
