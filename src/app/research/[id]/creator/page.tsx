@@ -2064,46 +2064,61 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
       
       {/* Controls Row */}
-      <div className="flex items-center justify-between gap-[14px] flex-wrap mb-[18px]">
-        <div className="flex bg-card border border-line rounded-[10px] overflow-hidden">
-          {["Outline", "Script Ready", "Full Spoken"].map(mode => {
-           const modeValue = mode.replace(" ", "_").toUpperCase();
-           const isModeActive = outputMode === modeValue;
-           return (
-            <button
-             key={mode}
-             onClick={() => setOutputMode(modeValue as any)}
-             className={`bg-transparent border-none px-[14px] py-[8px] text-[12.5px] font-semibold cursor-pointer ${
-              isModeActive 
-               ? "bg-ink text-paper" 
-               : "text-muted"
-             }`}
-            >
-             {mode}
-            </button>
-           );
-          })}
+      <div className="flex items-end justify-between gap-[16px] flex-wrap mb-[18px]">
+        <div className="flex items-end gap-[18px] flex-wrap">
+          <div>
+            <span className="block font-mono text-[10px] uppercase tracking-[0.5px] text-muted-2 mb-1.5">
+              Script detail {loading && <RefreshCw className="inline w-3 h-3 animate-spin ml-1 text-citation" />}
+            </span>
+            <div className="flex bg-card border border-line rounded-[10px] overflow-hidden">
+              {["Outline", "Script Ready", "Full Spoken"].map(mode => {
+                const modeValue = mode.replace(" ", "_").toUpperCase();
+                const isModeActive = outputMode === modeValue;
+                return (
+                  <button
+                    key={mode}
+                    onClick={() => !loading && handleModeChange(modeValue as any)}
+                    disabled={loading}
+                    className={`bg-transparent border-none px-[14px] py-[8px] text-[12.5px] font-semibold transition-colors disabled:cursor-wait ${
+                      isModeActive ? "bg-ink text-paper" : "text-muted hover:text-ink"
+                    }`}
+                  >
+                    {mode}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
+            <span className="block font-mono text-[10px] uppercase tracking-[0.5px] text-muted-2 mb-1.5">
+              Target length
+            </span>
+            <div className="flex bg-card border border-line rounded-[10px] overflow-hidden">
+              {[8, 12, 18].map((dur) => (
+                <button
+                  key={dur}
+                  onClick={() => !loading && handleDurationChange(dur as any)}
+                  disabled={loading}
+                  className={`bg-transparent border-none px-[12px] py-[8px] text-[12.5px] font-semibold font-mono transition-colors disabled:cursor-wait ${
+                    duration === dur ? "bg-ink text-paper" : "text-muted hover:text-ink"
+                  }`}
+                >
+                  {dur}m
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="flex gap-[10px] items-center">
-          <span className="font-mono text-[12px] text-muted">
-            Duration: 
-            {[8, 12, 18].map((dur, i) => (
-              <React.Fragment key={dur}>
-                {i > 0 && " · "}
-                {duration === dur ? <b className="text-ink">{dur}m</b> : <span onClick={() => setDuration(dur as any)} className="cursor-pointer">{dur}m</span>}
-              </React.Fragment>
-            ))}
-          </span>
-          <button
-            onClick={() => setIsTeleprompterOpen(true)}
-            disabled={!report?.scriptSections?.length}
-            title={report?.scriptSections?.length ? "Open the teleprompter" : "Generate a script first"}
-            className="bg-citation text-white border-none px-[16px] py-[9px] rounded-[9px] text-[12.5px] font-semibold cursor-pointer hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
-          >
-            🎙 Teleprompter
-          </button>
-        </div>
+        <button
+          onClick={() => setIsTeleprompterOpen(true)}
+          disabled={!report?.scriptSections?.length}
+          title={report?.scriptSections?.length ? "Open the teleprompter" : "Generate a script first"}
+          className="bg-citation text-white border-none px-[16px] py-[9px] rounded-[9px] text-[12.5px] font-semibold cursor-pointer hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+        >
+          🎙 Teleprompter
+        </button>
       </div>
 
       {/* Status Card */}

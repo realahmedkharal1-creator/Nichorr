@@ -85,6 +85,14 @@ export default function HistoryPage() {
             const sources = r.sources?.length || (r as any).source_count || 0;
             const claims = r.claims?.length || (r as any).claim_count || 0;
             const contentType = r.contentType || (r as any).content_type || "Research";
+            const TERMINAL = ["COMPLETED", "FAILED", "CANCELLED", "PARTIAL"];
+            const failReason = (r as any).error_message || (r as any).failureReason || "";
+            const ts = Date.parse((r as any).updated_at || r.createdAt || (r as any).created_at || "");
+            const stale =
+              !TERMINAL.includes(r.status) &&
+              !Number.isNaN(ts) &&
+              Date.now() - ts > 24 * 60 * 60 * 1000;
+            const displayStatus = stale ? "ABANDONED" : r.status;
             return (
               <div
                 key={r.id}
@@ -94,8 +102,8 @@ export default function HistoryPage() {
                   <div className="flex flex-wrap items-center gap-2 text-[10.5px] font-mono">
                     <span className="text-citation font-bold uppercase">{contentType}</span>
                     <span className="text-muted-2">·</span>
-                    <span className={`px-2 py-0.5 rounded-full font-bold border ${STATUS_STYLE[r.status] || "bg-warning-bg text-warning border-warning/25"}`}>
-                      {r.status}
+                    <span className={`px-2 py-0.5 rounded-full font-bold border ${STATUS_STYLE[displayStatus] || "bg-warning-bg text-warning border-warning/25"}`}>
+                      {displayStatus}
                     </span>
                     <span className="text-muted-2">·</span>
                     <span className="text-muted-2">{created}</span>
@@ -105,13 +113,21 @@ export default function HistoryPage() {
                     <span>{sources} sources</span>
                     <span>{claims} claims</span>
                   </div>
+                  {r.status === "FAILED" && failReason && (
+                    <p className="text-[11.5px] text-conflict leading-snug m-0 pt-1 max-w-xl">{failReason}</p>
+                  )}
+                  {stale && (
+                    <p className="text-[11.5px] text-muted-2 leading-snug m-0 pt-1">
+                      Left mid-pipeline and never resumed. Start a fresh run on this topic.
+                    </p>
+                  )}
                 </div>
 
                 <Link
-                  href={r.status === "CANCELLED" ? `/research/${r.id}/live` : `/research/${r.id}/results`}
+                  href={TERMINAL.includes(r.status) && r.status !== "CANCELLED" ? `/research/${r.id}/results` : `/research/${r.id}/live`}
                   className="shrink-0 flex items-center gap-1.5 bg-ink text-paper px-4 py-2.5 rounded-xl text-xs font-semibold transition hover:opacity-90"
                 >
-                  {r.status === "CANCELLED" ? "View status" : "Open results"}
+                  {TERMINAL.includes(r.status) && r.status !== "CANCELLED" ? "Open results" : "View status"}
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

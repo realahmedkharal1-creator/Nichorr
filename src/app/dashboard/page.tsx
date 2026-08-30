@@ -50,7 +50,14 @@ export default function DashboardPage() {
   const stats = useMemo(() => {
     const total = runs.length;
     const completed = runs.filter((r) => r.status === "COMPLETED" || r.status === "PARTIAL").length;
-    const active = runs.filter((r) => !TERMINAL.includes(r.status)).length;
+    // "In progress" = non-terminal AND touched in the last 24h. A run left mid-pipeline days
+    // ago (tab closed before it finished) is abandoned, not running — don't keep counting it.
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    const active = runs.filter((r) => {
+      if (TERMINAL.includes(r.status)) return false;
+      const ts = Date.parse((r as any).updated_at || r.created_at || r.createdAt || "");
+      return Number.isNaN(ts) ? true : Date.now() - ts < DAY_MS;
+    }).length;
     const claims = runs.reduce((sum, r) => sum + (r.claims?.length || r.claim_count || 0), 0);
     const sources = runs.reduce((sum, r) => sum + (r.sources?.length || r.source_count || 0), 0);
     return { total, completed, active, claims, sources };

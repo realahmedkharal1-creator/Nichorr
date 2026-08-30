@@ -2,6 +2,45 @@ import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { ResearchRunSession } from "@/features/research/research-engine";
 
 export class ResearchRunsRepository {
+  /**
+   * Repairs claim.evidence_ids that were stored as bare array indices ("0","2") — a bug in
+   * older runs where the extraction LLM got a plain string[] and returned positions instead
+   * of real evidence ids. Maps each numeric index onto the id of the evidence at that
+   * position; keeps ids that already resolve; drops anything unresolvable.
+   */
+  static normalizeClaimEvidenceIds(
+    claims: ResearchRunSession["claims"] | undefined,
+    evidence: ResearchRunSession["evidence"] | undefined
+  ): ResearchRunSession["claims"] {
+    const list = Array.isArray(claims) ? claims : [];
+    const evList = Array.isArray(evidence) ? evidence : [];
+    if (evList.length === 0) return list;
+    const validIds = new Set(evList.map((e) => e.id));
+    const needsFix = list.some((c) =>
+      (c.evidence_ids || []).some((id) => !validIds.has(String(id)))
+    );
+    if (!needsFix) return list;
+
+    return list.map((c) => {
+      const out = new Set<string>();
+      for (const raw of c.evidence_ids || []) {
+        const s = String(raw).trim();
+        if (validIds.has(s)) {
+          out.add(s);
+          continue;
+        }
+        const mNum = s.match(/^(\d+)$/);
+        if (mNum && evList[Number(mNum[1])]) {
+          out.add(evList[Number(mNum[1])].id);
+          continue;
+        }
+        const mEv = s.match(/^ev[-_]?(\d+)$/i);
+        if (mEv && validIds.has(`ev-${mEv[1]}`)) out.add(`ev-${mEv[1]}`);
+      }
+      return { ...c, evidence_ids: [...out] };
+    });
+  }
+
   async saveRun(session: ResearchRunSession, userId?: string): Promise<boolean> {
     try {
       const supabase = createServiceClient();
@@ -109,8 +148,14 @@ export class ResearchRunsRepository {
       // signals, youtube intelligence, etc.) that aren't reconstructable from the relational
       // columns/tables below, which is what makes resuming a partially-completed run possible.
       if (data.session_state && typeof data.session_state === "object" && data.session_state.id) {
+        const blob = data.session_state as ResearchRunSession;
+        // Runs created before the extraction-link fix stored evidence_ids as bare array
+        // indices ("0","2") from the LLM instead of real ids ("ev-3"). Remap them at read
+        // time so those older runs' grounding/lineage views are honest too — the stored
+        // blob is left untouched.
+        blob.claims = ResearchRunsRepository.normalizeClaimEvidenceIds(blob.claims, blob.evidence);
         return {
-          ...(data.session_state as ResearchRunSession),
+          ...blob,
           // The very first saveRun() call embeds whatever placeholder "run-<timestamp>" id the
           // session had BEFORE the DB assigned its real UUID (the payload is built, then sent,
           // before the returned row's real id is known) -- that stale id is permanently baked
