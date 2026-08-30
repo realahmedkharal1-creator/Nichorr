@@ -198,10 +198,14 @@ export class ProvenanceEngine {
         !matchedEvidence.excerpt.startsWith("[EXTRACTION_FAILED]") &&
         matchedEvidence.excerpt.trim().length > 10;
       const hasDirectEvidence = excerptUsable && !!matchedSource;
+      // A talking point backed only by a community/forum/comment source is user-reported
+      // sentiment, not a verified measurement — cap it at NEEDS_CONTEXT so it doesn't
+      // inflate the grounding score.
+      const communityOnly = srcAuth?.tier === "TIER_4_COMMUNITY";
       const verificationStatus: 'VERIFIED' | 'NEEDS_CONTEXT' | 'UNBACKED' =
         tp.verificationStatus === "DO_NOT_SAY" || !hasDirectEvidence
           ? "UNBACKED"
-          : tp.verificationStatus === "NEEDS_CONTEXT"
+          : tp.verificationStatus === "NEEDS_CONTEXT" || communityOnly
             ? "NEEDS_CONTEXT"
             : "VERIFIED";
 
