@@ -84,15 +84,19 @@ export function CreatorTeleprompter({
     scrollSpeedRef.current = scrollSpeed;
   }, [scrollSpeed]);
 
-  // px/sec for scroll speeds 1..5 (index 0 unused). 1x is a real, readable crawl.
-  const SPEED_PX_PER_SEC = [0, 45, 80, 130, 190, 260];
+  // px/sec for scroll speeds 1..5 (index 0 unused). Each step is a clear jump,
+  // and 2x is exactly twice 1x so the difference is unmistakable.
+  const SPEED_PX_PER_SEC = [0, 60, 120, 200, 320, 480];
 
   // Smooth auto-scroll — one stable loop, started/stopped only by isPlaying.
+  // Position is accumulated in a float (`pos`) and written to scrollTop each frame,
+  // so slow speeds don't get lost to integer rounding of scrollTop.
   useEffect(() => {
     if (!isPlaying) return;
 
     let raf = 0;
     let last = performance.now();
+    let pos = scrollContainerRef.current?.scrollTop ?? 0;
 
     const step = (now: number) => {
       const el = scrollContainerRef.current;
@@ -101,11 +105,15 @@ export function CreatorTeleprompter({
         return;
       }
 
+      // If something else moved the scroll (manual scroll, section jump), resync.
+      if (Math.abs(el.scrollTop - pos) > 4) pos = el.scrollTop;
+
       const dt = Math.min(now - last, 100); // clamp so a backgrounded tab doesn't jump
       last = now;
 
-      const pxPerSec = SPEED_PX_PER_SEC[scrollSpeedRef.current] || 80;
-      el.scrollTop += (pxPerSec * dt) / 1000;
+      const pxPerSec = SPEED_PX_PER_SEC[scrollSpeedRef.current] || 120;
+      pos += (pxPerSec * dt) / 1000;
+      el.scrollTop = pos;
 
       const scrollPos = el.scrollTop + 150;
       el.querySelectorAll<HTMLElement>("[data-section-index]").forEach((sec) => {
