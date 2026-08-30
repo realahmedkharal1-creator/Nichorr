@@ -189,12 +189,20 @@ export class ProvenanceEngine {
       }
 
       const srcAuth = matchedSource ? sourceAuthorityMap.get(matchedSource.id) : undefined;
-      const hasDirectEvidence = !!matchedEvidence && !!matchedSource;
-      const verificationStatus: 'VERIFIED' | 'NEEDS_CONTEXT' | 'UNBACKED' = 
-        tp.verificationStatus === "DO_NOT_SAY" || !hasDirectEvidence 
-          ? "UNBACKED" 
-          : tp.verificationStatus === "NEEDS_CONTEXT" 
-            ? "NEEDS_CONTEXT" 
+      // A chain is only VERIFIED when the matched evidence carries a real, retrieved
+      // excerpt AND a real source. A dangling reference, or an [EXTRACTION_FAILED] /
+      // empty excerpt, must NOT be counted as grounded — otherwise the grounding score
+      // reads "100%" while individual claims show "UNBACKED".
+      const excerptUsable =
+        !!matchedEvidence?.excerpt &&
+        !matchedEvidence.excerpt.startsWith("[EXTRACTION_FAILED]") &&
+        matchedEvidence.excerpt.trim().length > 10;
+      const hasDirectEvidence = excerptUsable && !!matchedSource;
+      const verificationStatus: 'VERIFIED' | 'NEEDS_CONTEXT' | 'UNBACKED' =
+        tp.verificationStatus === "DO_NOT_SAY" || !hasDirectEvidence
+          ? "UNBACKED"
+          : tp.verificationStatus === "NEEDS_CONTEXT"
+            ? "NEEDS_CONTEXT"
             : "VERIFIED";
 
       if (verificationStatus === "VERIFIED") verifiedCount++;
@@ -207,12 +215,14 @@ export class ProvenanceEngine {
         claimId: matchedClaim?.id || "cl-unknown",
         claimText: matchedClaim?.claim_text || tp.statement,
         evidenceId: matchedEvidence?.id || "ev-unknown",
-        evidenceExcerpt: matchedEvidence?.excerpt || "Direct laboratory measurement and technical evaluation.",
+        evidenceExcerpt: excerptUsable
+          ? matchedEvidence!.excerpt
+          : "No source excerpt was retrieved for this hop.",
         benchmarkOrTranscriptRef,
         sourceId: matchedSource?.id || "src-unknown",
-        sourceTitle: matchedSource?.title || "Technical Source",
-        sourceUrl: matchedSource?.url || "https://nichorr.com/sources",
-        publisher: matchedSource?.publisher || "Independent Laboratory",
+        sourceTitle: matchedSource?.title || "Source not identified",
+        sourceUrl: matchedSource?.url || "",
+        publisher: matchedSource?.publisher || "Source not identified",
         authorityTier: srcAuth?.tier || "TIER_2_INDEPENDENT_LAB",
         independenceScore: srcAuth?.independenceScore || 8.5,
         verificationStatus,

@@ -242,7 +242,26 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
   // Real confidence summary, replacing a hardcoded "High (92%)". Confidence is reported as the
   // dominant band across claims (the product deliberately avoids fake precision percentages).
-  const claimsWithEvidence = (run.claims || []).filter((c) => (c.evidence_ids || []).length > 0).length;
+  //
+  // A claim only counts as "grounded" when at least one of its evidence_ids resolves to an
+  // evidence record that actually carries a usable excerpt. A dangling evidence_id, or one
+  // pointing at a [EXTRACTION_FAILED] / empty excerpt, does NOT count — otherwise the
+  // provenance stats overstate how well-backed the run is ("9/9 grounded" while the first
+  // claim reads "UNBACKED").
+  const claimIsGrounded = (c: { evidence_ids?: string[] }) => {
+    const ids = c.evidence_ids || [];
+    if (ids.length === 0) return false;
+    return (run.evidence || []).some(
+      (e) =>
+        ids.includes(e.id) &&
+        !!e.excerpt &&
+        !e.excerpt.startsWith("[EXTRACTION_FAILED]") &&
+        e.excerpt.trim().length > 0
+    );
+  };
+  const groundedClaims = (run.claims || []).filter(claimIsGrounded).length;
+  const totalClaims = (run.claims || []).length;
+  const claimsWithEvidence = groundedClaims; // kept name for existing references
   const confidenceCounts = (run.claims || []).reduce<Record<string, number>>((acc, c) => {
     const band = (c.confidence || "UNKNOWN").toUpperCase();
     acc[band] = (acc[band] || 0) + 1;
@@ -407,7 +426,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
         <div className="animate-in fade-in duration-300 space-y-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard icon={FileCheck} label="Verified Sources" value={run.sources?.length || 0} sublabel="100% traceable" tone="citation" />
-            <StatCard icon={BadgeCheck} label="Supported Claims" value={run.claims?.length || 0} sublabel="excerpt backed" tone="verified" />
+            <StatCard icon={BadgeCheck} label="Supported Claims" value={`${groundedClaims}/${totalClaims}`} sublabel="backed by a source excerpt" tone={groundedClaims === totalClaims && totalClaims > 0 ? "verified" : "warning"} />
             <StatCard icon={AlertTriangle} label="Conflicts Surfaced" value={conflicts.length} sublabel="methodological" tone="conflict" />
             <StatCard icon={Users} label="Community Signals" value={run.communitySignals?.length || 0} sublabel="user reported" tone="warning" />
           </div>
@@ -688,9 +707,9 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
       {activeTab === "evidence" && (
         <div className="animate-in fade-in duration-300 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <StatCard icon={FileCheck} label="Total Claims" value={(run.claims || []).length} sublabel={`${claimsWithEvidence} traced to evidence`} tone="citation" />
+            <StatCard icon={FileCheck} label="Total Claims" value={totalClaims} sublabel={`${groundedClaims} backed by a source excerpt`} tone="citation" />
             <StatCard icon={ExternalLink} label="Source Distribution" value={(run.sources || []).length} sublabel="YouTube & Web Specs" tone="ink" />
-            <StatCard icon={ShieldCheck} label="Confidence Rating" value={dominantConfidence} sublabel={`${claimsWithEvidence} of ${(run.claims || []).length} claims have matched evidence`} tone="verified" />
+            <StatCard icon={ShieldCheck} label="Confidence Rating" value={groundedClaims === 0 ? "Unverified" : dominantConfidence} sublabel={`${groundedClaims} of ${totalClaims} claims have a linked excerpt`} tone={groundedClaims === 0 ? "conflict" : "verified"} />
           </div>
 
           <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card">
@@ -720,7 +739,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
 
             <div className="space-y-3">
               {filteredClaims.map((claim, idx) => {
-                const backed = (claim.evidence_ids || []).length > 0;
+                const backed = claimIsGrounded(claim);
                 const open = expandedClaimId === claim.id;
                 return (
                   <div key={idx} className="rounded-xl border border-line bg-card p-4 transition-colors hover:border-muted-2">
@@ -848,10 +867,10 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
               an AnandTech attribution and a quote about the iPhone 18 Pro Max — none of which
               came from the research being displayed. */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard icon={ShieldCheck} label="Claims With Evidence" value={`${claimsWithEvidence}/${(run.claims || []).length}`} sublabel="traced to an excerpt" tone="verified" />
+            <StatCard icon={ShieldCheck} label="Grounded Claims" value={`${groundedClaims}/${totalClaims}`} sublabel={groundedClaims === totalClaims ? "each traced to a real excerpt" : `${totalClaims - groundedClaims} without a linked excerpt`} tone={groundedClaims === totalClaims && totalClaims > 0 ? "verified" : "warning"} />
             <StatCard icon={FileText} label="Sources" value={(run.sources || []).length} sublabel="retrieved this run" tone="ink" />
             <StatCard icon={GitBranch} label="Usable Excerpts" value={usableEvidence.length} sublabel={`${failedEvidence.length} extraction failures`} tone="citation" />
-            <StatCard icon={TrendingUp} label="Confidence" value={dominantConfidence} sublabel="dominant band across claims" tone="ink" />
+            <StatCard icon={TrendingUp} label="Confidence" value={groundedClaims === 0 ? "Unverified" : dominantConfidence} sublabel="dominant band across grounded claims" tone={groundedClaims === 0 ? "conflict" : "ink"} />
           </div>
 
           <div className="bg-card border border-line rounded-2xl p-5 sm:p-6 shadow-card">

@@ -57,15 +57,29 @@ export function CreatorTeleprompter({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
 
-  // Timer effect when playing
+  // Elapsed timer. Derived from wall-clock deltas rather than a "+1 per tick" counter, so
+  // it can't drift or double-count if an interval is ever left running.
+  const playStartRef = useRef<number | null>(null);
+  const baseElapsedRef = useRef(0);
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setElapsedSeconds((prev) => prev + 1);
-      }, 1000);
+    if (!isPlaying) {
+      playStartRef.current = null;
+      return;
     }
-    return () => clearInterval(interval);
+    playStartRef.current = performance.now();
+    const id = setInterval(() => {
+      if (playStartRef.current != null) {
+        const secs = baseElapsedRef.current + (performance.now() - playStartRef.current) / 1000;
+        setElapsedSeconds(Math.floor(secs));
+      }
+    }, 500);
+    return () => {
+      if (playStartRef.current != null) {
+        baseElapsedRef.current += (performance.now() - playStartRef.current) / 1000;
+        playStartRef.current = null;
+      }
+      clearInterval(id);
+    };
   }, [isPlaying]);
 
   // Cleanup Webcam on unmount
@@ -167,9 +181,11 @@ export function CreatorTeleprompter({
   const restartTeleprompter = () => {
     setIsPlaying(false);
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = 0;
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: "auto" });
     }
     setActiveSectionIndex(0);
+    baseElapsedRef.current = 0;
+    playStartRef.current = null;
     setElapsedSeconds(0);
   };
 

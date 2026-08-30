@@ -863,8 +863,15 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
      if (data.candidates) setCalibrationCandidates(data.candidates);
      if (data.queue) {
       setCalibrationQueue(data.queue);
-      if (!selectedCalibrationItem && data.queue.length > 0) {
-       setSelectedCalibrationItem(data.queue[0]);
+      // Re-point the selection at a live queue item. Re-running "Ingest & Re-evaluate"
+      // rebuilds the queue with fresh ids, so a previously-selected item can go stale —
+      // which made "Validate This" post a dead queueItemId and silently do nothing.
+      const stillValid =
+       selectedCalibrationItem &&
+       data.queue.some((q: any) => q.queueItemId === selectedCalibrationItem.queueItemId);
+      if (!stillValid) {
+       setSelectedCalibrationItem(data.queue[0] || null);
+       setValidationResult(null);
       }
      }
      if (data.snapshot) setCalibrationSnapshot(data.snapshot);
@@ -6153,6 +6160,13 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
            {isCalibrating ? "Validating…" : "Validate This"}
           </button>
          </div>
+
+         {calibrationErrorMsg && (
+          <div className="flex items-start gap-2 p-3 rounded-[10px] bg-conflict-bg border border-conflict/25 text-conflict text-[11px] font-mono">
+           <AlertOctagon className="w-3.5 h-3.5 shrink-0 mt-px" />
+           <span>{calibrationErrorMsg}</span>
+          </div>
+         )}
 
          {validationResult && (() => {
           const oc = String(validationResult.outcome || "").toUpperCase();
