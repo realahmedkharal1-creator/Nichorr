@@ -1091,7 +1091,19 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
  };
 
  const handleSchedulePublishingTarget = (targetId: string) => {
-  if (!publishingScheduleTime) return;
+  if (!publishingScheduleTime) {
+   setPublishingErrorMsg("Pick a release date and time first.");
+   return;
+  }
+  const when = new Date(publishingScheduleTime);
+  if (isNaN(when.getTime())) {
+   setPublishingErrorMsg("That date and time isn't valid.");
+   return;
+  }
+  if (when.getTime() <= Date.now()) {
+   setPublishingErrorMsg("Choose a date and time in the future.");
+   return;
+  }
   setIsPublishingLoading(true);
   setPublishingErrorMsg(null);
   fetch(`/api/research/${params.id}/creator-publishing/schedule`, {
@@ -5024,15 +5036,15 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
     <div className="space-y-[22px]">
      {/* Notifications */}
      {publishingSuccessMsg && (
-      <div className="p-4 rounded-[10px] bg-ink/60 border border-citation/80 text-citation/60 text-xs font-mono flex items-center gap-2">
-       <CheckCheck className="w-4 h-4 text-citation/60" />
+      <div className="p-4 rounded-[10px] bg-verified-bg border border-verified/25 text-verified text-xs font-mono flex items-center gap-2">
+       <CheckCheck className="w-4 h-4 text-verified shrink-0" />
        <span>{publishingSuccessMsg}</span>
       </div>
      )}
 
-     {publishingErrorMsg && (
-      <div className="p-4 rounded-[10px] bg-conflict-bg border border-conflict-bg text-conflict text-xs font-mono flex items-center gap-2">
-       <AlertOctagon className="w-4 h-4 text-conflict" />
+     {publishingErrorMsg && !showPublishingScheduleModal && (
+      <div className="p-4 rounded-[10px] bg-conflict-bg border border-conflict/25 text-conflict text-xs font-mono flex items-center gap-2">
+       <AlertOctagon className="w-4 h-4 text-conflict shrink-0" />
        <span>{publishingErrorMsg}</span>
       </div>
      )}
@@ -5398,7 +5410,10 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           <input
            type="datetime-local"
            value={publishingScheduleTime}
-           onChange={(e) => setPublishingScheduleTime(e.target.value)}
+           onChange={(e) => {
+            setPublishingScheduleTime(e.target.value);
+            setPublishingErrorMsg(null);
+           }}
            className="w-full bg-paper border border-line-soft rounded-[10px] px-3 py-2 text-ink focus:outline-none focus:border-citation font-mono"
           />
          </div>
@@ -5418,10 +5433,20 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
          </div>
         </div>
 
+        {publishingErrorMsg && (
+         <div className="flex items-start gap-2 p-3 rounded-[10px] bg-conflict-bg border border-conflict/25 text-conflict text-xs font-mono">
+          <AlertOctagon className="w-4 h-4 shrink-0 mt-px" />
+          <span>{publishingErrorMsg}</span>
+         </div>
+        )}
+
         <div className="flex justify-end gap-2 pt-2 border-t border-line-soft">
          <button
-          onClick={() => setShowPublishingScheduleModal(false)}
-          className="px-4 py-2 rounded-[10px] bg-paper hover:bg-paper text-ink text-xs font-mono transition"
+          onClick={() => {
+           setShowPublishingScheduleModal(false);
+           setPublishingErrorMsg(null);
+          }}
+          className="px-4 py-2 rounded-[10px] bg-paper hover:opacity-90 text-ink text-xs font-mono transition"
          >
           Cancel
          </button>
@@ -5430,7 +5455,7 @@ export default function CreatorWorkspacePage({ params }: { params: { id: string 
           disabled={isPublishingLoading || !publishingScheduleTime}
           className="px-4 py-2 rounded-[10px] bg-citation hover:opacity-90 disabled:opacity-50 text-white text-xs font-mono font-bold transition"
          >
-          Confirm Schedule
+          {isPublishingLoading ? "Scheduling…" : "Confirm Schedule"}
          </button>
         </div>
        </div>
