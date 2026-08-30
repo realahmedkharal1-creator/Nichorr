@@ -53,7 +53,6 @@ export function CreatorTeleprompter({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const animationFrameRef = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
@@ -78,53 +77,54 @@ export function CreatorTeleprompter({
     };
   }, [mediaStream]);
 
-  // Smooth Auto-scroll animation loop
+  // Keep the live speed in a ref so changing it doesn't tear down / restart the
+  // scroll loop (which previously spawned a second rAF and made speed changes erratic).
+  const scrollSpeedRef = useRef(scrollSpeed);
   useEffect(() => {
-    let lastTime = performance.now();
+    scrollSpeedRef.current = scrollSpeed;
+  }, [scrollSpeed]);
 
-    const scrollStep = (currentTime: number) => {
-      if (!isPlaying || !scrollContainerRef.current) return;
+  // px/sec for scroll speeds 1..5 (index 0 unused). 1x is a real, readable crawl.
+  const SPEED_PX_PER_SEC = [0, 45, 80, 130, 190, 260];
 
-      const deltaTime = currentTime - lastTime;
-      lastTime = currentTime;
+  // Smooth auto-scroll — one stable loop, started/stopped only by isPlaying.
+  useEffect(() => {
+    if (!isPlaying) return;
 
-      const speedMultiplier = [0, 25, 45, 70, 100, 140][scrollSpeed] || 45;
-      const scrollDelta = (speedMultiplier * deltaTime) / 1000;
+    let raf = 0;
+    let last = performance.now();
 
-      scrollContainerRef.current.scrollTop += scrollDelta;
+    const step = (now: number) => {
+      const el = scrollContainerRef.current;
+      if (!el) {
+        raf = requestAnimationFrame(step);
+        return;
+      }
 
-      const scrollPos = scrollContainerRef.current.scrollTop + 150;
-      const sectionElements = scrollContainerRef.current.querySelectorAll<HTMLElement>("[data-section-index]");
-      sectionElements.forEach((el) => {
-        const top = el.offsetTop;
-        const height = el.offsetHeight;
-        const idx = Number(el.getAttribute("data-section-index"));
-        if (scrollPos >= top && scrollPos < top + height) {
+      const dt = Math.min(now - last, 100); // clamp so a backgrounded tab doesn't jump
+      last = now;
+
+      const pxPerSec = SPEED_PX_PER_SEC[scrollSpeedRef.current] || 80;
+      el.scrollTop += (pxPerSec * dt) / 1000;
+
+      const scrollPos = el.scrollTop + 150;
+      el.querySelectorAll<HTMLElement>("[data-section-index]").forEach((sec) => {
+        const idx = Number(sec.getAttribute("data-section-index"));
+        if (scrollPos >= sec.offsetTop && scrollPos < sec.offsetTop + sec.offsetHeight) {
           setActiveSectionIndex(idx);
         }
       });
 
-      const isAtBottom =
-        scrollContainerRef.current.scrollHeight - scrollContainerRef.current.scrollTop <=
-        scrollContainerRef.current.clientHeight + 5;
-
-      if (isAtBottom) {
+      if (el.scrollHeight - el.scrollTop <= el.clientHeight + 2) {
         setIsPlaying(false);
-      } else {
-        animationFrameRef.current = requestAnimationFrame(scrollStep);
+        return;
       }
+      raf = requestAnimationFrame(step);
     };
 
-    if (isPlaying) {
-      animationFrameRef.current = requestAnimationFrame(scrollStep);
-    } else if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
-
-    return () => {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-    };
-  }, [isPlaying, scrollSpeed]);
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [isPlaying]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -262,12 +262,9 @@ export function CreatorTeleprompter({
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const fontSizeClass = {
-    sm: "text-lg leading-relaxed",
-    md: "text-2xl leading-relaxed",
-    lg: "text-3xl sm:text-4xl leading-relaxed",
-    xl: "text-4xl sm:text-5xl leading-loose",
-  }[fontSize];
+  // Explicit px so the SM/MD/LG/XL buttons visibly change the reading text
+  // regardless of Tailwind class inheritance.
+  const readingFontPx = { sm: 20, md: 30, lg: 42, xl: 58 }[fontSize];
 
   const textWidthClass = {
     narrow: "max-w-2xl",
@@ -279,7 +276,7 @@ export function CreatorTeleprompter({
     <div
       ref={containerRef}
       className={`flex flex-col bg-black text-slate-100 font-sans select-none overflow-hidden ${
-        isFullscreen ? "fixed inset-0 z-50 h-screen w-screen" : "relative rounded-2xl border border-slate-800 h-[750px]"
+        isFullscreen ? "fixed inset-0 z-50 h-screen w-screen" : "relative rounded-2xl border border-slate-800 h-[88vh] max-h-[820px]"
       }`}
     >
       {/* Floating Webcam Recorder */}
@@ -430,6 +427,15 @@ export function CreatorTeleprompter({
         style={{ scrollbarWidth: 'none' }}
       >
         <div className={`mx-auto ${textWidthClass} space-y-16`}>
+          {sections.length === 0 && (
+            <p
+              className="text-slate-400 text-center leading-relaxed"
+              style={{ fontSize: readingFontPx }}
+            >
+              This run has no generated script yet. Open Creator Studio &rarr; Script and generate one,
+              then reopen the teleprompter.
+            </p>
+          )}
           {sections.map((sec, secIdx) => (
             <div
               key={sec.id}
@@ -447,10 +453,21 @@ export function CreatorTeleprompter({
               </div>
 
               {/* Script Talking Points to Read */}
-              <div className={`space-y-8 ${fontSizeClass} font-serif tracking-wide`}>
+              <div className="space-y-8 font-serif tracking-wide">
+                {sec.talkingPoints.length === 0 && (
+                  <p
+                    className="text-slate-300 font-medium leading-relaxed italic"
+                    style={{ fontSize: readingFontPx, lineHeight: 1.5, textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}
+                  >
+                    {sec.goal || "No script lines were generated for this section."}
+                  </p>
+                )}
                 {sec.talkingPoints.map((tp) => (
                   <div key={tp.id} className="space-y-2">
-                    <p className="text-slate-100 font-medium leading-relaxed" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}>
+                    <p
+                      className="text-slate-100 font-medium leading-relaxed"
+                      style={{ fontSize: readingFontPx, lineHeight: 1.5, textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}
+                    >
                       {tp.statement}
                     </p>
 
